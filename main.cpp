@@ -4,20 +4,6 @@ using namespace std;
 
 vector<vector<int>> table;
 
-vector<vector<int>> getEmptySlots() {
-    vector<vector<int>> emptySlots = vector<vector<int>>(0);
-    for (int i = 0; i < table.size(); i++) {
-        vector<int> indexEmptySlots = vector<int>(0);
-        for (int j = 0; j < table[i].size(); j++) {
-            if (table[i][j] == 0) {
-                indexEmptySlots.push_back(j);
-            }
-        }
-        emptySlots.push_back(indexEmptySlots);
-    }
-    return emptySlots;
-}
-
 void afficherTableau(vector<int> tableau) {
     cout << "[";
     for (int i = 0; i < tableau.size(); i++) {
@@ -40,6 +26,20 @@ void afficherTableau(vector<vector<int>> tableau) {
     cout << "]" << endl;
 }
 
+vector<vector<int>> getEmptySlots() {
+    vector<vector<int>> emptySlots = vector<vector<int>>(0);
+    for (int i = 0; i < table.size(); i++) {
+        vector<int> indexEmptySlots = vector<int>(0);
+        for (int j = 0; j < table[i].size(); j++) {
+            if (table[i][j] == 0) {
+                indexEmptySlots.push_back(j);
+            }
+        }
+        emptySlots.push_back(indexEmptySlots);
+    }
+    return emptySlots;
+}
+
 void setRandomElement() {
     vector<int> indexWithValues = vector<int>(0);
     vector<vector<int>> emptySlots = getEmptySlots();
@@ -49,7 +49,7 @@ void setRandomElement() {
         }
     }
     int k = (int) rand() % indexWithValues.size();
-    int j = (int) rand() % emptySlots[indexWithValues[k]].size();
+    int j = emptySlots[k][(int) rand() % emptySlots[indexWithValues[k]].size()];
     table[k][j] = 2;
 }
 
@@ -68,8 +68,9 @@ void start() {
     for (int i = 0; i < 4; i++) {
         table[i] = {0, 0, 0, 0};
     }
-    setRandomElement();
-    setRandomElement();
+    for (int i = 0; i < 5; i++) {
+        setRandomElement();
+    }
     printConsole();
     string value;
     cin >> value;

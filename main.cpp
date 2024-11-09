@@ -53,11 +53,32 @@ void setRandomElement() {
     table[k][j] = 2;
 }
 
-void printConsole() {
-    cout << endl;
+string caractere(string caractere, int max) {
+    string texte = caractere;
+    for (int i = 0; i < max - caractere.size(); i++) {
+        texte += ' ';
+    }
+    return texte;
+}
+
+int caractereMax() {
+    int k = 0;
     for (int i = 0; i < table.size(); i++) {
         for (int j = 0; j < table[i].size(); j++) {
-            cout << " " << table[i][j] << " ";
+            if(k < table[i][j]) {
+                k = table[i][j];
+            }
+        }
+    }
+    return k;
+}
+
+void printConsole() {
+    cout << endl;
+    int longmax = to_string(caractereMax()).size();
+    for (int i = 0; i < table.size(); i++) {
+        for (int j = 0; j < table[i].size(); j++) {
+            cout << " " << caractere(to_string(table[i][j]), longmax) << " ";
         }
         cout << endl;
     }

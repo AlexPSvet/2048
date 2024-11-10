@@ -54,7 +54,7 @@ void setRandomElement() {
     table[k][j] = 2;
 }
 
-string caractere(string caractere, int max) {
+string getText(string caractere, int max) {
     string texte = caractere;
     for (int i = 0; i < max - caractere.size(); i++) {
         texte += ' ';
@@ -62,7 +62,7 @@ string caractere(string caractere, int max) {
     return texte;
 }
 
-int caractereMax() {
+int getMaxTextLenght() {
     int k = 0;
     for (int i = 0; i < table.size(); i++) {
         for (int j = 0; j < table[i].size(); j++) {
@@ -71,15 +71,87 @@ int caractereMax() {
             }
         }
     }
-    return k;
+    return to_string(k).size();
+}
+
+void moveLeft() {
+    for (int i = 0; i < table.size(); i++) {
+        int first0Index = -1;
+        for (int j = 0; j < table[i].size(); j++) {
+            if (table[i][j] == 0) {
+                if (first0Index == -1) {
+                    first0Index = j;
+                }
+            } else if (first0Index != -1) {
+                int value = table[i][j];
+                table[i][j] = 0;
+                table[i][first0Index] = value;
+                first0Index += 1;
+            }
+        }
+    }
+}
+
+void moveRight() {
+    for (int i = 0; i < table.size(); i++) {
+        int first0Index = -1;
+        for (int j = table[i].size() - 1; j >= 0; j--) {
+            if (table[i][j] == 0) {
+                if (first0Index == -1) {
+                    first0Index = j;
+                }
+            } else if (first0Index != -1) {
+                int value = table[i][j];
+                table[i][j] = 0;
+                table[i][first0Index] = value;
+                first0Index -= 1;
+            }
+        }
+    }
+}
+
+void moveDown() {
+    for (int i = 0; i < 4; i++) {
+        int first0Index = -1;
+        for (int j = 3; j >= 0; j--) {
+            if (table[j][i] == 0) {
+                if (first0Index == -1) {
+                    first0Index = j;
+                }
+            } else if (first0Index != -1) {
+                int value = table[j][i];
+                table[j][i] = 0;
+                table[first0Index][i] = value;
+                first0Index -= 1;
+            }
+        }
+    }    
+}
+
+void moveUp() {
+    for (int i = 0; i < 4; i++) {
+        int first0Index = -1;
+        for (int j = 0; j < 4; j++) {
+            if (table[j][i] == 0) {
+                if (first0Index == -1) {
+                    first0Index = j;
+                }
+            } else if (first0Index != -1) {
+                int value = table[j][i];
+                table[j][i] = 0;
+                table[first0Index][i] = value;
+                first0Index += 1;
+            }
+        }
+    }
 }
 
 void printConsole() {
     cout << endl;
-    int longmax = to_string(caractereMax()).size();
+    int longMax = getMaxTextLenght();
     for (int i = 0; i < table.size(); i++) {
         for (int j = 0; j < table[i].size(); j++) {
-            cout << " " << caractere(to_string(table[i][j]), longmax) << " ";
+            cout << " " << getText(to_string(table[i][j]), longMax) << " ";
         }
         cout << endl;
     }
@@ -90,12 +162,25 @@ void start() {
     for (int i = 0; i < 4; i++) {
         table[i] = {0, 0, 0, 0};
     }
-    for (int i = 0; i < 2; i++) {
+    for (int i = 0; i < 5; i++) {
         setRandomElement();
     }
-    printConsole();
-    string value;
-    cin >> value;
+    while (true) {
+        printConsole();
+        string answer;
+        cout << "Saisir une valeur de mouvement : ";
+        cin >> answer;
+        if (answer == "g") {
+            moveLeft();
+        } else if (answer == "d") {
+            moveRight();
+        } else if (answer == "h") {
+            moveUp();
+        } else if (answer == "b") {
+            moveDown();
+        }
+    }
+    
 }
 
 int main() {

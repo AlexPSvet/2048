@@ -4,7 +4,7 @@
 #include "modele.h"
 using namespace std;
 
-vector<vector<int>> table;
+std::vector<std::vector<int>> table;
 
 /* Fonction pour afficher un tableau d'entiers sur la console.
  * @param un tableau d'entiers

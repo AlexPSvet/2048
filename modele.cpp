@@ -1,7 +1,7 @@
 #include "modele.h"
 #include <vector>
 
-void moveLeft(std::vector<std::vector<int>> table) {
+void moveLeft(std::vector<std::vector<int>>& table) {
     for (int i = 0; i < table.size(); i++) {
         int first0Index = -1;
         for (int j = 0; j < table[i].size(); j++) {
@@ -28,7 +28,7 @@ void moveLeft(std::vector<std::vector<int>> table) {
     }
 }
 
-void moveRight(std::vector<std::vector<int>> table) {
+void moveRight(std::vector<std::vector<int>>& table) {
     for (int i = 0; i < table.size(); i++) {
         int first0Index = -1;
         for (int j = table[i].size() - 1; j >= 0; j--) {
@@ -55,7 +55,7 @@ void moveRight(std::vector<std::vector<int>> table) {
     }
 }
 
-void moveDown(std::vector<std::vector<int>> table) {
+void moveDown(std::vector<std::vector<int>>& table) {
     for (int i = 0; i < 4; i++) {
         int first0Index = -1;
         for (int j = 3; j >= 0; j--) {
@@ -82,7 +82,7 @@ void moveDown(std::vector<std::vector<int>> table) {
     }
 }
 
-void moveUp(std::vector<std::vector<int>> table) {
+void moveUp(std::vector<std::vector<int>>& table) {
     for (int i = 0; i < 4; i++) {
         int first0Index = -1;
         for (int j = 0; j < 4; j++) {

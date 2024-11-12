@@ -115,13 +115,14 @@ void start() {
             moveUp(table);
         } else if (answer == "b") {
             moveDown(table);
+        } else if (answer == "spawn") {
+            setRandomElement();
         } else if (answer == "stop") {
             cout << "Stop game." << endl;
             break;
         }
         setRandomElement();
     }
-    
 }
 
 int main() {

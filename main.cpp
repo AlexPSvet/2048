@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <map>
 #include <vector>
 #include "modele.h"
 using namespace std;
@@ -7,7 +8,7 @@ using namespace std;
 std::vector<std::vector<int>> table;
 
 /* Fonction pour afficher un tableau d'entiers sur la console.
- * @param un tableau d'entiers
+ * @param t un tableau d'entiers
  */
 void afficherTableau(vector<int> tableau) {
     cout << "[";
@@ -21,7 +22,7 @@ void afficherTableau(vector<int> tableau) {
 }
 
 /* Fonction pour afficher un tableau d'entiers à deux dimensions sur la console.
- * @param un tableau d'entiers à deux dimensions
+ * @param t un tableau d'entiers à deux dimensions
  */
 void afficherTableau(vector<vector<int>> tableau) {
     cout << "[";
@@ -35,10 +36,10 @@ void afficherTableau(vector<vector<int>> tableau) {
 }
 
 /* Fonction qui trouve toutes les indices des tableaux dans lequels des cases sont vides (valeurs égales à 0)
- * @return un tableau a deux dimensions avec les indices
+ * @return map un map avec les indices dans chaque tableau avec des cases vides
  */
-vector<vector<int>> getEmptySlots() {
-    vector<vector<int>> emptySlots = vector<vector<int>>(0);
+map<int, vector<int>> getEmptySlots() {
+    map<int, vector<int>> emptySlots;
     for (int i = 0; i < table.size(); i++) {
         vector<int> indexEmptySlots = vector<int>(0);
         for (int j = 0; j < table[i].size(); j++) {
@@ -46,7 +47,9 @@ vector<vector<int>> getEmptySlots() {
                 indexEmptySlots.push_back(j);
             }
         }
-        emptySlots.push_back(indexEmptySlots);
+        if (indexEmptySlots.size() != 0) {
+            emptySlots[i] = indexEmptySlots;
+        }
     }
     return emptySlots;
 }
@@ -56,16 +59,9 @@ vector<vector<int>> getEmptySlots() {
  * sur les cases vides de la table.
  */
 void setRandomElement() {
-    vector<int> indexWithValues = vector<int>(0);
-    vector<vector<int>> emptySlots = getEmptySlots();
-    for (int i = 0; i < emptySlots.size(); i++) {
-        if (emptySlots[i].size() != 0) {
-            indexWithValues.push_back(i);
-        }
-    }
-    int k = (int) rand() % indexWithValues.size();
-    int i = indexWithValues[k];
-    int j = emptySlots[i][(int) rand() % emptySlots[i].size()];
+    map<int, vector<int>> emptySlots = getEmptySlots();
+    int k = (int) rand() % emptySlots.size();
+    int j = emptySlots[k][(int) rand() % emptySlots[k].size()];
     int r = rand() % 9;
     table[k][j] = r < 9 ? 2 : 4;
 }
@@ -131,21 +127,27 @@ void start() {
         cout << "Saisir une valeur de mouvement : ";
         cin >> answer;
         if (answer == "g") {
-            moveLeft(table);
+            moveLeft();
             setRandomElement();
         } else if (answer == "d") {
-            moveRight(table);
+            moveRight();
             setRandomElement();
         } else if (answer == "h") {
-            moveUp(table);
+            moveUp();
             setRandomElement();
         } else if (answer == "b") {
-            moveDown(table);
+            moveDown();
             setRandomElement();
         } else if (answer == "stop") {
             cout << "Stop game." << endl;
             break;
-        }
+        } else {
+            cout << endl << "Votre commande est invalide." << endl;
+            cout << "Mouvemant haut : h" << endl;
+            cout << "Mouvemant bas : b" << endl;
+            cout << "Mouvemant gauche : g" << endl;
+            cout << "Mouvemant droite : d" << endl;
+        }  
     }
 }
 

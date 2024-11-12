@@ -1,11 +1,11 @@
 #ifndef MODELE_H
 #define MODELE_H
 
-#include <vector>
+extern std::vector<std::vector<int>> table;
 
-void moveLeft(std::vector<std::vector<int>>& table);
-void moveRight(std::vector<std::vector<int>>& table);
-void moveUp(std::vector<std::vector<int>>& table);
-void moveDown(std::vector<std::vector<int>>& table);
+void moveLeft();
+void moveRight();
+void moveUp();
+void moveDown();
 
 #endif

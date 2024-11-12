@@ -4,7 +4,7 @@
 /* Décale depuis l'indice startIndex jusqu'à l'indice endIndex exclu les valeurs d'un tableau.
  * @param t tableau représentant la ligne de la table.
  * @param startIndex l'indice de début.
- * @param endIndex l'indice de fin exclus.
+ * @param endIndex l'indice de fin exclu.
 */
 void moveLeftRange(std::vector<int>& t, int startIndex, int endIndex) {
     int first0Index = -1;
@@ -23,8 +23,7 @@ void moveLeftRange(std::vector<int>& t, int startIndex, int endIndex) {
 }
 
 /* Rajoute vers la gauche les cases avec les memes valeurs.
- * @param startIndex l'indice de début.
- * @param endIndex l'indice de fin exclus.
+ * @param t le tableau.
 */
 void addLeftValues(std::vector<int>& t) {
     for (int i = 1; i < t.size(); i++) {
@@ -49,7 +48,7 @@ void moveLeft() {
 /* Décale depuis l'indice startIndex jusqu'à l'indice endIndex les valeurs d'un tableau.
  * @param t tableau représentant la ligne de la table.
  * @param startIndex l'indice de début.
- * @param endIndex l'indice de fin exclus.
+ * @param endIndex l'indice de fin.
 */
 void moveRightRange(std::vector<int>& t, int startIndex, int endIndex) {
     int first0Index = -1;
@@ -68,8 +67,7 @@ void moveRightRange(std::vector<int>& t, int startIndex, int endIndex) {
 }
 
 /* Rajoute vers la droite les cases avec les memes valeurs.
- * @param startIndex l'indice de début.
- * @param endIndex l'indice de fin exclus.
+ * @param t le tableau.
 */
 void addRightValues(std::vector<int>& t) {
     for (int i = 0; i < t.size() - 1; i++) {

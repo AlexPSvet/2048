@@ -34,6 +34,9 @@ void afficherTableau(vector<vector<int>> tableau) {
     cout << "]" << endl;
 }
 
+/* Fonction qui trouve toutes les indices des tableaux dans lequels des cases sont vides (valeurs égales à 0)
+ * @return un tableau a deux dimensions avec les indices
+ */
 vector<vector<int>> getEmptySlots() {
     vector<vector<int>> emptySlots = vector<vector<int>>(0);
     for (int i = 0; i < table.size(); i++) {
@@ -48,6 +51,10 @@ vector<vector<int>> getEmptySlots() {
     return emptySlots;
 }
 
+/* 
+ * Fonction qui rajoute un élément de manière aléatoire 
+ * sur les cases vides de la table.
+ */
 void setRandomElement() {
     vector<int> indexWithValues = vector<int>(0);
     vector<vector<int>> emptySlots = getEmptySlots();
@@ -59,9 +66,15 @@ void setRandomElement() {
     int k = (int) rand() % indexWithValues.size();
     int i = indexWithValues[k];
     int j = emptySlots[i][(int) rand() % emptySlots[i].size()];
-    table[k][j] = 2;
+    int r = rand() % 9;
+    table[k][j] = r < 9 ? 2 : 4;
 }
 
+/* Fonction pour ajuster une chaîne de caracteres d'une taille spécifique.
+ * @param la chaîne de caracteres.
+ * @param taille de la chaîne de caractères.
+ * @return la chaîne de caractères avec la taille.
+ */
 string getText(string caractere, int max) {
     string texte = caractere;
     for (int i = 0; i < max - caractere.size(); i++) {
@@ -70,6 +83,9 @@ string getText(string caractere, int max) {
     return texte;
 }
 
+/* Retrouve le nombre le plus grand en caractères.
+ * @return la plus grande taille des numéros en chaîne de caractères.
+ */
 int getMaxTextLenght() {
     int k = 0;
     for (int i = 0; i < table.size(); i++) {
@@ -82,6 +98,9 @@ int getMaxTextLenght() {
     return to_string(k).size();
 }
 
+/*
+ * Affiche dans la console le tableau à deux dimensions.
+ */
 void printConsole() {
     cout << endl;
     int longMax = getMaxTextLenght();
@@ -94,6 +113,10 @@ void printConsole() {
     cout << endl;
 }
 
+/*
+ * Commence le jeu en initialisant le tableau, rajoute deux valeurs
+ * aléatoires et demande à l'utilisateur les mouvements.
+ */
 void start() {
     table = vector<vector<int>>(4);
     for (int i = 0; i < 4; i++) {
@@ -109,19 +132,20 @@ void start() {
         cin >> answer;
         if (answer == "g") {
             moveLeft(table);
+            setRandomElement();
         } else if (answer == "d") {
             moveRight(table);
+            setRandomElement();
         } else if (answer == "h") {
             moveUp(table);
+            setRandomElement();
         } else if (answer == "b") {
             moveDown(table);
-        } else if (answer == "spawn") {
             setRandomElement();
         } else if (answer == "stop") {
             cout << "Stop game." << endl;
             break;
         }
-        setRandomElement();
     }
 }
 

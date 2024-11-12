@@ -54,8 +54,7 @@ map<int, vector<int>> getEmptySlots() {
     return emptySlots;
 }
 
-/* 
- * Fonction qui rajoute un élément de manière aléatoire 
+/* Fonction qui rajoute un élément de manière aléatoire 
  * sur les cases vides de la table.
  */
 void setRandomElement() {

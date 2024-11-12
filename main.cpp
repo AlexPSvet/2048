@@ -94,9 +94,8 @@ int getMaxTextLenght() {
     return to_string(k).size();
 }
 
-/*
- * Affiche dans la console le tableau à deux dimensions.
- */
+/* Affiche dans la console le tableau à deux dimensions. 
+*/
 void printConsole() {
     cout << endl;
     int longMax = getMaxTextLenght();
@@ -109,9 +108,8 @@ void printConsole() {
     cout << endl;
 }
 
-/*
- * Commence le jeu en initialisant le tableau, rajoute deux valeurs
- * aléatoires et demande à l'utilisateur les mouvements.
+/* Commence le jeu en initialisant le tableau, rajoute deux valeurs
+ * aléatoires et demande à l'utilisateur les mouvements. 
  */
 void start() {
     table = vector<vector<int>>(4);
@@ -128,16 +126,12 @@ void start() {
         cin >> answer;
         if (answer == "g") {
             moveLeft();
-            setRandomElement();
         } else if (answer == "d") {
             moveRight();
-            setRandomElement();
         } else if (answer == "h") {
             moveUp();
-            setRandomElement();
         } else if (answer == "b") {
             moveDown();
-            setRandomElement();
         } else if (answer == "stop") {
             cout << "Stop game." << endl;
             break;

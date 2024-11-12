@@ -10,11 +10,11 @@ std::vector<std::vector<int>> table;
 /* Fonction pour afficher un tableau d'entiers sur la console.
  * @param t un tableau d'entiers
  */
-void afficherTableau(vector<int> tableau) {
+void printTable(vector<int> table) {
     cout << "[";
-    for (int i = 0; i < tableau.size(); i++) {
+    for (int i = 0; i < table.size(); i++) {
         cout << i;
-        if (i != tableau.size() - 1) {
+        if (i != table.size() - 1) {
             cout << ", ";
         }
     }
@@ -24,11 +24,11 @@ void afficherTableau(vector<int> tableau) {
 /* Fonction pour afficher un tableau d'entiers à deux dimensions sur la console.
  * @param t un tableau d'entiers à deux dimensions
  */
-void afficherTableau(vector<vector<int>> tableau) {
+void printTable(vector<vector<int>> table) {
     cout << "[";
-    for (int i = 0; i < tableau.size(); i++) {
-        afficherTableau(tableau[i]);
-        if (i != tableau.size() - 1) {
+    for (int i = 0; i < table.size(); i++) {
+        printTable(table[i]);
+        if (i != table.size() - 1) {
             cout << ", ";
         }
     }

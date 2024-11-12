@@ -3,9 +3,9 @@
 
 extern std::vector<std::vector<int>> table;
 
-void moveLeft();
-void moveRight();
-void moveUp();
-void moveDown();
+bool moveLeft();
+bool moveRight();
+bool moveUp();
+bool moveDown();
 
 #endif

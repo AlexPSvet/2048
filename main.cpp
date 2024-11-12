@@ -107,6 +107,32 @@ void printConsole() {
     cout << endl;
 }
 
+/* Demande a l'utilisateur le mouvement suivant.
+ * @return bool : true si d'autres mouvements peuvent s'effectuer ou false sinon.
+*/
+bool makeMovement() {
+    string answer;
+    cout << "Saisir une valeur de mouvement : ";
+    cin >> answer;
+    if (answer == "g") {
+        moveLeft();
+    } else if (answer == "d") {
+        moveRight();
+    } else if (answer == "h") {
+        moveUp();
+    } else if (answer == "b") {
+        moveDown();
+    } else {
+        cout << endl << "Votre commande est invalide." << endl;
+        cout << "Mouvemant haut : h" << endl;
+        cout << "Mouvemant bas : b" << endl;
+        cout << "Mouvemant gauche : g" << endl;
+        cout << "Mouvemant droite : d" << endl;
+        return false;
+    }
+    return true;
+}
+
 /* Commence le jeu en initialisant le tableau, rajoute deux valeurs
  * aléatoires et demande à l'utilisateur les mouvements. 
  */
@@ -120,27 +146,9 @@ void start() {
     }
     while (true) {
         printConsole();
-        string answer;
-        cout << "Saisir une valeur de mouvement : ";
-        cin >> answer;
-        if (answer == "g") {
-            moveLeft();
-        } else if (answer == "d") {
-            moveRight();
-        } else if (answer == "h") {
-            moveUp();
-        } else if (answer == "b") {
-            moveDown();
-        } else if (answer == "stop") {
-            cout << "Stop game." << endl;
-            break;
-        } else {
-            cout << endl << "Votre commande est invalide." << endl;
-            cout << "Mouvemant haut : h" << endl;
-            cout << "Mouvemant bas : b" << endl;
-            cout << "Mouvemant gauche : g" << endl;
-            cout << "Mouvemant droite : d" << endl;
-        }  
+        if (makeMovement()) {
+            setRandomElement();
+        }
     }
 }
 

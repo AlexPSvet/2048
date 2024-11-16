@@ -3,8 +3,10 @@
 
 extern std::vector<std::vector<int>> table;
 
-bool canMoveHorizontal();
-bool canMoveVertical();
+bool canMoveRight();
+bool canMoveLeft();
+bool canMoveUp();
+bool canMoveDown();
 bool canMove();
 bool moveLeft();
 bool moveRight();

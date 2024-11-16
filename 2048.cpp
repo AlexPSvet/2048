@@ -60,13 +60,13 @@ void setRandomElement() {
 }
 
 /** Fonction pour ajuster une chaîne de caracteres d'une taille spécifique.
- * @param la chaîne de caracteres.
- * @param taille de la chaîne de caractères.
+ * @param caractere la chaîne de caracteres.
+ * @param t la taille que la chaîne de caractères doi avoir
  * @return la chaîne de caractères avec la taille.
  **/
-string getText(string caractere, int max) {
+string getText(string caractere, int t) {
     string texte = caractere;
-    for (int i = 0; i < max - caractere.size(); i++) {
+    for (int i = 0; i < t - caractere.size(); i++) {
         texte += ' ';
     }
     return texte;
@@ -101,35 +101,40 @@ void printConsole() {
     cout << endl;
 }
 
-/** Demande a l'utilisateur le mouvement suivant.
- * @return bool : true si d'autres mouvements peuvent s'effectuer ou false sinon.
+/** Vérifie que la commande de l'utilisateur est un mouvement valide, et réalise le mouvement.
+ * @param answer la réponse en string de l'utilisateur en commande.
  **/
-bool makeMovement() {
-    string answer;
-    cout << "Saisir une valeur de mouvement : ";
-    cin >> answer;
-    if (canMove()) {
-        if (answer == "g") {
+bool doMovement(string answer) {
+    if (answer == "g") {
+        if (canMoveLeft()) {
             moveLeft();
-        } else if (answer == "d") {
+            return true;
+        }
+     } else if (answer == "d") {
+        if (canMoveRight()) {
             moveRight();
-        } else if (answer == "h") {
+            return true;
+        }
+    } else if (answer == "h") {
+        if (canMoveUp()) {
             moveUp();
-        } else if (answer == "b") {
+            return true;
+        }
+    } else if (answer == "b") {
+        if (canMoveDown()) {
             moveDown();
-        } else {
-            cout << endl << "Votre commande est invalide." << endl;
-            cout << "Mouvemant haut : h" << endl;
-            cout << "Mouvemant bas : b" << endl;
-            cout << "Mouvemant gauche : g" << endl;
-            cout << "Mouvemant droite : d" << endl;
-            return false;
+            return true;
         }
     } else {
-        cout << "Le jeu est fini! Pas de mouvements possibles.";
+        cout << endl << "Votre commande est invalide." << endl;
+        cout << "Mouvemant haut : h" << endl;
+        cout << "Mouvemant bas : b" << endl;
+        cout << "Mouvemant gauche : g" << endl;
+        cout << "Mouvemant droite : d" << endl;
         return false;
     }
-    return true;
+    cout << "Le mouvement est invalide, saisir un mouvement valide." << endl;
+    return false;
 }
 
 /** Commence le jeu en initialisant le tableau, rajoute deux valeurs aléatoires et demande à l'utilisateur les mouvements. 
@@ -144,8 +149,16 @@ void start() {
     }
     while (true) {
         printConsole();
-        if (makeMovement()) {
-            setRandomElement();
+        string answer;
+        cout << "Saisir une valeur de mouvement : ";
+        cin >> answer;
+        if (canMove()) {
+            if (doMovement(answer)) {
+                setRandomElement();
+            }
+        } else {
+            cout << "Le jeu est fini! Pas de mouvements possibles.";
+            break;
         }
     }
 }

@@ -12,38 +12,80 @@ void rotateTable() {
     }
 }
 
-/** Vérifie si deux nombres collées après mouvement peuvent s'additioner, donc faire un mouvement.
+/** Vérifie si pour un mouvement à gauche, il y a soit des espaces vides entre les indices 0 et t.size() exclu, ou des elements proches égaux.
  * @param t le tableau représentant la ligne dans la table.
  * @return b booléen : true si un mouvement peut s'effectuer, false sinon.
  **/
-bool canMoveHorizontalLine(std::vector<int> t) {
-    std::vector<int> values;
-    for (int i = 0; i < t.size() - 1; i += 2) {
-        if (t[i] == 0 || t[i+1] == 0 || t[i] == t[i+1]) {
-            return true;
+bool canMoveLeftLine(std::vector<int> t) {
+    bool isEmpty = true;
+    for (int i = 0; i < t.size() - 1; i++) {
+        if (t[i] != 0 || t[i+1] != 0) {
+            isEmpty = false;
+            if (t[i] == t[i+1] || t[i] == 0) {
+                return true;
+            }
         }
     }
-    return false;
+    return isEmpty;
+}
+
+/** Vérifie si pour un mouvement à droite, il y a soit des espaces vides entre les indices t.size() - 1 et 1 exclu, ou des elements proches égaux.
+ * @param t le tableau représentant la ligne dans la table.
+ * @return b booléen : true si un mouvement peut s'effectuer, false sinon.
+ **/
+bool canMoveRightLine(std::vector<int> t) {
+    bool isEmpty = true;
+    for (int i = t.size() - 1; i > 0; i--) {
+        if (t[i] != 0 || t[i-1] != 0) {
+            isEmpty = false;
+            if (t[i] == t[i-1] || t[i] == 0) {
+                return true;
+            }
+        }
+    }
+    return isEmpty;
 }
 
 /** Vérifie si des mouvements horizontales peuvent se faire.
  * @return b booléen : true si au moins un mouvement horizontale est possible, false sinon.
  **/
-bool canMoveHorizontal() {
+bool canMoveLeft() {
     for (int i = 0; i < table.size(); i++) {
-        if (canMoveHorizontalLine(table[i])) {
+        if (canMoveLeftLine(table[i])) {
             return true;
         }
     }
     return false;
 }
 
-/** Vérifie si des mouvements verticales peuvent se faire.
- * @return b booléen : true si au moins un mouvement horizontale est possible, false sinon.
+/** Vérifie si des mouvements à droite peuvent se faire.
+ * @return b booléen : true si au moins un mouvement à droite est possible, false sinon.
  **/
-bool canMoveVertical() {
+bool canMoveRight() {
+    for (int i = 0; i < table.size(); i++) {
+        if (canMoveRightLine(table[i])) {
+            return true;
+        }
+    }
+    return false;
+}
+
+/** Vérifie si des mouvements en haut peuvent se faire.
+ * @return b booléen : true si au moins un mouvement en haut est possible, false sinon.
+ **/
+bool canMoveUp() {
     rotateTable();
-    bool b = canMoveHorizontal();
+    bool b = canMoveLeft();
+    rotateTable();
+    return b;
+}
+
+/** Vérifie si des mouvements en bas peuvent se faire.
+ * @return b booléen : true si au moins un mouvement en bas est possible, false sinon.
+ **/
+bool canMoveDown() {
+    rotateTable();
+    bool b = canMoveRight();
     rotateTable();
     return b;
 }
@@ -52,7 +94,7 @@ bool canMoveVertical() {
  * @return b booléen : true si au moins un mouvement horizontale ou verticale est possible, false sinon.
  **/
 bool canMove() {
-    return canMoveHorizontal() || canMoveVertical();
+    return canMoveLeft() || canMoveRight() || canMoveUp() || canMoveDown();
 }
 
 /** Décale depuis l'indice startIndex jusqu'à l'indice endIndex exclu les valeurs d'un tableau.

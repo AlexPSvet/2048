@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include "modele.h"
+#include "graphics.h"
 using namespace std;
 
 std::vector<std::vector<int>> table;
@@ -166,5 +167,6 @@ void start() {
 int main() {
     srand(time(0));
     start();
+    openGame();
     return 0;
 }

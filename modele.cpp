@@ -16,7 +16,7 @@ void rotateTable() {
  * @param t le tableau représentant la ligne dans la table.
  * @return b booléen : true si un mouvement peut s'effectuer, false sinon.
  **/
-bool canLineMove(std::vector<int> t) {
+bool canMoveHorizontalLine(std::vector<int> t) {
     std::vector<int> values;
     for (int i = 0; i < t.size() - 1; i += 2) {
         if (t[i] == 0 || t[i+1] == 0 || t[i] == t[i+1]) {
@@ -29,27 +29,30 @@ bool canLineMove(std::vector<int> t) {
 /** Vérifie si des mouvements horizontales peuvent se faire.
  * @return b booléen : true si au moins un mouvement horizontale est possible, false sinon.
  **/
-bool canMoveLines() {
+bool canMoveHorizontal() {
     for (int i = 0; i < table.size(); i++) {
-        if (canLineMove(table[i])) {
+        if (canMoveHorizontalLine(table[i])) {
             return true;
         }
     }
     return false;
 }
 
+/** Vérifie si des mouvements verticales peuvent se faire.
+ * @return b booléen : true si au moins un mouvement horizontale est possible, false sinon.
+ **/
+bool canMoveVertical() {
+    rotateTable();
+    bool b = canMoveHorizontal();
+    rotateTable();
+    return b;
+}
+
 /** Vérifie si des mouvements horizontales ou verticales peuvent se faire.
  * @return b booléen : true si au moins un mouvement horizontale ou verticale est possible, false sinon.
  **/
 bool canMove() {
-    if (canMoveLines()) {
-        return true;
-    } else {
-        rotateTable();
-        bool b = canMoveLines();
-        rotateTable();
-        return b;
-    }
+    return canMoveHorizontal() || canMoveVertical();
 }
 
 /** Décale depuis l'indice startIndex jusqu'à l'indice endIndex exclu les valeurs d'un tableau.

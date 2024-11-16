@@ -1,6 +1,5 @@
 #include <iostream>
 #include <string>
-#include <map>
 #include <vector>
 #include "modele.h"
 using namespace std;
@@ -36,19 +35,15 @@ void printTable(vector<vector<int>> table) {
 }
 
 /** Fonction qui trouve toutes les indices des tableaux dans lequels des cases sont vides (valeurs égales à 0)
- * @return map un map avec les indices dans chaque tableau avec des cases vides
+ * @return tableau des uplets : premier valeur l'indice de la ligne et deuxième valeur l'indice dans le tableau de la case vide.
  **/
-map<int, vector<int>> getEmptySlots() {
-    map<int, vector<int>> emptySlots;
+vector<tuple<int, int>> getEmptySlots() {
+    vector<tuple<int, int>> emptySlots;
     for (int i = 0; i < table.size(); i++) {
-        vector<int> indexEmptySlots;
         for (int j = 0; j < table[i].size(); j++) {
             if (table[i][j] == 0) {
-                indexEmptySlots.push_back(j);
+                emptySlots.push_back({i, j});
             }
-        }
-        if (indexEmptySlots.size() != 0) {
-            emptySlots.insert({i, indexEmptySlots});
         }
     }
     return emptySlots;
@@ -57,12 +52,11 @@ map<int, vector<int>> getEmptySlots() {
 /** Fonction qui rajoute un élément de manière aléatoire sur les cases vides de la table.
  */
 void setRandomElement() {
-    map<int, vector<int>> emptySlots = getEmptySlots();
+    vector<tuple<int, int>> emptySlots = getEmptySlots();
     int k = (int) rand() % emptySlots.size();
-    int value = rand() % emptySlots[k].size();
-    int j = emptySlots[k][value];
+    tuple<int, int> values = emptySlots[k];
     int r = rand() % 9;
-    table[k][j] = r < 9 ? 2 : 4;
+    table[get<0>(values)][get<1>(values)] = r < 9 ? 2 : 4;
 }
 
 /** Fonction pour ajuster une chaîne de caracteres d'une taille spécifique.

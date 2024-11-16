@@ -7,7 +7,7 @@ using namespace std;
 std::vector<std::vector<int>> table;
 
 /** Fonction pour afficher un tableau d'entiers sur la console.
- * @param t un tableau d'entiers
+ * @param t un tableau d'entiers.
  **/
 void printTable(vector<int> table) {
     cout << "[";

@@ -1,5 +1,5 @@
-#include "graphics.h"
 #include <SFML/Graphics.hpp>
+#include "graphics.h"
 
 void openGame() {
     sf::RenderWindow window(sf::VideoMode(200, 200), "SFML works!");

@@ -111,30 +111,31 @@ string verifyAnswer() {
 
 /** Vérifie que la commande de l'utilisateur est un mouvement valide, et réalise le mouvement.
  **/
-void validMovement() {
+bool validMovement() {
     string answer = verifyAnswer();
     if (answer == "g") {
        if (canMoveLeft()) {
             moveLeft();
-            return;
+            return true;
         }
     } else if (answer == "d") {
         if (canMoveRight()) {
             moveRight();
-            return;
+            return true;
         }
     } else if (answer == "h") {
         if (canMoveUp()) {
             moveUp();
-            return;
+            return true;
         }
     } else if (answer == "b") {
         if (canMoveDown()) {
             moveDown();
-            return;
+            return true;
         }
     }
     cout << "Le mouvement est invalide, saisir un mouvement valide." << endl;
+    return false;
 }
 
 /** Commence le jeu en initialisant le tableau, rajoute deux valeurs aléatoires et demande à l'utilisateur les mouvements. 

@@ -12,47 +12,16 @@ void rotateTable() {
     }
 }
 
-/** Vérifie si pour un mouvement à gauche, il y a soit des espaces vides entre les indices 0 et t.size() exclu, ou des elements proches égaux.
- * @param t le tableau représentant la ligne dans la table.
- * @return b booléen : true si un mouvement peut s'effectuer, false sinon.
- **/
-bool canMoveLeftLine(std::vector<int> t) {
-    bool isEmpty = true;
-    for (int i = 0; i < t.size() - 1; i++) {
-        if (t[i] != 0 || t[i+1] != 0) {
-            isEmpty = false;
-            if (t[i] == t[i+1] || t[i] == 0) {
-                return true;
-            }
-        }
-    }
-    return isEmpty;
-}
-
-/** Vérifie si pour un mouvement à droite, il y a soit des espaces vides entre les indices t.size() - 1 et 1 exclu, ou des elements proches égaux.
- * @param t le tableau représentant la ligne dans la table.
- * @return b booléen : true si un mouvement peut s'effectuer, false sinon.
- **/
-bool canMoveRightLine(std::vector<int> t) {
-    bool isEmpty = true;
-    for (int i = t.size() - 1; i > 0; i--) {
-        if (t[i] != 0 || t[i-1] != 0) {
-            isEmpty = false;
-            if (t[i] == t[i-1] || t[i] == 0) {
-                return true;
-            }
-        }
-    }
-    return isEmpty;
-}
-
 /** Vérifie si des mouvements horizontales peuvent se faire.
  * @return b booléen : true si au moins un mouvement horizontale est possible, false sinon.
  **/
 bool canMoveLeft() {
     for (int i = 0; i < table.size(); i++) {
-        if (canMoveLeftLine(table[i])) {
-            return true;
+        std::vector<int> t = table[i];
+        for (int j = 0; j < t.size() - 1; j++) {
+            if ((t[j] != 0 || t[j+1] != 0) && (t[j] == t[j+1] || t[j] == 0)) {
+                return true;
+            }
         }
     }
     return false;
@@ -63,8 +32,11 @@ bool canMoveLeft() {
  **/
 bool canMoveRight() {
     for (int i = 0; i < table.size(); i++) {
-        if (canMoveRightLine(table[i])) {
-            return true;
+        std::vector<int> t = table[i];
+        for (int j = table[i].size() - 1; j > 0; j--) {
+            if ((t[j] != 0 || t[j-1] != 0) && (t[j] == t[j-1] || t[j] == 0)) {
+                return true;
+            }
         }
     }
     return false;

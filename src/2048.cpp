@@ -158,7 +158,7 @@ void start() {
 
 int main() {
     srand(time(0));
-    start();
     openGame();
+    start();
     return 0;
 }

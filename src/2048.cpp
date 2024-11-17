@@ -36,8 +36,8 @@ void printTable(const vector<vector<int>>& table) {
     cout << "]" << endl;
 }
 
-/** Fonction qui trouve toutes les indices des tableaux dans lequels des cases sont vides (valeurs égales à 0)
- * @return tableau des uplets : premier valeur l'indice de la ligne et deuxième valeur l'indice dans le tableau de la case vide.
+/** Fonction qui identifie les indices des cases vides (valeurs égales à 0) dans un tableau d'uplets.
+ * @return tableau des uplets : premier valeur l'indice du tableau et deuxième valeur l'indice dans le tableau de la case vide.
  **/
 vector<tuple<int, int>> getEmptySlots() {
     vector<tuple<int, int>> emptySlots;
@@ -53,16 +53,18 @@ vector<tuple<int, int>> getEmptySlots() {
 
 /** Fonction qui rajoute un élément de manière aléatoire sur les cases vides de la table.
  */
-void setRandomElement() {
-    vector<tuple<int, int>> emptySlots = getEmptySlots();
-    int k = (int) rand() % emptySlots.size(); /// Choisit un tuple de facon aléatoire
-    tuple<int, int> values = emptySlots[k]; // Choisit les indices d'une case vide de ce sous-tableau de facon aléatoire
-    int r = rand() % 10; // 90% de Chance d'Ajouter un 2, 10% de Chance d'ajouter un 4.
-    table[get<0>(values)][get<1>(values)] = r < 9 ? 2 : 4;
+void setRandomElements(int amount) {
+    for (int i = 0; i < amount; i++) {
+        vector<tuple<int, int>> emptySlots = getEmptySlots();
+        int k = (int) rand() % emptySlots.size(); /// Choisit un tuple de facon aléatoire
+        tuple<int, int> values = emptySlots[k]; // Choisit les indices d'une case vide de ce sous-tableau de facon aléatoire
+        int r = rand() % 10; // 90% de Chance d'Ajouter un 2, 10% de Chance d'ajouter un 4.
+        table[get<0>(values)][get<1>(values)] = r < 9 ? 2 : 4;
+    }
 }
 
 /** Retrouve le nombre le plus grand en caractères.
- * @return la plus grande taille des numéros en chaîne de caractères.
+ * @return maxValue la plus grande taille des numéros en chaîne de caractères.
  **/
 int getMaxTextLenght() {
     int maxValue = 0;
@@ -73,7 +75,7 @@ int getMaxTextLenght() {
             }
         }
     }
-    return to_string(k).size(); // Renvoie la longueur de la chaîne de caracteres equvialente a numéro
+    return to_string(maxValue).size(); // Renvoie la longueur de la chaîne de caracteres equvialente a numéro
 }
 
 /** Affiche dans la console le tableau à deux dimensions. 
@@ -83,9 +85,7 @@ void printConsole() {
     int longMax = getMaxTextLenght();
     for (int i = 0; i < table.size(); i++) {
         for (int j = 0; j < table[i].size(); j++) {
-            string s = to_string(table[i][j]);
-            s.resize(longMax, " ");
-            cout << "* " << setw(longMax) << s << " "; //Utilisation setw
+            cout << "* " << setw(longMax / 2) << table[i][j] << " "; // Utilisation setw
         }
         cout << "*" << endl;
     }
@@ -93,28 +93,32 @@ void printConsole() {
 }
 
 /** Vérifier que la commande est valide à un type de mouvement.
- * @param answer la réponse de l'utilisateur.
+ * @return answer la réponse vérifiée de l'utilisateur.
  **/
-void verifyAnswer(string answer) {
+string verifyAnswer() {
+    string answer;
+    cout << "Saisir une valeur de mouvement : ";
+    cin >> answer;
     while (answer != "d" && answer != "g" && answer != "h" && answer != "b") {
         cout << "Votre commande est invalide." << endl;
-        cout << "Mouvemant haut : h\nMouvemant bas : b\nMouvemant gauche : g\nMouvemant droite : d\n";
+        printConsole();
+        cout << "Mouvemant haut : h\nMouvemant bas : b\nMouvemant gauche : g\nMouvemant droite : d\n" << endl;
         cout << "Saisir une valeur de mouvement : ";
         cin >> answer;
     }
+    return answer;
 }
 
 /** Vérifie que la commande de l'utilisateur est un mouvement valide, et réalise le mouvement.
- * @param answer la réponse en string de l'utilisateur en commande.
  **/
-void doMovement(string answer) {
-    verifyAnswer(answer);
+void validMovement() {
+    string answer = verifyAnswer();
     if (answer == "g") {
        if (canMoveLeft()) {
             moveLeft();
             return;
         }
-     } else if (answer == "d") {
+    } else if (answer == "d") {
         if (canMoveRight()) {
             moveRight();
             return;
@@ -137,21 +141,16 @@ void doMovement(string answer) {
  **/
 void start() {
     table = vector<vector<int>>(4, vector<int>(4, 0));
-    for (int i = 0; i < 2; i++) {
-        setRandomElement();
-    }
+    setRandomElements(2);
     while (true) {
         printConsole();
-        string answer;
-        cout << "Saisir une valeur de mouvement : ";
-        cin >> answer;
         if (canMove()) {
-            if (doMovement(answer)) {
-                setRandomElement();
+            if (validMovement()) {
+                setRandomElements(1);
             }
         } else {
             cout << "Le jeu est fini! Pas de mouvements possibles.";
-            break;
+            return;
         }
     }
 }

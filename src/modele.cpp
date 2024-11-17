@@ -122,17 +122,15 @@ void moveLeftRange(std::vector<int>& t, int startIndex, int endIndex) {
  * @param t le tableau.
  **/
 void addLeftValues(std::vector<int>& t) {
-    int i = 1;
-    while (i < t.size()) {
-        if (t[i] != 0 && t[i-1] == t[i]) {
+    int i = 0;
+    while (i < t.size() - 1) {
+        if (t[i] != 0 && t[i+1] == t[i]) {
             int value = t[i] * 2;
-            t[i] = 0;
-            t[i-1] = value;
-            moveLeftRange(t, i, t.size());
-            i += 2;
-        } else {
-            i++;
+            t[i+1] = 0;
+            t[i] = value;
+            moveLeftRange(t, i+1, t.size());
         }
+        i++;
     }
 }
 
@@ -145,14 +143,14 @@ void moveLeft() {
     }
 }
 
-/** Décale depuis l'indice startIndex jusqu'à l'indice endIndex les valeurs d'un tableau.
+/** Décale depuis l'indice startIndex jusqu'à l'indice endIndex exclu les valeurs d'un tableau.
  * @param t tableau représentant la ligne de la table.
  * @param startIndex l'indice de début.
  * @param endIndex l'indice de fin.
  **/
 void moveRightRange(std::vector<int>& t, int startIndex, int endIndex) {
     int first0Index = -1;
-    for (int i = endIndex; i >= startIndex; i--) {
+    for (int i = endIndex - 1; i >= startIndex; i--) {
         if (t[i] == 0) {
             if (first0Index == -1) {
                 first0Index = i;
@@ -170,17 +168,15 @@ void moveRightRange(std::vector<int>& t, int startIndex, int endIndex) {
  * @param t le tableau.
  **/
 void addRightValues(std::vector<int>& t) {
-    int i = 0;
-    while (i < t.size() - 1) {
-        if (t[i] != 0 && t[i+1] == t[i]) {
+    int i = t.size() - 1;
+    while (i > 0) {
+        if (t[i] != 0 && t[i-1] == t[i]) {
             int value = t[i] * 2;
-            t[i] = 0;
-            t[i+1] = value;
+            t[i-1] = 0;
+            t[i] = value;
             moveRightRange(t, 0, i);
-            i += 2;
-        } else {
-            i++;
-        }
+        } 
+        i--;
     } 
 }
 

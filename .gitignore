@@ -1,5 +1,5 @@
 .vscode
 include
 lib
-Make
+Makefile
 target

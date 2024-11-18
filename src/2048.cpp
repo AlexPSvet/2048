@@ -1,8 +1,11 @@
 #include <iostream>
 #include "Game.h"
+#include "Graphics.h"
 
 int main() {
     srand(time(0));
+
+    // displayWindow(); Pas enlever commentaire. Pour test de l'interface graphique.
 
     Game jeu2048;
     jeu2048.start();

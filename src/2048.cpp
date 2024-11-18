@@ -85,7 +85,7 @@ void printConsole() {
     int longMax = getMaxTextLenght();
     for (int i = 0; i < table.size(); i++) {
         for (int j = 0; j < table[i].size(); j++) {
-            cout << "* " << setw(longMax / 2) << table[i][j] << " "; // Utilisation setw
+            cout << " * " << setw(longMax) << table[i][j] << " "; // Utilisation setw
         }
         cout << "*" << endl;
     }
@@ -150,7 +150,7 @@ void start() {
                 setRandomElements(1);
             }
         } else {
-            cout << "Le jeu est fini! Pas de mouvements possibles.";
+            cout << "Le jeu est fini! Pas de mouvements possibles." << endl;
             return;
         }
     }
@@ -158,7 +158,6 @@ void start() {
 
 int main() {
     srand(time(0));
-    openGame();
     start();
     return 0;
 }

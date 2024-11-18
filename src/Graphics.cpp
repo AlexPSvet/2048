@@ -1,11 +1,10 @@
 #include <SFML/Graphics.hpp>
-#include "graphics.h"
+#include "Graphics.h"
 #include <iostream>
 using namespace std;
 
 void openGame() {
     sf::RenderWindow window(sf::VideoMode(600, 600), "2048");
-
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event)) {

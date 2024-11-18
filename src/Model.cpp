@@ -1,13 +1,17 @@
 #include <vector>
-#include "modele.h"
+#include <string>
+#include "Game.h"
+using namespace std;
+
+Jeu::Jeu() : plateau(vector<vector<int>>(4, vector<int>(4, 0))), score(0) {}    
 
 /** Tourne toutes les lignes en colonnes d'un tableau.
  **/
-void rotateTable() {
-    std::vector<std::vector<int>> t2 = table;
+void Jeu::rotateTable() {
+    vector<vector<int>> t2 = plateau;
     for (int i = 0; i < t2.size(); i++) {
         for (int j = 0; j < t2[i].size(); j++) {
-            table[i][j] = t2[j][i];
+            plateau[i][j] = t2[j][i];
         }
     }
 }
@@ -15,9 +19,9 @@ void rotateTable() {
 /** Vérifie si des mouvements horizontales peuvent se faire.
  * @return b booléen : true si au moins un mouvement horizontale est possible, false sinon.
  **/
-bool canMoveLeft() {
-    for (int i = 0; i < table.size(); i++) {
-        std::vector<int> t = table[i];
+bool Jeu::canMoveLeft() {
+    for (int i = 0; i < plateau.size(); i++) {
+        vector<int> t = plateau[i];
         for (int j = 0; j < t.size() - 1; j++) {
             if ((t[j] != 0 || t[j+1] != 0) && (t[j] == t[j+1] || t[j] == 0)) {
                 return true;
@@ -30,10 +34,10 @@ bool canMoveLeft() {
 /** Vérifie si des mouvements à droite peuvent se faire.
  * @return b booléen : true si au moins un mouvement à droite est possible, false sinon.
  **/
-bool canMoveRight() {
-    for (int i = 0; i < table.size(); i++) {
-        std::vector<int> t = table[i];
-        for (int j = table[i].size() - 1; j > 0; j--) {
+bool Jeu::canMoveRight() {
+    for (int i = 0; i < plateau.size(); i++) {
+        vector<int> t = plateau[i];
+        for (int j = plateau[i].size() - 1; j > 0; j--) {
             if ((t[j] != 0 || t[j-1] != 0) && (t[j] == t[j-1] || t[j] == 0)) {
                 return true;
             }
@@ -45,7 +49,7 @@ bool canMoveRight() {
 /** Vérifie si des mouvements en haut peuvent se faire.
  * @return b booléen : true si au moins un mouvement en haut est possible, false sinon.
  **/
-bool canMoveUp() {
+bool Jeu::canMoveUp() {
     rotateTable();
     bool b = canMoveLeft();
     rotateTable();
@@ -55,7 +59,7 @@ bool canMoveUp() {
 /** Vérifie si des mouvements en bas peuvent se faire.
  * @return b booléen : true si au moins un mouvement en bas est possible, false sinon.
  **/
-bool canMoveDown() {
+bool Jeu::canMoveDown() {
     rotateTable();
     bool b = canMoveRight();
     rotateTable();
@@ -65,7 +69,7 @@ bool canMoveDown() {
 /** Vérifie si des mouvements horizontales ou verticales peuvent se faire.
  * @return b booléen : true si au moins un mouvement horizontale ou verticale est possible, false sinon.
  **/
-bool canMove() {
+bool Jeu::canMove() {
     return canMoveLeft() || canMoveRight() || canMoveUp() || canMoveDown();
 }
 
@@ -74,7 +78,7 @@ bool canMove() {
  * @param startIndex l'indice de début.
  * @param endIndex l'indice de fin exclu.
  **/
-void moveLeftRange(std::vector<int>& t, int startIndex, int endIndex) {
+void Jeu::moveLeftRange(vector<int>& t, int startIndex, int endIndex) {
     int first0Index = -1;
     for (int i = startIndex; i < endIndex; i++) {
         if (t[i] == 0) {
@@ -93,7 +97,7 @@ void moveLeftRange(std::vector<int>& t, int startIndex, int endIndex) {
 /** Rajoute vers la gauche les cases avec les memes valeurs.
  * @param t le tableau.
  **/
-void addLeftValues(std::vector<int>& t) {
+void Jeu::addLeftValues(vector<int>& t) {
     int i = 0;
     while (i < t.size() - 1) {
         if (t[i] != 0 && t[i+1] == t[i]) {
@@ -108,10 +112,10 @@ void addLeftValues(std::vector<int>& t) {
 
 /** Fait le mouvement de gauche dans la table.
  **/
-void moveLeft() {
-    for (int i = 0; i < table.size(); i++) {
-        moveLeftRange(table[i], 0, table[i].size());
-        addLeftValues(table[i]);
+void Jeu::moveLeft() {
+    for (int i = 0; i < plateau.size(); i++) {
+        moveLeftRange(plateau[i], 0, plateau[i].size());
+        addLeftValues(plateau[i]);
     }
 }
 
@@ -120,7 +124,7 @@ void moveLeft() {
  * @param startIndex l'indice de début.
  * @param endIndex l'indice de fin.
  **/
-void moveRightRange(std::vector<int>& t, int startIndex, int endIndex) {
+void Jeu::moveRightRange(vector<int>& t, int startIndex, int endIndex) {
     int first0Index = -1;
     for (int i = endIndex - 1; i >= startIndex; i--) {
         if (t[i] == 0) {
@@ -139,7 +143,7 @@ void moveRightRange(std::vector<int>& t, int startIndex, int endIndex) {
 /** Rajoute vers la droite les cases avec les memes valeurs.
  * @param t le tableau.
  **/
-void addRightValues(std::vector<int>& t) {
+void Jeu::addRightValues(vector<int>& t) {
     int i = t.size() - 1;
     while (i > 0) {
         if (t[i] != 0 && t[i-1] == t[i]) {
@@ -154,16 +158,16 @@ void addRightValues(std::vector<int>& t) {
 
 /** Fait le mouvement de droite dans la table.
  **/
-void moveRight() {
-    for (int i = 0; i < table.size(); i++) {
-        moveRightRange(table[i], 0, table[i].size());
-        addRightValues(table[i]);
+void Jeu::moveRight() {
+    for (int i = 0; i < plateau.size(); i++) {
+        moveRightRange(plateau[i], 0, plateau[i].size());
+        addRightValues(plateau[i]);
     }
 }
 
 /** Fait le mouvement de bas dans la table.
  **/
-void moveDown() {
+void Jeu::moveDown() {
     rotateTable();
     moveRight();
     rotateTable();
@@ -171,7 +175,7 @@ void moveDown() {
 
 /** Fait le mouvement de haut dans la table.
  **/
-void moveUp() {
+void Jeu::moveUp() {
     rotateTable();
     moveLeft();
     rotateTable();

@@ -4,7 +4,7 @@
 int main() {
     srand(time(0));
 
-    Jeu jeu2048;
+    Game jeu2048;
     jeu2048.start();
     
     return 0;

@@ -5,14 +5,13 @@
 #include "Game.h"
 using namespace std;
 
-vector<vector<int>> Jeu::getPlateau() {
-    return plateau;
-}
+// Class constructor
+Game::Game() : plateau(vector<vector<int>>(4, vector<int>(4, 0))), score(0) {}    
 
 /** Fonction pour afficher un tableau d'entiers sur la console.
  * @param line un tableau d'entiers.
  **/
-void Jeu::printLine(const vector<int>& line) {
+void Game::printLine(const vector<int>& line) {
     cout << "[";
     for (int i = 0; i < plateau.size(); i++) {
         cout << line[i];
@@ -26,7 +25,7 @@ void Jeu::printLine(const vector<int>& line) {
 /** Fonction pour afficher un tableau d'entiers à deux dimensions sur la console.
  * @param t un tableau d'entiers à deux dimensions
  **/
-void Jeu::printTable(const vector<vector<int>>& plateau) {
+void Game::printTable(const vector<vector<int>>& plateau) {
     cout << "[";
     for (int i = 0; i < plateau.size(); i++) {
         printLine(plateau[i]);
@@ -37,37 +36,10 @@ void Jeu::printTable(const vector<vector<int>>& plateau) {
     cout << "]" << endl;
 }
 
-/** Fonction qui identifie les indices des cases vides (valeurs égales à 0) dans un tableau d'uplets.
- * @return tableau des uplets : premier valeur l'indice du tableau et deuxième valeur l'indice dans le tableau de la case vide.
- **/
-vector<tuple<int, int>> Jeu::getEmptySlots() {
-    vector<tuple<int, int>> emptySlots;
-    for (int i = 0; i < plateau.size(); i++) {
-        for (int j = 0; j < plateau[i].size(); j++) {
-            if (plateau[i][j] == 0) {
-                emptySlots.push_back({i, j});
-            }
-        }
-    }
-    return emptySlots;
-}
-
-/** Fonction qui rajoute un élément de manière aléatoire sur les cases vides de la table.
- */
-void Jeu::setRandomElements(int amount) {
-    for (int i = 0; i < amount; i++) {
-        vector<tuple<int, int>> emptySlots = getEmptySlots();
-        int k = (int) rand() % emptySlots.size(); /// Choisit un tuple de facon aléatoire
-        tuple<int, int> values = emptySlots[k]; // Choisit les indices d'une case vide de ce sous-tableau de facon aléatoire
-        int r = rand() % 10; // 90% de Chance d'Ajouter un 2, 10% de Chance d'ajouter un 4.
-        plateau[get<0>(values)][get<1>(values)] = r < 9 ? 2 : 4;
-    }
-}
-
 /** Retrouve le nombre le plus grand en caractères.
  * @return maxValue la plus grande taille des numéros en chaîne de caractères.
  **/
-int Jeu::getMaxTextLenght() {
+int Game::getMaxTextLenght() {
     int maxValue = 0;
     for (int i = 0; i < plateau.size(); i++) {
         for (int j = 0; j < plateau[i].size(); j++) {
@@ -81,7 +53,7 @@ int Jeu::getMaxTextLenght() {
 
 /** Affiche dans la console le tableau à deux dimensions. 
  **/
-void Jeu::printConsole() {
+void Game::printConsole() {
     cout << endl;
     int longMax = getMaxTextLenght();
     for (int i = 0; i < plateau.size(); i++) {
@@ -96,7 +68,7 @@ void Jeu::printConsole() {
 /** Vérifier que la commande est valide à un type de mouvement.
  * @return answer la réponse vérifiée de l'utilisateur.
  **/
-string Jeu::verifyAnswer() {
+string Game::verifyAnswer() {
     string answer;
     cout << "Saisir une valeur de mouvement : ";
     cin >> answer;
@@ -112,7 +84,7 @@ string Jeu::verifyAnswer() {
 
 /** Vérifie que la commande de l'utilisateur est un mouvement valide, et réalise le mouvement.
  **/
-bool Jeu::validMovement() {
+bool Game::validMovement() {
     string answer = verifyAnswer();
     if (answer == "g") {
        if (canMoveLeft()) {
@@ -141,7 +113,7 @@ bool Jeu::validMovement() {
 
 /** Commence le jeu en initialisant le tableau, rajoute deux valeurs aléatoires et demande à l'utilisateur les mouvements. 
  **/
-void Jeu::start() {
+void Game::start() {
     setRandomElements(2);
     while (true) {
         printConsole();
@@ -154,4 +126,12 @@ void Jeu::start() {
             return;
         }
     }
+}
+
+vector<vector<int>>& Game::getPlateau() {
+    return plateau;
+}
+
+int Game::getScore() {
+    return score;
 }

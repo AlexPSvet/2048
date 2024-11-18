@@ -5,36 +5,41 @@
 #include <vector>
 using namespace std;
 
-class Jeu {
+class Game {
     public:
-        Jeu();
+        Game();
 
+        // Game screen functions
         void start();
         bool validMovement();
         string verifyAnswer();
         void printConsole();
         int getMaxTextLenght();
-        void setRandomElements(int amount);
-        vector<tuple<int, int>> getEmptySlots();
-        void printLine(const vector<int>& line);
-        void printTable(const vector<vector<int>>& plateau);
 
+        // Model functions
         void rotateTable();
         bool canMoveLeft();
         bool canMoveRight();
         bool canMoveUp();
         bool canMoveDown();
         bool canMove();
-        void moveLeftRange(std::vector<int>& t, int startIndex, int endIndex);
-        void addLeftValues(std::vector<int>& t);
+        void moveLeftRange(vector<int>& t, int startIndex, int endIndex);
+        void addLeftValues(vector<int>& t);
         void moveLeft();
-        void moveRightRange(std::vector<int>& t, int startIndex, int endIndex);
-        void addRightValues(std::vector<int>& t);
+        void moveRightRange(vector<int>& t, int startIndex, int endIndex);
+        void addRightValues(vector<int>& t);
         void moveRight();
         void moveDown();
         void moveUp();
+        void setRandomElements(int amount);
+        vector<tuple<int, int>> getEmptySlots();
 
-        vector<vector<int>> getPlateau();
+        // Debug functions
+        void printLine(const vector<int>& line);
+        void printTable(const vector<vector<int>>& plateau);
+
+        // Get variables
+        vector<vector<int>>& getPlateau();
         int getScore();
     private:
         vector<vector<int>> plateau;

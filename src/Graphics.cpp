@@ -3,7 +3,7 @@
 #include <iostream>
 using namespace std;
 
-void openGame() {
+void displayWindow() {
     sf::RenderWindow window(sf::VideoMode(600, 600), "2048");
     while (window.isOpen()) {
         sf::Event event;

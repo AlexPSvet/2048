@@ -3,11 +3,9 @@
 #include "Game.h"
 using namespace std;
 
-Jeu::Jeu() : plateau(vector<vector<int>>(4, vector<int>(4, 0))), score(0) {}    
-
 /** Tourne toutes les lignes en colonnes d'un tableau.
  **/
-void Jeu::rotateTable() {
+void Game::rotateTable() {
     vector<vector<int>> t2 = plateau;
     for (int i = 0; i < t2.size(); i++) {
         for (int j = 0; j < t2[i].size(); j++) {
@@ -19,7 +17,7 @@ void Jeu::rotateTable() {
 /** Vérifie si des mouvements horizontales peuvent se faire.
  * @return b booléen : true si au moins un mouvement horizontale est possible, false sinon.
  **/
-bool Jeu::canMoveLeft() {
+bool Game::canMoveLeft() {
     for (int i = 0; i < plateau.size(); i++) {
         vector<int> t = plateau[i];
         for (int j = 0; j < t.size() - 1; j++) {
@@ -34,7 +32,7 @@ bool Jeu::canMoveLeft() {
 /** Vérifie si des mouvements à droite peuvent se faire.
  * @return b booléen : true si au moins un mouvement à droite est possible, false sinon.
  **/
-bool Jeu::canMoveRight() {
+bool Game::canMoveRight() {
     for (int i = 0; i < plateau.size(); i++) {
         vector<int> t = plateau[i];
         for (int j = plateau[i].size() - 1; j > 0; j--) {
@@ -49,7 +47,7 @@ bool Jeu::canMoveRight() {
 /** Vérifie si des mouvements en haut peuvent se faire.
  * @return b booléen : true si au moins un mouvement en haut est possible, false sinon.
  **/
-bool Jeu::canMoveUp() {
+bool Game::canMoveUp() {
     rotateTable();
     bool b = canMoveLeft();
     rotateTable();
@@ -59,7 +57,7 @@ bool Jeu::canMoveUp() {
 /** Vérifie si des mouvements en bas peuvent se faire.
  * @return b booléen : true si au moins un mouvement en bas est possible, false sinon.
  **/
-bool Jeu::canMoveDown() {
+bool Game::canMoveDown() {
     rotateTable();
     bool b = canMoveRight();
     rotateTable();
@@ -69,7 +67,7 @@ bool Jeu::canMoveDown() {
 /** Vérifie si des mouvements horizontales ou verticales peuvent se faire.
  * @return b booléen : true si au moins un mouvement horizontale ou verticale est possible, false sinon.
  **/
-bool Jeu::canMove() {
+bool Game::canMove() {
     return canMoveLeft() || canMoveRight() || canMoveUp() || canMoveDown();
 }
 
@@ -78,7 +76,7 @@ bool Jeu::canMove() {
  * @param startIndex l'indice de début.
  * @param endIndex l'indice de fin exclu.
  **/
-void Jeu::moveLeftRange(vector<int>& t, int startIndex, int endIndex) {
+void Game::moveLeftRange(vector<int>& t, int startIndex, int endIndex) {
     int first0Index = -1;
     for (int i = startIndex; i < endIndex; i++) {
         if (t[i] == 0) {
@@ -97,7 +95,7 @@ void Jeu::moveLeftRange(vector<int>& t, int startIndex, int endIndex) {
 /** Rajoute vers la gauche les cases avec les memes valeurs.
  * @param t le tableau.
  **/
-void Jeu::addLeftValues(vector<int>& t) {
+void Game::addLeftValues(vector<int>& t) {
     int i = 0;
     while (i < t.size() - 1) {
         if (t[i] != 0 && t[i+1] == t[i]) {
@@ -112,7 +110,7 @@ void Jeu::addLeftValues(vector<int>& t) {
 
 /** Fait le mouvement de gauche dans la table.
  **/
-void Jeu::moveLeft() {
+void Game::moveLeft() {
     for (int i = 0; i < plateau.size(); i++) {
         moveLeftRange(plateau[i], 0, plateau[i].size());
         addLeftValues(plateau[i]);
@@ -124,7 +122,7 @@ void Jeu::moveLeft() {
  * @param startIndex l'indice de début.
  * @param endIndex l'indice de fin.
  **/
-void Jeu::moveRightRange(vector<int>& t, int startIndex, int endIndex) {
+void Game::moveRightRange(vector<int>& t, int startIndex, int endIndex) {
     int first0Index = -1;
     for (int i = endIndex - 1; i >= startIndex; i--) {
         if (t[i] == 0) {
@@ -143,7 +141,7 @@ void Jeu::moveRightRange(vector<int>& t, int startIndex, int endIndex) {
 /** Rajoute vers la droite les cases avec les memes valeurs.
  * @param t le tableau.
  **/
-void Jeu::addRightValues(vector<int>& t) {
+void Game::addRightValues(vector<int>& t) {
     int i = t.size() - 1;
     while (i > 0) {
         if (t[i] != 0 && t[i-1] == t[i]) {
@@ -158,7 +156,7 @@ void Jeu::addRightValues(vector<int>& t) {
 
 /** Fait le mouvement de droite dans la table.
  **/
-void Jeu::moveRight() {
+void Game::moveRight() {
     for (int i = 0; i < plateau.size(); i++) {
         moveRightRange(plateau[i], 0, plateau[i].size());
         addRightValues(plateau[i]);
@@ -167,7 +165,7 @@ void Jeu::moveRight() {
 
 /** Fait le mouvement de bas dans la table.
  **/
-void Jeu::moveDown() {
+void Game::moveDown() {
     rotateTable();
     moveRight();
     rotateTable();
@@ -175,8 +173,35 @@ void Jeu::moveDown() {
 
 /** Fait le mouvement de haut dans la table.
  **/
-void Jeu::moveUp() {
+void Game::moveUp() {
     rotateTable();
     moveLeft();
     rotateTable();
+}
+
+/** Fonction qui identifie les indices des cases vides (valeurs égales à 0) dans un tableau d'uplets.
+ * @return tableau des uplets : premier valeur l'indice du tableau et deuxième valeur l'indice dans le tableau de la case vide.
+ **/
+vector<tuple<int, int>> Game::getEmptySlots() {
+    vector<tuple<int, int>> emptySlots;
+    for (int i = 0; i < plateau.size(); i++) {
+        for (int j = 0; j < plateau[i].size(); j++) {
+            if (plateau[i][j] == 0) {
+                emptySlots.push_back({i, j});
+            }
+        }
+    }
+    return emptySlots;
+}
+
+/** Fonction qui rajoute un élément de manière aléatoire sur les cases vides de la table.
+ */
+void Game::setRandomElements(int amount) {
+    for (int i = 0; i < amount; i++) {
+        vector<tuple<int, int>> emptySlots = getEmptySlots();
+        int k = (int) rand() % emptySlots.size(); /// Choisit un tuple de facon aléatoire
+        tuple<int, int> values = emptySlots[k]; // Choisit les indices d'une case vide de ce sous-tableau de facon aléatoire
+        int r = rand() % 10; // 90% de Chance d'Ajouter un 2, 10% de Chance d'ajouter un 4.
+        plateau[get<0>(values)][get<1>(values)] = r < 9 ? 2 : 4;
+    }
 }

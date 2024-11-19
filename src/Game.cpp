@@ -86,28 +86,31 @@ string Game::verifyAnswer() {
  **/
 bool Game::validMovement() {
     string answer = verifyAnswer();
-    if (answer == "g") {
-       if (canMoveLeft()) {
+    if (answer == "g"){
+        if (canMoveLeft()){
             moveLeft();
+            printScore();
             return true;
         }
-    } else if (answer == "d") {
-        if (canMoveRight()) {
+    } else if (answer == "d"){
+        if (canMoveRight()){
             moveRight();
+            printScore();
             return true;
         }
-    } else if (answer == "h") {
-        if (canMoveUp()) {
+    } else if (answer == "h"){
+        if (canMoveUp()){
             moveUp();
+            printScore();
             return true;
         }
-    } else if (answer == "b") {
-        if (canMoveDown()) {
+    } else if (answer == "b"){
+        if (canMoveDown()){
             moveDown();
+            printScore();
             return true;
         }
-    }
-    cout << "Le mouvement est invalide, saisir un mouvement valide." << endl;
+    } "La mouvement saisi est invalide. Saisir un mouvement valide: ";
     return false;
 }
 
@@ -115,14 +118,20 @@ bool Game::validMovement() {
  **/
 void Game::start() {
     setRandomElements(2);
+    printConsole();
+    printScore(); //Affiche le score Initialisé a 0
     while (true) {
         printConsole();
+        printScore();
         if (canMove()) {
             if (validMovement()) {
                 setRandomElements(1);
+                printConsole();
+                printScore();
             }
         } else {
             cout << "Le jeu est fini! Pas de mouvements possibles." << endl;
+            cout << "Score final: " << score << endl;        //Affiche le score final
             return;
         }
     }

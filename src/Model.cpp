@@ -1,7 +1,10 @@
 #include <vector>
+#include <iostream>
 #include <string>
 #include "Game.h"
 using namespace std;
+
+Game::Game() : plateau(vector<vector<int>>(4, vector<int>(4, 0))), score(0) {}    
 
 /** Tourne toutes les lignes en colonnes d'un tableau.
  **/
@@ -100,6 +103,7 @@ void Game::addLeftValues(vector<int>& t) {
     while (i < t.size() - 1) {
         if (t[i] != 0 && t[i+1] == t[i]) {
             int value = t[i] * 2;
+            score += value;                 //Mise a jour du score
             t[i+1] = 0;
             t[i] = value;
             moveLeftRange(t, i+1, t.size());
@@ -146,6 +150,7 @@ void Game::addRightValues(vector<int>& t) {
     while (i > 0) {
         if (t[i] != 0 && t[i-1] == t[i]) {
             int value = t[i] * 2;
+            score += value;                 ////Mise a jour du score
             t[i-1] = 0;
             t[i] = value;
             moveRightRange(t, 0, i);

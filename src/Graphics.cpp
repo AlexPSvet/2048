@@ -1,24 +1,24 @@
-#include <SFML/Graphics.hpp>
+#include <SFML/Graphics.hpp> //Inclut la Bibliotheque SFML permettant de manipuler des éléments graphiques
 #include "Game.h"
 #include <iostream>
 using namespace sf;
 
 void Game::displayBackground(RenderWindow& window) {
     Sprite sprite;
-    sprite.setTextureRect(IntRect(0, 0, 800, 1000));
-    sprite.setTexture(backgroundText);
+    sprite.setTextureRect(IntRect(0, 0, 800, 1000)); //IMage rectangulaire de 800x1000 pixels
+    sprite.setTexture(backgroundText); //backgroundText est une texture préalablement chargée
     window.draw(sprite);
 }
 
 void Game::displayTitle(RenderWindow& window) {
     int x = window.getSize().x;
 
-    RectangleShape rectangle(Vector2f(350, 112.5));
-    rectangle.setFillColor(Color( 204, 8, 224 ));
+    RectangleShape rectangle(Vector2f(350, 112.5)); //Création d'un rectangle pour le fond du titre
+    rectangle.setFillColor(Color( 204, 8, 224 )); //Couleur du Rectangle
     rectangle.setPosition(Vector2f(x/3 - 40, 132.5));
-    rectangle.setOutlineColor(Color( 99, 22, 89 ));
+    rectangle.setOutlineColor(Color( 99, 22, 89 )); //Couleur de Contour du Rectangle
     rectangle.setOutlineThickness(15);
-    window.draw(rectangle);
+    window.draw(rectangle); //Desinne le rectangle sur la fenetre
 
     Text text;
     text.setFont(gameFont);

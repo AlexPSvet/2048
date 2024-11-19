@@ -34,7 +34,6 @@ class Jeu {
         void moveRight();
         void moveDown();
         void moveUp();
-        void printScore();
         
         vector<vector<int>> getPlateau();
         int getScore();

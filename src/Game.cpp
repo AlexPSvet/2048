@@ -127,16 +127,11 @@ bool Game::validMovement() {
 void Game::start() {
     setRandomElements(2);
     printConsole();
-    displayWindow();
-    /*
-    printScore();
+    // displayWindow();
     while (true) {
-        printConsole();
-        printScore();
         if (canMove()) {
             if (validMovement()) {
                 setRandomElements(1);
-                printScore();
                 printConsole();
             }
         } else {
@@ -145,7 +140,6 @@ void Game::start() {
             return;
         }
     }
-    */
 }
 
 vector<vector<int>>& Game::getPlateau() {

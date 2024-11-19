@@ -89,28 +89,25 @@ bool Game::validMovement() {
     if (answer == "g"){
         if (canMoveLeft()){
             moveLeft();
-            printScore();
             return true;
         }
     } else if (answer == "d"){
         if (canMoveRight()){
             moveRight();
-            printScore();
             return true;
         }
     } else if (answer == "h"){
         if (canMoveUp()){
             moveUp();
-            printScore();
             return true;
         }
     } else if (answer == "b"){
         if (canMoveDown()){
             moveDown();
-            printScore();
             return true;
         }
-    } "La mouvement saisi est invalide. Saisir un mouvement valide: ";
+    }
+    "La mouvement saisi est invalide. Saisir un mouvement valide: ";
     return false;
 }
 
@@ -126,8 +123,8 @@ void Game::start() {
         if (canMove()) {
             if (validMovement()) {
                 setRandomElements(1);
-                printConsole();
                 printScore();
+                printConsole();
             }
         } else {
             cout << "Le jeu est fini! Pas de mouvements possibles." << endl;

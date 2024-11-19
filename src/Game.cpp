@@ -49,10 +49,10 @@ int Game::getMaxTextLenght() {
             }
         }
     }
-    return to_string(maxValue).size(); // Renvoie la longueur de la chaîne de caracteres equvialente a numéro
+    return to_string(maxValue).size(); // Renvoie la longueur de la chaîne de caracteres equvialente au numéro
 }
 
-/** Affiche dans la console le tableau à deux dimensions. 
+/** Affiche dans la console le tableau à deux dimensions avec les bordures. 
  **/
 void Game::printConsole() {
     cout << endl;
@@ -62,12 +62,12 @@ void Game::printConsole() {
 
     string border = "";
     for (int a = 0; a < plateau[0].size(); a++){
-        border += string(longMax + 3, '*'); //Ajoute une séquence de (longMax + 4) caracteres '*'
+        border += string(longMax + 3, '*'); //Ajoute une séquence de (longMax + 3) caracteres '*'
     }
 
     for (int i = 0; i < plateau.size(); i++) {
         cout << border << '*' << endl;
-        for (int j = 0; j < plateau[i].size(); j++) {
+        for (int j = 0; j < plateau[0].size(); j++) {
             cout << "* " << setw(longMax) << plateau[i][j] << " "; // Utilisation setw
         }
         cout << "*" << endl;

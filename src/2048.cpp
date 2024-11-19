@@ -5,7 +5,7 @@
 int main() {
     srand(time(0));
 
-    // displayWindow(); Pas enlever commentaire. Pour test de l'interface graphique.
+    // displayWindow(); Pas modifier cette ligne.
 
     Game jeu2048;
     jeu2048.start();

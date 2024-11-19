@@ -36,28 +36,21 @@ void displayTitle(RenderWindow& window) {
 
 void displayTable(RenderWindow& window) {
     Vector2 size = window.getSize();
-    sf::RectangleShape rectangle(Vector2f(5*size.x/7, size.y - size.y * 0.45));
-    rectangle.setFillColor(Color(109, 32, 117));
-    rectangle.setOutlineColor(Color( 155, 7, 134 ));
-    rectangle.setOutlineThickness(12);
-    rectangle.setPosition(Vector2f(size.x/7, size.y * 0.35));
-    window.draw(rectangle);
-
-    Vector2 rectSize = rectangle.getSize();
-    float xCase = rectSize.x / 4;
-    float yCase = rectSize.y / 4;
-    Vector2f rectPos = rectangle.getPosition();
-    float x_i = rectPos.x;
-    float y_i = rectPos.y;
+    float xCase = (5 * size.x / 7) / 4;
+    float yCase = (size.y - size.y * 0.45) / 4;
+    float x_i = size.x / 7;
+    float y_i = size.y * 0.35;
     for (int i = 0; i < 4; i++) {
         for (int j = 0; j < 4; j++) {
             sf::RectangleShape rect(Vector2f(xCase, yCase));
             rect.setPosition(Vector2f(x_i, y_i));
             rect.setFillColor(Color(234, 105, 172));
+            rect.setOutlineColor(Color(155, 7, 134));
+            rect.setOutlineThickness(10);
             window.draw(rect);
             x_i += xCase;
         }
-        x_i = rectPos.x;
+        x_i = size.x / 7;
         y_i += yCase;
     }
 }
@@ -82,7 +75,7 @@ void displayWindow() {
                 
                 break;
             case Event::Resized:
-                // Cancel resize
+                window.setSize(Vector2u(event.size.width, event.size.height));
                 break;
             }
         }

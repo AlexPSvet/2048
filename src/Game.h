@@ -14,6 +14,7 @@ class Game {
         bool validMovement();
         string verifyAnswer();
         void printConsole();
+        void printScore();
         int getMaxTextLenght();
 
         // Model functions

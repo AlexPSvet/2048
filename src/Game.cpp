@@ -2,6 +2,7 @@
 #include <iomanip>
 #include <string>
 #include <vector>
+#include <SFML/Graphics.hpp>
 #include "Game.h"
 using namespace std;
 
@@ -116,19 +117,7 @@ bool Game::validMovement() {
  **/
 void Game::start() {
     setRandomElements(2);
-    printConsole();
-    while (true) {
-        if (canMove()) {
-            if (validMovement()) {
-                setRandomElements(1);
-                printConsole();
-            }
-        } else {
-            cout << "Le jeu est fini! Pas de mouvements possibles." << endl;
-            cout << "Score final: " << score << endl;        //Affiche le score final
-            return;
-        }
-    }
+    displayWindow();
 }
 
 vector<vector<int>>& Game::getPlateau() {

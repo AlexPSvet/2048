@@ -1,6 +1,7 @@
 #ifndef GAME_H
 #define GAME_H
 
+#include <SFML/Graphics.hpp>
 #include <string>
 #include <vector>
 using namespace std;
@@ -14,8 +15,14 @@ class Game {
         bool validMovement();
         string verifyAnswer();
         void printConsole();
-        void printScore();
         int getMaxTextLenght();
+
+        // Graphics functions
+        void displayWindow();
+        void displayBackground(sf::RenderWindow& window);
+        void displayTitle(sf::RenderWindow& window);
+        void displayTable(sf::RenderWindow& window);
+        bool checkMovement(sf::Event event);
 
         // Model functions
         void rotateTable();
@@ -43,6 +50,9 @@ class Game {
         vector<vector<int>>& getPlateau();
         int getScore();
     private:
+        sf::Font gameFont;
+        sf::Texture backgroundText;
+
         vector<vector<int>> plateau;
         int score;
 };

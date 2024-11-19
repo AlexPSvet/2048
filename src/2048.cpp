@@ -5,7 +5,7 @@
 int main() {
     srand(time(0));
 
-    displayWindow();
+    // displayWindow();
 
     Game jeu2048;
     jeu2048.start();

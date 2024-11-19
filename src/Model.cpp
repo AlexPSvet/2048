@@ -148,8 +148,7 @@ void Game::addRightValues(vector<int>& t) {
     while (i > 0) {
         if (t[i] != 0 && t[i-1] == t[i]) {
             int value = t[i] * 2;
-            score += value;                 ////Mise a jour du score
-            cout << "Updated Score: " << score << endl; 
+            score += value;
             t[i-1] = 0;
             t[i] = value;
             moveRightRange(t, 0, i);

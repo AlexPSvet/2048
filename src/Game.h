@@ -10,6 +10,7 @@ class Jeu {
         Jeu();
 
         void start();
+        void printScore();
         bool validMovement();
         string verifyAnswer();
         void printConsole();

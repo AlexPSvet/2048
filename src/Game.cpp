@@ -57,13 +57,22 @@ int Game::getMaxTextLenght() {
 void Game::printConsole() {
     cout << endl;
     int longMax = getMaxTextLenght();
-    cout << "Score actuel: " << score << endl; //Affiche le score Initialisé a 0
+
+    cout << "Score actuel: " << score << endl;
+
+    string border = "";
+    for (int a = 0; a < plateau[0].size(); a++){
+        border += string(longMax + 3, '*'); //Ajoute une séquence de (longMax + 4) caracteres '*'
+    }
+
     for (int i = 0; i < plateau.size(); i++) {
+        cout << border << '*' << endl;
         for (int j = 0; j < plateau[i].size(); j++) {
-            cout << " * " << setw(longMax) << plateau[i][j] << " "; // Utilisation setw
+            cout << "* " << setw(longMax) << plateau[i][j] << " "; // Utilisation setw
         }
         cout << "*" << endl;
     }
+    cout << border << '*' << endl;
     cout << endl;
 }
 
@@ -117,7 +126,26 @@ bool Game::validMovement() {
  **/
 void Game::start() {
     setRandomElements(2);
+    printConsole();
     displayWindow();
+    /*
+    printScore();
+    while (true) {
+        printConsole();
+        printScore();
+        if (canMove()) {
+            if (validMovement()) {
+                setRandomElements(1);
+                printScore();
+                printConsole();
+            }
+        } else {
+            cout << "Le jeu est fini! Pas de mouvements possibles." << endl;
+            cout << "Score final: " << score << endl;        //Affiche le score final
+            return;
+        }
+    }
+    */
 }
 
 vector<vector<int>>& Game::getPlateau() {

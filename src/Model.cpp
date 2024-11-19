@@ -2,15 +2,7 @@
 #include <iostream>
 #include <string>
 #include "Game.h"
-using namespace std;
-
-Game::Game() : plateau(vector<vector<int>>(4, vector<int>(4, 0))), score(0) {}    
-
-/** Affiche le score actuel
-**/
-void Game::printScore() {
-    cout << "Score actuel: " << score << endl;
-}
+using namespace std;   
 
 /** Tourne toutes les lignes en colonnes d'un tableau.
  **/
@@ -110,7 +102,6 @@ void Game::addLeftValues(vector<int>& t) {
         if (t[i] != 0 && t[i+1] == t[i]) {
             int value = t[i] * 2;
             score += value;
-            cout << "Updated Score: " << score << endl;                //Mise a jour du score
             t[i+1] = 0;
             t[i] = value;
             moveLeftRange(t, i+1, t.size());
@@ -158,7 +149,6 @@ void Game::addRightValues(vector<int>& t) {
         if (t[i] != 0 && t[i-1] == t[i]) {
             int value = t[i] * 2;
             score += value;                 ////Mise a jour du score
-            cout << "Updated Score: " << score << endl; 
             t[i-1] = 0;
             t[i] = value;
             moveRightRange(t, 0, i);

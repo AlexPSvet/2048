@@ -11,7 +11,6 @@ class Game {
 
         // Game screen functions
         void start();
-        void printScore();
         bool validMovement();
         string verifyAnswer();
         void printConsole();

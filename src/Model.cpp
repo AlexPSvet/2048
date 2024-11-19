@@ -4,8 +4,6 @@
 #include "Game.h"
 using namespace std;
 
-Game::Game() : plateau(vector<vector<int>>(4, vector<int>(4, 0))), score(0) {}    
-
 /** Affiche le score actuel
 **/
 void Game::printScore() {

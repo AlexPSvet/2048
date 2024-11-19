@@ -4,12 +4,6 @@
 #include "Game.h"
 using namespace std;
 
-/** Affiche le score actuel
-**/
-void Game::printScore() {
-    cout << "Score actuel: " << score << endl;
-}
-
 /** Tourne toutes les lignes en colonnes d'un tableau.
  **/
 void Game::rotateTable() {
@@ -108,7 +102,6 @@ void Game::addLeftValues(vector<int>& t) {
         if (t[i] != 0 && t[i+1] == t[i]) {
             int value = t[i] * 2;
             score += value;
-            cout << "Updated Score: " << score << endl;                //Mise a jour du score
             t[i+1] = 0;
             t[i] = value;
             moveLeftRange(t, i+1, t.size());

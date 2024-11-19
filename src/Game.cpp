@@ -56,6 +56,7 @@ int Game::getMaxTextLenght() {
 void Game::printConsole() {
     cout << endl;
     int longMax = getMaxTextLenght();
+    cout << "Score actuel: " << score << endl; //Affiche le score Initialisé a 0
     for (int i = 0; i < plateau.size(); i++) {
         for (int j = 0; j < plateau[i].size(); j++) {
             cout << " * " << setw(longMax) << plateau[i][j] << " "; // Utilisation setw
@@ -107,7 +108,7 @@ bool Game::validMovement() {
             return true;
         }
     }
-    "La mouvement saisi est invalide. Saisir un mouvement valide: ";
+    cout << "La mouvement saisi est invalide. Saisir un mouvement valide: ";
     return false;
 }
 
@@ -116,14 +117,10 @@ bool Game::validMovement() {
 void Game::start() {
     setRandomElements(2);
     printConsole();
-    printScore(); //Affiche le score Initialisé a 0
     while (true) {
-        printConsole();
-        printScore();
         if (canMove()) {
             if (validMovement()) {
                 setRandomElements(1);
-                printScore();
                 printConsole();
             }
         } else {

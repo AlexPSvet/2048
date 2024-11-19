@@ -60,7 +60,6 @@ void displayWindow() {
     RenderWindow window(VideoMode(800, 1000), "2048");
     window.setFramerateLimit(60);
 
-    sf::View view = window.getDefaultView();
     while (window.isOpen()) {
         Event event;
         while (window.pollEvent(event)) {
@@ -78,7 +77,7 @@ void displayWindow() {
                 
                 break;
             case Event::Resized:
-                view.setSize(event.size.width, event.size.height);
+                
                 break;
             }
         }

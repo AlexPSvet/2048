@@ -23,9 +23,11 @@ void Game::displayTitle(RenderWindow& window) {
     Text text;
     text.setFont(gameFont);
     text.setString("2048");
-    text.setCharacterSize(70);
+    float size = rectangle.getSize().y;
+    text.setCharacterSize(size / 2);
     text.setFillColor(Color( 111, 8, 97 ));
-    text.setPosition(Vector2f(x/3, 150));
+    Vector2f position = rectangle.getPosition();
+    text.setPosition(Vector2f(position.x + size / 2, position.y + size / 4));
     window.draw(text);
 }
 
@@ -40,10 +42,12 @@ void Game::displayTable(RenderWindow& window) {
     float y_i = size.y * 0.35;
 
     RectangleShape table(Vector2f(xRectangle, yRectangle));
+    float outline = 20.0;
+    y_i -= outline;
     table.setPosition(x_i, y_i);
     table.setFillColor(Color(113, 16, 66));
     table.setOutlineColor(Color(205, 54, 132));
-    table.setOutlineThickness(20);
+    table.setOutlineThickness(outline);
     window.draw(table);
 
     for (int i = 0; i < plateau.size(); i++) {
@@ -71,24 +75,28 @@ void Game::displayTable(RenderWindow& window) {
 bool Game::checkMovement(Event event) {
     switch (event.key.code) {
         case sf::Keyboard::W:
+        case sf::Keyboard::Up:
             if (canMoveUp()) {
                 moveUp();
                 return true;
             }
             break;
         case sf::Keyboard::A:
+        case sf::Keyboard::Left:
             if (canMoveLeft()) {
                 moveLeft();
                 return true;
             }
             break;
         case sf::Keyboard::S:
+        case sf::Keyboard::Down:
             if (canMoveDown()) {
                 moveDown();
                 return true;
             }
             break;
         case sf::Keyboard::D:
+        case sf::Keyboard::Right:
             if (canMoveRight()) {
                 moveRight();
                 return true;
@@ -112,8 +120,12 @@ void Game::displayWindow() {
                 window.close();
                 break;
             case sf::Event::KeyPressed:
-                if (checkMovement(event)) {
-                    setRandomElements(1);
+                if (canMove()) {
+                    if (checkMovement(event)) {
+                        setRandomElements(1);
+                    }
+                } else {
+                    clear();
                 }
                 break;
             }

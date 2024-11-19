@@ -7,7 +7,9 @@
 using namespace std;
 
 // Class constructor
-Game::Game() : plateau(vector<vector<int>>(4, vector<int>(4, 0))), score(0) {}    
+Game::Game() {
+    clear();
+}    
 
 /** Fonction pour afficher un tableau d'entiers sur la console.
  * @param line un tableau d'entiers.
@@ -125,23 +127,31 @@ bool Game::validMovement() {
 /** Commence le jeu en initialisant le tableau, rajoute deux valeurs aléatoires et demande à l'utilisateur les mouvements. 
  **/
 void Game::start() {
-    setRandomElements(2);
-    printConsole();
-    displayWindow();
-    /*
-    while (true) {
-        if (canMove()) {
-            if (validMovement()) {
-                setRandomElements(1);
-                printConsole();
+    cout << "Game type (screen, console): ";
+    string ans;
+    cin >> ans;
+    if (ans == "screen") {
+        displayWindow();
+    } else if (ans == "console") {
+        while (true) {
+            printConsole();
+            if (canMove()) {
+                if (validMovement()) {
+                    setRandomElements(1);
+                }
+            } else {
+                cout << "Le jeu est fini! Pas de mouvements possibles." << endl;
+                cout << "Score final: " << score << endl;
+                clear();
             }
-        } else {
-            cout << "Le jeu est fini! Pas de mouvements possibles." << endl;
-            cout << "Score final: " << score << endl;        //Affiche le score final
-            return;
         }
     }
-    */
+}
+
+void Game::clear() {
+    plateau = vector<vector<int>>(4, vector<int>(4, 0));
+    score = 0;
+    setRandomElements(2);
 }
 
 vector<vector<int>>& Game::getPlateau() {

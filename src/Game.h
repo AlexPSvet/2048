@@ -12,6 +12,7 @@ class Game {
 
         // Game screen functions
         void start();
+        void clear();
         bool validMovement();
         string verifyAnswer();
         void printConsole();

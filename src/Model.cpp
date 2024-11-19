@@ -6,6 +6,12 @@ using namespace std;
 
 Game::Game() : plateau(vector<vector<int>>(4, vector<int>(4, 0))), score(0) {}    
 
+/** Affiche le score actuel
+**/
+void Game::printScore() {
+    cout << "Score actuel: " << score << endl;
+}
+
 /** Tourne toutes les lignes en colonnes d'un tableau.
  **/
 void Game::rotateTable() {

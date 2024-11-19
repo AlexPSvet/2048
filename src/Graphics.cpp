@@ -31,20 +31,29 @@ void Game::displayTitle(RenderWindow& window) {
 
 void Game::displayTable(RenderWindow& window) {
     Vector2 size = window.getSize();
-    float xCase = (5 * size.x / 7) / 4;
-    float yCase = (size.y * 0.65) / 4;
+    float xRectangle = 5 * size.x / 7;
+    float yRectangle = size.y * 0.65;
+    float margin = 10.0;
+    float xCase = xRectangle / 4 - margin * 1.25;
+    float yCase = yRectangle / 4 - margin * 1.25;
     float x_i = size.x / 7;
     float y_i = size.y * 0.35;
+
+    RectangleShape table(Vector2f(xRectangle, yRectangle));
+    table.setPosition(x_i, y_i);
+    table.setFillColor(Color(113, 16, 66));
+    table.setOutlineColor(Color(205, 54, 132));
+    table.setOutlineThickness(20);
+    window.draw(table);
+
     for (int i = 0; i < plateau.size(); i++) {
         for (int j = 0; j < plateau[i].size(); j++) {
             if (plateau[i][j] != 0) {
                 RectangleShape rect(Vector2f(xCase, yCase));
-                int x = x_i + j * xCase;
-                int y = y_i + i * yCase;
+                int x = x_i + j * xCase + (j+1) * margin;
+                int y = y_i + i * yCase + (i+1) * margin;
                 rect.setPosition(Vector2f(x, y));
                 rect.setFillColor(Color(234, 105, 172));
-                rect.setOutlineColor(Color(155, 7, 134));
-                rect.setOutlineThickness(10);
                 window.draw(rect);
 
                 Text text;

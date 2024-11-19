@@ -37,7 +37,8 @@ void displayTitle(RenderWindow& window) {
 void displayTable(RenderWindow& window) {
     Vector2 size = window.getSize();
     float xCase = (5 * size.x / 7) / 4;
-    float yCase = (size.y - size.y * 0.45) / 4;
+    std::cout << size.x << std::endl;
+    float yCase = (size.y * 0.65) / 4;
     float x_i = size.x / 7;
     float y_i = size.y * 0.35;
     for (int i = 0; i < 4; i++) {
@@ -58,6 +59,8 @@ void displayTable(RenderWindow& window) {
 void displayWindow() {
     RenderWindow window(VideoMode(800, 1000), "2048");
     window.setFramerateLimit(60);
+
+    sf::View view = window.getDefaultView();
     while (window.isOpen()) {
         Event event;
         while (window.pollEvent(event)) {
@@ -75,7 +78,7 @@ void displayWindow() {
                 
                 break;
             case Event::Resized:
-                window.setSize(Vector2u(event.size.width, event.size.height));
+                view.setSize(event.size.width, event.size.height);
                 break;
             }
         }

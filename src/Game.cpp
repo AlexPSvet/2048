@@ -118,8 +118,11 @@ bool Game::validMovement() {
  **/
 void Game::start() {
     setRandomElements(2);
+    cout << "Bonjour" << endl;
     printConsole();
+    cout << "Coucuu" << endl;
     printScore(); //Affiche le score Initialisé a 0
+    cout << "Oke" << endl;
     while (true) {
         printConsole();
         printScore();

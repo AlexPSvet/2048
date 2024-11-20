@@ -127,8 +127,8 @@ void Game::displayScore(RenderWindow& window) {
 
     // Displays text
     Vector2f positionBack = background.getPosition();
-    float positionX = positionBack.x + ( 1 - textSize / xSize ) * xSize / 2;
-    float positionY = positionBack.y + ( 1 - textCharSize / ySize ) * ySize / 2;
+    float positionX = positionBack.x + ( xSize - textSize ) / 2;
+    float positionY = positionBack.y + ( ySize - textCharSize ) / 2;
     text.setPosition(Vector2f(positionX, positionY));
     window.draw(text);
 }

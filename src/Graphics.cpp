@@ -1,13 +1,41 @@
-#include <SFML/Graphics.hpp> //Inclut la Bibliotheque SFML permettant de manipuler des éléments graphiques
+#include <SFML/Graphics.hpp>
 #include "Game.h"
 #include <iostream>
 using namespace sf;
 
 void Game::displayBackground(RenderWindow& window) {
     Sprite sprite;
-    sprite.setTextureRect(IntRect(0, 0, 800, 1000)); //Image rectangulaire de 800x1000 pixels
-    sprite.setTexture(backgroundText); //backgroundText est une texture préalablement chargée
+    sprite.setTextureRect(IntRect(0, 0, 800, 1000));
+    sprite.setTexture(backgroundText);
     window.draw(sprite);
+}
+
+Color Game::getColor(int caseNumber) {
+    if (caseNumber == 2) {
+        return Color( 204, 0, 255 );
+    } else if (caseNumber == 4) {
+        return Color( 135, 14, 166 );
+    } else if (caseNumber == 8) {
+        return Color( 189, 9, 147 );
+    } else if (caseNumber == 16) {
+        return Color( 118, 11, 93 );
+    } else if (caseNumber == 32) {
+        return Color( 86, 9, 160 );
+    } else if (caseNumber == 64) {
+        return Color( 16, 9, 160 );
+    } else if (caseNumber == 128) {
+        return Color( 20, 151, 206 );
+    } else if (caseNumber == 256) {
+        return Color( 20, 206, 108 );
+    } else if (caseNumber == 512) {
+        return Color( 172, 206, 20 );
+    } else if (caseNumber == 1024) {
+        return Color( 206, 100, 20 );
+    } else if (caseNumber == 2048) {
+        return Color( 227, 24, 4 );
+    } else {
+        return Color( 120, 13, 2 );
+    } 
 }
 
 void Game::displayTable(RenderWindow& window) {
@@ -36,7 +64,7 @@ void Game::displayTable(RenderWindow& window) {
                 int x = x_i + j * xCase + (j+1) * margin;
                 int y = y_i + i * yCase + (i+1) * margin;
                 rect.setPosition(Vector2f(x, y));
-                rect.setFillColor(Color(234, 105, 172));
+                rect.setFillColor(getColor(plateau[i][j]));
                 window.draw(rect);
 
                 Text text;
@@ -44,7 +72,7 @@ void Game::displayTable(RenderWindow& window) {
                 text.setString(std::to_string(plateau[i][j]));
                 int amountCharacters = text.getString().getSize();
                 text.setCharacterSize( (xCase - 10 * xUnit) / amountCharacters);
-                text.setFillColor(Color( 111, 8, 97 ));
+                text.setFillColor(Color( 244, 169, 255 ));
                 int textSize = amountCharacters * text.getCharacterSize();
                 float positionX = x + ( xCase - textSize ) / 2;
                 float positionY = y + ( yCase - text.getCharacterSize() ) / 2;
@@ -72,7 +100,7 @@ void Game::displayTitle(RenderWindow& window) {
     Vector2f rectangleSize = rectangle.getSize();
     int textSize = text.getCharacterSize() * 4;
     float positionX = position.x + ( rectangleSize.x - textSize ) / 2;
-    float positionY = position.y + ( 1 - rectangleSize.y / textSize ) * rectangleSize.y / 2;
+    float positionY = position.y + ( rectangleSize.y - text.getCharacterSize() ) / 2;
     text.setPosition(Vector2f(positionX, positionY));
     window.draw(text);
 }
@@ -139,8 +167,8 @@ bool Game::checkMovement(Event event) {
 }
 
 void Game::displayWindow() {
-    RenderWindow window(VideoMode(800, 800), "2048");
-    window.setFramerateLimit(60);
+    RenderWindow window(VideoMode(600, 600), "2048");
+    window.setFramerateLimit(30);
     backgroundText.loadFromFile("textures/background.png");
     backgroundText.setSmooth(true);
     gameFont.loadFromFile("fonts/prstart.ttf");

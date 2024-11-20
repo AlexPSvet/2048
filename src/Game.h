@@ -24,6 +24,7 @@ class Game {
         void displayTitle(sf::RenderWindow& window);
         void displayTable(sf::RenderWindow& window);
         void displayScore(sf::RenderWindow& window);
+        sf::Color getColor(int caseNumber);
         bool checkMovement(sf::Event event);
 
         // Model functions

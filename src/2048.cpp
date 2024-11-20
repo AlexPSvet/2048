@@ -3,9 +3,9 @@
 
 int main() {
     srand(time(0));
+    system("color 1d"); 
 
     Game jeu2048;
-    system("color 1d"); 
     jeu2048.start();
 
     return 0;

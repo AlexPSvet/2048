@@ -5,41 +5,20 @@ using namespace sf;
 
 void Game::displayBackground(RenderWindow& window) {
     Sprite sprite;
-    sprite.setTextureRect(IntRect(0, 0, 800, 1000)); //IMage rectangulaire de 800x1000 pixels
+    sprite.setTextureRect(IntRect(0, 0, 800, 1000)); //Image rectangulaire de 800x1000 pixels
     sprite.setTexture(backgroundText); //backgroundText est une texture préalablement chargée
     window.draw(sprite);
 }
 
-void Game::displayTitle(RenderWindow& window) {
-    int x = window.getSize().x;
-
-    RectangleShape rectangle(Vector2f(350, 112.5)); //Création d'un rectangle pour le fond du titre
-    rectangle.setFillColor(Color( 204, 8, 224 )); //Couleur du Rectangle
-    rectangle.setPosition(Vector2f(x/3 - 40, 132.5));
-    rectangle.setOutlineColor(Color( 99, 22, 89 )); //Couleur de Contour du Rectangle
-    rectangle.setOutlineThickness(15);
-    window.draw(rectangle); //Desinne le rectangle sur la fenetre
-
-    Text text;
-    text.setFont(gameFont);
-    text.setString("2048");
-    float size = rectangle.getSize().y;
-    text.setCharacterSize(size / 2);
-    text.setFillColor(Color( 111, 8, 97 ));
-    Vector2f position = rectangle.getPosition();
-    text.setPosition(Vector2f(position.x + size / 2, position.y + size / 4));
-    window.draw(text);
-}
-
 void Game::displayTable(RenderWindow& window) {
     Vector2 size = window.getSize();
-    float xRectangle = 5 * size.x / 7;
-    float yRectangle = size.y * 0.65;
+    float xRectangle = xUnit * 150;
+    float yRectangle = yUnit * 120;
     float margin = 10.0;
     float xCase = xRectangle / 4 - margin * 1.25;
     float yCase = yRectangle / 4 - margin * 1.25;
-    float x_i = size.x / 7;
-    float y_i = size.y * 0.35;
+    float x_i = xUnit * 25;
+    float y_i = yUnit * 75;
 
     RectangleShape table(Vector2f(xRectangle, yRectangle));
     float outline = 20.0;
@@ -63,13 +42,67 @@ void Game::displayTable(RenderWindow& window) {
                 Text text;
                 text.setFont(gameFont);
                 text.setString(std::to_string(plateau[i][j]));
-                text.setCharacterSize(25);
+                int amountCharacters = text.getString().getSize();
+                text.setCharacterSize( (xCase - 10 * xUnit) / amountCharacters);
                 text.setFillColor(Color( 111, 8, 97 ));
-                text.setPosition(Vector2f(x, y));
+                int textSize = amountCharacters * text.getCharacterSize();
+                float positionX = x + ( xCase - textSize ) / 2;
+                float positionY = y + ( yCase - text.getCharacterSize() ) / 2;
+                text.setPosition(Vector2f(positionX, positionY));
                 window.draw(text);
             }
         }
     }
+}
+
+void Game::displayTitle(RenderWindow& window) {
+    RectangleShape rectangle(Vector2f(xUnit * 100, yUnit * 25));
+    rectangle.setFillColor(Color( 204, 8, 224 ));
+    rectangle.setPosition(Vector2f(xUnit * 50, yUnit * 10));
+    rectangle.setOutlineColor(Color( 99, 22, 89 ));
+    rectangle.setOutlineThickness(15);
+    window.draw(rectangle);
+
+    Text text;
+    text.setFont(gameFont);
+    text.setString("2048");
+    text.setCharacterSize(yUnit * 25 / 2);
+    text.setFillColor(Color( 111, 8, 97 ));
+    Vector2f position = rectangle.getPosition();
+    Vector2f rectangleSize = rectangle.getSize();
+    int textSize = text.getCharacterSize() * 4;
+    float positionX = position.x + ( rectangleSize.x - textSize ) / 2;
+    float positionY = position.y + ( 1 - rectangleSize.y / textSize ) * rectangleSize.y / 2;
+    text.setPosition(Vector2f(positionX, positionY));
+    window.draw(text);
+}
+
+void Game::displayScore(RenderWindow& window) {
+    // Creates text score
+    Text text;
+    text.setFont(gameFont);
+    text.setFillColor(Color( 111, 8, 97 ));
+    int textCharSize = 25;
+    text.setCharacterSize(textCharSize);
+    text.setString("Score : " + to_string(score));
+    int charAmount = text.getString().getSize();
+    int textSize = textCharSize * charAmount;
+
+    // Creates background depending on text width
+    Vector2 size = window.getSize();
+    float xSize = textSize + xUnit * 10;
+    float xUnitsLeft = ( 200 - ( xSize ) / xUnit ) / 2;
+    float ySize = yUnit * 15;
+    RectangleShape background(Vector2f(xSize, ySize));
+    background.setPosition(Vector2f(xUnitsLeft * xUnit, yUnit * 45));
+    window.draw(background);
+
+    // Displays text
+    Vector2f positionBack = background.getPosition();
+    float positionX = positionBack.x + ( 1 - textSize / xSize ) * xSize / 2;
+    float positionY = positionBack.y + ( 1 - textCharSize / ySize ) * ySize / 2;
+    text.setPosition(Vector2f(positionX, positionY));
+    window.draw(text);
 }
 
 bool Game::checkMovement(Event event) {
@@ -106,11 +139,15 @@ bool Game::checkMovement(Event event) {
 }
 
 void Game::displayWindow() {
-    RenderWindow window(VideoMode(800, 1000), "2048");
+    RenderWindow window(VideoMode(800, 800), "2048");
     window.setFramerateLimit(60);
     backgroundText.loadFromFile("textures/background.png");
     backgroundText.setSmooth(true);
     gameFont.loadFromFile("fonts/prstart.ttf");
+
+    Vector2u windowSize = window.getSize();
+    xUnit = windowSize.x / 200;
+    yUnit = windowSize.y / 200;
 
     while (window.isOpen()) {
         sf::Event event;
@@ -133,6 +170,7 @@ void Game::displayWindow() {
         window.clear();
         displayBackground(window);
         displayTitle(window);
+        displayScore(window);
         displayTable(window);
         window.display();
     }

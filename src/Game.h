@@ -23,6 +23,7 @@ class Game {
         void displayBackground(sf::RenderWindow& window);
         void displayTitle(sf::RenderWindow& window);
         void displayTable(sf::RenderWindow& window);
+        void displayScore(sf::RenderWindow& window);
         bool checkMovement(sf::Event event);
 
         // Model functions
@@ -53,6 +54,8 @@ class Game {
     private:
         sf::Font gameFont;
         sf::Texture backgroundText;
+        float xUnit;
+        float yUnit;
 
         vector<vector<int>> plateau;
         int score;

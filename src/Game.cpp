@@ -9,7 +9,7 @@ using namespace std;
 // Class constructor
 Game::Game() {
     clear();
-}    
+}
 
 /** Fonction pour afficher un tableau d'entiers sur la console.
  * @param line un tableau d'entiers.

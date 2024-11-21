@@ -1,12 +1,10 @@
-#include <iostream>
 #include "Game.h"
 
 int main() {
     srand(time(0));
-    system("color 1d"); 
 
     Game jeu2048;
-    jeu2048.start();
+    jeu2048.plateau;
 
     return 0;
 }

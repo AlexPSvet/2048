@@ -66,15 +66,16 @@ void Game::printConsole() {
     for (int a = 0; a < plateau[0].size(); a++){
         border += string(longMax + 3, '*'); //Ajoute une séquence de (longMax + 3) caracteres '*'
     }
+    border += "*";
 
     for (int i = 0; i < plateau.size(); i++) {
-        cout << border << '*' << endl;
+        cout << border << endl;
         for (int j = 0; j < plateau[0].size(); j++) {
             cout << "* " << setw(longMax) << plateau[i][j] << " "; // Utilisation setw
         }
         cout << "*" << endl;
     }
-    cout << border << '*' << endl;
+    cout << border << endl;
     cout << endl;
 }
 
@@ -120,7 +121,7 @@ bool Game::validMovement() {
             return true;
         }
     }
-    cout << "La mouvement saisi est invalide. Saisir un mouvement valide: ";
+    cout << "Le mouvement saisi est invalide." << endl;
     return false;
 }
 

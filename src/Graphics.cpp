@@ -38,6 +38,74 @@ Color Game::getColor(int caseNumber) {
     } 
 }
 
+void Game::drawCase(RenderWindow& window, int x, int y, int i, int j, float xCase, float yCase, int margin) {
+    RectangleShape rect(Vector2f(xCase, yCase));
+    rect.setPosition(Vector2f(x, y));
+    rect.setFillColor(getColor(plateau[i][j]));
+    window.draw(rect);
+
+    Text text;
+    text.setFont(gameFont);
+    text.setString(std::to_string(plateau[i][j]));
+    int amountCharacters = text.getString().getSize();
+    text.setCharacterSize( (xCase - 10 * xUnit) / amountCharacters);
+    text.setFillColor(Color( 244, 169, 255 ));
+    int textSize = amountCharacters * text.getCharacterSize();
+    float positionX = x + ( xCase - textSize ) / 2;
+    float positionY = y + ( yCase - text.getCharacterSize() ) / 2;
+    text.setPosition(Vector2f(positionX, positionY));
+    window.draw(text);
+}
+
+void Game::isCaseInAnimation(int i, int j) {
+    for (int k = 0; k < animatedTasks.size(); k++) {
+        MoveEvent moveEvent = animatedTasks[i];
+        if (moveEvent.getiStart() == i && moveEvent.getjStart() == j) {
+            return true;
+        }
+    }
+    return false;
+}
+
+MoveEvent Game::getMoveEvent(int i, int j) {
+    for (int k = 0; k < animatedTasks.size(); k++) {
+        MoveEvent moveEvent = animatedTasks[i];
+        if (moveEvent.getiStart() == i && moveEvent.getjStart() == j) {
+            return moveEvent;
+        }
+    }
+    return NULL;
+}
+
+void Game::drawAnimation(RenderWindow& window, MoveEvent event, float xCase, float yCase, int margin) {
+    if (event.getiStart < event.getiEnd) {
+        // Mouvement gauche
+        event.getCurrentX += xUnit;
+        if (event.getCurrentX >= (event.getiEnd - event.getiStart + 2) * xCase + event.getStartX()) {
+            animatedTasks.erase()
+        }
+    } else if (event.getiStart > event.getiEnd) {
+        // Mouvement droite
+        event.getCurrentX -= xUnit;
+        if (event.getCurrentX <= (event.getiStart - event.getiEnd + 2) * xCase + event.getStartX()) {
+            
+        }
+    } else if (event.getjStart > event.getjEnd) {
+        // Mouvement bas
+        event.getCurrentY -= xUnit;
+        if (event.getCurrentY <= (event.getjStart - event.getjEnd + 2) * yCase + event.getStartY()) {
+            
+        }
+    } else if (event.getjStart < event.getjEnd) {
+        // Mouvement haut
+        event.getCurrentY += xUnit;
+        if (event.getCurrentY >= (event.getjEnd - event.getjStart + 2) * yCase + event.getStartY()) {
+            
+        }
+    }
+    drawCase(window, event.getCurrentX, event.getCurrentY, event.getiEnd, event.getjEnd, xCase, yCase, margin);
+}
+
 void Game::displayTable(RenderWindow& window) {
     Vector2 size = window.getSize();
     float xRectangle = xUnit * 150;
@@ -60,24 +128,13 @@ void Game::displayTable(RenderWindow& window) {
     for (int i = 0; i < plateau.size(); i++) {
         for (int j = 0; j < plateau[i].size(); j++) {
             if (plateau[i][j] != 0) {
-                RectangleShape rect(Vector2f(xCase, yCase));
-                int x = x_i + j * xCase + (j+1) * margin;
-                int y = y_i + i * yCase + (i+1) * margin;
-                rect.setPosition(Vector2f(x, y));
-                rect.setFillColor(getColor(plateau[i][j]));
-                window.draw(rect);
-
-                Text text;
-                text.setFont(gameFont);
-                text.setString(std::to_string(plateau[i][j]));
-                int amountCharacters = text.getString().getSize();
-                text.setCharacterSize( (xCase - 10 * xUnit) / amountCharacters);
-                text.setFillColor(Color( 244, 169, 255 ));
-                int textSize = amountCharacters * text.getCharacterSize();
-                float positionX = x + ( xCase - textSize ) / 2;
-                float positionY = y + ( yCase - text.getCharacterSize() ) / 2;
-                text.setPosition(Vector2f(positionX, positionY));
-                window.draw(text);
+                if (isCaseInAnimation(i, j)) {
+                    drawAnimation(wifstream, getMoveEvent(i, j));
+                } else {
+                    int x = x_i + j * xCase + (j+1) * margin;
+                    int y = y_i + i * yCase + (i+1) * margin;
+                    drawCase(window, plateau[i][j], x, y, i, j, xCase, yCase, margin);
+                }
             }
         }
     }
@@ -181,18 +238,20 @@ void Game::displayWindow() {
         sf::Event event;
         while (window.pollEvent(event)) {
             switch (event.type) {
-            case sf::Event::Closed:
-                window.close();
-                break;
-            case sf::Event::KeyPressed:
-                if (canMove()) {
-                    if (checkMovement(event)) {
-                        setRandomElements(1);
+                case sf::Event::Closed:
+                    window.close();
+                    break;
+                case sf::Event::KeyPressed:
+                    if (animatedTasks.size() == 0) {
+                        if (canMove()) {
+                            if (checkMovement(event)) {
+                                setRandomElements(1);
+                            }
+                        } else {
+                            clear();
+                        }
                     }
-                } else {
-                    clear();
-                }
-                break;
+                    break;
             }
         }
         window.clear();

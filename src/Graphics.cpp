@@ -1,94 +1,220 @@
-#include <SFML/Graphics.hpp> //Inclut la Bibliotheque SFML permettant de manipuler des éléments graphiques
+#include <SFML/Graphics.hpp>
 #include "Game.h"
 #include <iostream>
 using namespace sf;
 
 void Game::displayBackground(RenderWindow& window) {
     Sprite sprite;
-    sprite.setTextureRect(IntRect(0, 0, 800, 1000)); //IMage rectangulaire de 800x1000 pixels
-    sprite.setTexture(backgroundText); //backgroundText est une texture préalablement chargée
+    sprite.setTextureRect(IntRect(0, 0, 800, 1000));
+    sprite.setTexture(backgroundText);
     window.draw(sprite);
 }
 
-void Game::displayTitle(RenderWindow& window) {
-    int x = window.getSize().x;
+Color Game::getColor(int caseNumber) {
+    if (caseNumber == 2) {
+        return Color( 204, 0, 255 );
+    } else if (caseNumber == 4) {
+        return Color( 135, 14, 166 );
+    } else if (caseNumber == 8) {
+        return Color( 189, 9, 147 );
+    } else if (caseNumber == 16) {
+        return Color( 118, 11, 93 );
+    } else if (caseNumber == 32) {
+        return Color( 86, 9, 160 );
+    } else if (caseNumber == 64) {
+        return Color( 16, 9, 160 );
+    } else if (caseNumber == 128) {
+        return Color( 20, 151, 206 );
+    } else if (caseNumber == 256) {
+        return Color( 20, 206, 108 );
+    } else if (caseNumber == 512) {
+        return Color( 172, 206, 20 );
+    } else if (caseNumber == 1024) {
+        return Color( 206, 100, 20 );
+    } else if (caseNumber == 2048) {
+        return Color( 227, 24, 4 );
+    } else {
+        return Color( 120, 13, 2 );
+    } 
+}
 
-    RectangleShape rectangle(Vector2f(350, 112.5)); //Création d'un rectangle pour le fond du titre
-    rectangle.setFillColor(Color( 204, 8, 224 )); //Couleur du Rectangle
-    rectangle.setPosition(Vector2f(x/3 - 40, 132.5));
-    rectangle.setOutlineColor(Color( 99, 22, 89 )); //Couleur de Contour du Rectangle
-    rectangle.setOutlineThickness(15);
-    window.draw(rectangle); //Desinne le rectangle sur la fenetre
+void Game::drawCase(RenderWindow& window, int x, int y, int i, int j, float xCase, float yCase, int margin) {
+    RectangleShape rect(Vector2f(xCase, yCase));
+    rect.setPosition(Vector2f(x, y));
+    rect.setFillColor(getColor(plateau[i][j]));
+    window.draw(rect);
 
-    Text text; //Création objet text
+    Text text;
     text.setFont(gameFont);
-    text.setString("2048"); //Définit texte a afficher, ici 2048
-    text.setCharacterSize(70);
-    text.setFillColor(Color( 111, 8, 97 ));
-    text.setPosition(Vector2f(x/3, 150));
-    window.draw(text); //Desinne le texte sur la fenetre
+    text.setString(std::to_string(plateau[i][j]));
+    int amountCharacters = text.getString().getSize();
+    text.setCharacterSize( (xCase - 10 * xUnit) / amountCharacters);
+    text.setFillColor(Color( 244, 169, 255 ));
+    int textSize = amountCharacters * text.getCharacterSize();
+    float positionX = x + ( xCase - textSize ) / 2;
+    float positionY = y + ( yCase - text.getCharacterSize() ) / 2;
+    text.setPosition(Vector2f(positionX, positionY));
+    window.draw(text);
+}
+
+void Game::isCaseInAnimation(int i, int j) {
+    for (int k = 0; k < animatedTasks.size(); k++) {
+        MoveEvent moveEvent = animatedTasks[i];
+        if (moveEvent.getiStart() == i && moveEvent.getjStart() == j) {
+            return true;
+        }
+    }
+    return false;
+}
+
+MoveEvent Game::getMoveEvent(int i, int j) {
+    for (int k = 0; k < animatedTasks.size(); k++) {
+        MoveEvent moveEvent = animatedTasks[i];
+        if (moveEvent.getiStart() == i && moveEvent.getjStart() == j) {
+            return moveEvent;
+        }
+    }
+    return NULL;
+}
+
+void Game::drawAnimation(RenderWindow& window, MoveEvent event, float xCase, float yCase, int margin) {
+    if (event.getiStart < event.getiEnd) {
+        // Mouvement gauche
+        event.getCurrentX += xUnit;
+        if (event.getCurrentX >= (event.getiEnd - event.getiStart + 2) * xCase + event.getStartX()) {
+            animatedTasks.erase()
+        }
+    } else if (event.getiStart > event.getiEnd) {
+        // Mouvement droite
+        event.getCurrentX -= xUnit;
+        if (event.getCurrentX <= (event.getiStart - event.getiEnd + 2) * xCase + event.getStartX()) {
+            
+        }
+    } else if (event.getjStart > event.getjEnd) {
+        // Mouvement bas
+        event.getCurrentY -= xUnit;
+        if (event.getCurrentY <= (event.getjStart - event.getjEnd + 2) * yCase + event.getStartY()) {
+            
+        }
+    } else if (event.getjStart < event.getjEnd) {
+        // Mouvement haut
+        event.getCurrentY += xUnit;
+        if (event.getCurrentY >= (event.getjEnd - event.getjStart + 2) * yCase + event.getStartY()) {
+            
+        }
+    }
+    drawCase(window, event.getCurrentX, event.getCurrentY, event.getiEnd, event.getjEnd, xCase, yCase, margin);
 }
 
 void Game::displayTable(RenderWindow& window) {
     Vector2 size = window.getSize();
-    float xRectangle = 5 * size.x / 7;
-    float yRectangle = size.y * 0.65;
+    float xRectangle = xUnit * 150;
+    float yRectangle = yUnit * 120;
     float margin = 10.0;
     float xCase = xRectangle / 4 - margin * 1.25;
     float yCase = yRectangle / 4 - margin * 1.25;
-    float x_i = size.x / 7;
-    float y_i = size.y * 0.35;
+    float x_i = xUnit * 25;
+    float y_i = yUnit * 75;
 
     RectangleShape table(Vector2f(xRectangle, yRectangle));
+    float outline = 20.0;
+    y_i -= outline;
     table.setPosition(x_i, y_i);
     table.setFillColor(Color(113, 16, 66));
     table.setOutlineColor(Color(205, 54, 132));
-    table.setOutlineThickness(20);
+    table.setOutlineThickness(outline);
     window.draw(table);
 
     for (int i = 0; i < plateau.size(); i++) {
         for (int j = 0; j < plateau[i].size(); j++) {
             if (plateau[i][j] != 0) {
-                RectangleShape rect(Vector2f(xCase, yCase));
-                int x = x_i + j * xCase + (j+1) * margin;
-                int y = y_i + i * yCase + (i+1) * margin;
-                rect.setPosition(Vector2f(x, y));
-                rect.setFillColor(Color(234, 105, 172));
-                window.draw(rect);
-
-                Text text;
-                text.setFont(gameFont);
-                text.setString(std::to_string(plateau[i][j]));
-                text.setCharacterSize(25);
-                text.setFillColor(Color( 111, 8, 97 ));
-                text.setPosition(Vector2f(x, y));
-                window.draw(text);
+                if (isCaseInAnimation(i, j)) {
+                    drawAnimation(wifstream, getMoveEvent(i, j));
+                } else {
+                    int x = x_i + j * xCase + (j+1) * margin;
+                    int y = y_i + i * yCase + (i+1) * margin;
+                    drawCase(window, plateau[i][j], x, y, i, j, xCase, yCase, margin);
+                }
             }
         }
     }
 }
 
+void Game::displayTitle(RenderWindow& window) {
+    RectangleShape rectangle(Vector2f(xUnit * 100, yUnit * 25));
+    rectangle.setFillColor(Color( 204, 8, 224 ));
+    rectangle.setPosition(Vector2f(xUnit * 50, yUnit * 10));
+    rectangle.setOutlineColor(Color( 99, 22, 89 ));
+    rectangle.setOutlineThickness(15);
+    window.draw(rectangle);
+
+    Text text;
+    text.setFont(gameFont);
+    text.setString("2048");
+    text.setCharacterSize(yUnit * 25 / 2);
+    text.setFillColor(Color( 111, 8, 97 ));
+    Vector2f position = rectangle.getPosition();
+    Vector2f rectangleSize = rectangle.getSize();
+    int textSize = text.getCharacterSize() * 4;
+    float positionX = position.x + ( rectangleSize.x - textSize ) / 2;
+    float positionY = position.y + ( rectangleSize.y - text.getCharacterSize() ) / 2;
+    text.setPosition(Vector2f(positionX, positionY));
+    window.draw(text);
+}
+
+void Game::displayScore(RenderWindow& window) {
+    // Creates text score
+    Text text;
+    text.setFont(gameFont);
+    text.setFillColor(Color( 111, 8, 97 ));
+    int textCharSize = 25;
+    text.setCharacterSize(textCharSize);
+    text.setString("Score : " + to_string(score));
+    int charAmount = text.getString().getSize();
+    int textSize = textCharSize * charAmount;
+
+    // Creates background depending on text width
+    Vector2 size = window.getSize();
+    float xSize = textSize + xUnit * 10;
+    float xUnitsLeft = ( 200 - ( xSize ) / xUnit ) / 2;
+    float ySize = yUnit * 15;
+    RectangleShape background(Vector2f(xSize, ySize));
+    background.setPosition(Vector2f(xUnitsLeft * xUnit, yUnit * 45));
+    window.draw(background);
+
+    // Displays text
+    Vector2f positionBack = background.getPosition();
+    float positionX = positionBack.x + ( xSize - textSize ) / 2;
+    float positionY = positionBack.y + ( ySize - textCharSize ) / 2;
+    text.setPosition(Vector2f(positionX, positionY));
+    window.draw(text);
+}
+
 bool Game::checkMovement(Event event) {
     switch (event.key.code) {
         case sf::Keyboard::W:
+        case sf::Keyboard::Up:
             if (canMoveUp()) {
                 moveUp();
                 return true;
             }
             break;
         case sf::Keyboard::A:
+        case sf::Keyboard::Left:
             if (canMoveLeft()) {
                 moveLeft();
                 return true;
             }
             break;
         case sf::Keyboard::S:
+        case sf::Keyboard::Down:
             if (canMoveDown()) {
                 moveDown();
                 return true;
             }
             break;
         case sf::Keyboard::D:
+        case sf::Keyboard::Right:
             if (canMoveRight()) {
                 moveRight();
                 return true;
@@ -98,29 +224,40 @@ bool Game::checkMovement(Event event) {
 }
 
 void Game::displayWindow() {
-    RenderWindow window(VideoMode(800, 1000), "2048");
-    window.setFramerateLimit(60);
+    RenderWindow window(VideoMode(600, 600), "2048");
+    window.setFramerateLimit(30);
     backgroundText.loadFromFile("textures/background.png");
     backgroundText.setSmooth(true);
     gameFont.loadFromFile("fonts/prstart.ttf");
+
+    Vector2u windowSize = window.getSize();
+    xUnit = windowSize.x / 200;
+    yUnit = windowSize.y / 200;
 
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event)) {
             switch (event.type) {
-            case sf::Event::Closed:
-                window.close();
-                break;
-            case sf::Event::KeyPressed:
-                if (checkMovement(event)) {
-                    setRandomElements(1);
-                }
-                break;
+                case sf::Event::Closed:
+                    window.close();
+                    break;
+                case sf::Event::KeyPressed:
+                    if (animatedTasks.size() == 0) {
+                        if (canMove()) {
+                            if (checkMovement(event)) {
+                                setRandomElements(1);
+                            }
+                        } else {
+                            clear();
+                        }
+                    }
+                    break;
             }
         }
         window.clear();
         displayBackground(window);
         displayTitle(window);
+        displayScore(window);
         displayTable(window);
         window.display();
     }

@@ -2,6 +2,9 @@
 #define GAME_H
 
 #include <SFML/Graphics.hpp>
+#include "MoveEvent.h"
+#include "Case.h"
+#include "Model.h"
 #include <string>
 #include <vector>
 using namespace std;
@@ -12,7 +15,6 @@ class Game {
 
         // Game screen functions
         void start();
-        void clear();
         bool validMovement();
         string verifyAnswer();
         void printConsole();
@@ -25,39 +27,12 @@ class Game {
         void displayTable(sf::RenderWindow& window);
         void displayScore(sf::RenderWindow& window);
         sf::Color getColor(int caseNumber);
-        void drawCase(sf::RenderWindow& window, int x_i, int y_i, int i, int j, float xCase, float yCase, int margin);
-        bool isCaseInAnimation(int i, int j);
-        MoveEvent getMoveEvent(int i, int j);
-        void drawAnimation(sf::RenderWindow& window, MoveEvent event, float xCase, float yCase, int margin);
+        void drawCase(sf::RenderWindow& window, int value, int x, int y, float xCase, float yCase);
+        bool drawAnimation(sf::RenderWindow& window, Case& caseObjet, float xCase, float yCase, float xStart, float yStart);
         bool checkMovement(sf::Event event);
 
-        // Model functions
-        void rotateTable();
-        bool canMoveLeft();
-        bool canMoveRight();
-        bool canMoveUp();
-        bool canMoveDown();
-        bool canMove();
-        void moveLeftRange(vector<int>& t, int startIndex, int endIndex);
-        void addLeftValues(vector<int>& t);
-        void moveLeft();
-        void moveRightRange(vector<int>& t, int startIndex, int endIndex);
-        void addRightValues(vector<int>& t);
-        void moveRight();
-        void moveDown();
-        void moveUp();
-        void setRandomElements(int amount);
-        vector<tuple<int, int>> getEmptySlots();
-
-        // Debug functions
-        void printLine(const vector<int>& line);
-        void printTable(const vector<vector<int>>& plateau);
-
         // Get variables
-        vector<vector<int>>& getPlateau();
-        vector<vector<int>>& getGraphicsPlateau();
-        bool isAnimationLoaded();
-        int getScore();
+        Model getModel();
     private:
         // Graphics variables
         sf::Font gameFont;
@@ -66,33 +41,11 @@ class Game {
         float yUnit;
         vector<MoveEvent> animatedTasks;
 
-        // General variables
-        vector<vector<int>> plateau;
-        int score;
-};
+        // Logic variables
+        Model model;
 
-class MoveEvent {
-    public:
-        MoveEvent(int iStart, int jStart, float xStart, float yStart, float currentX, float currentY, int iEnd, int jEnd);
-        int getjStart();
-        int getiStart();
-        float getStartX();
-        float getStartY();
-        float getCurrentX();
-        float getCurrentY();
-        void setCurrentX(float currentX);
-        void setCurrentY(float currentY);
-        int getiEnd();
-        int getjEnd();
-    private:
-        int iStart;
-        int jStart;
-        float xStart;
-        float yStart;
-        float currentX;
-        float currentY;
-        int iEnd;
-        int jEnd;
-}
+        // General variables
+        vector<Case> cases;
+};
 
 #endif

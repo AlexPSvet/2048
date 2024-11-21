@@ -2,52 +2,25 @@
 #include <iomanip>
 #include <string>
 #include <vector>
-#include <SFML/Graphics.hpp>
 #include "Game.h"
 using namespace std;
 
 // Class constructor
 Game::Game() {
-    clear();
-}
-
-/** Fonction pour afficher un tableau d'entiers sur la console.
- * @param line un tableau d'entiers.
- **/
-void Game::printLine(const vector<int>& line) {
-    cout << "[";
-    for (int i = 0; i < plateau.size(); i++) {
-        cout << line[i];
-        if (i != line.size() - 1) {
-            cout << ", ";
-        }
-    }
-    cout << "]";
-}
-
-/** Fonction pour afficher un tableau d'entiers à deux dimensions sur la console.
- * @param t un tableau d'entiers à deux dimensions
- **/
-void Game::printTable(const vector<vector<int>>& plateau) {
-    cout << "[";
-    for (int i = 0; i < plateau.size(); i++) {
-        printLine(plateau[i]);
-        if (i != plateau.size() - 1) {
-            cout << ", ";
-        }
-    }
-    cout << "]" << endl;
+    Model model(4, 4);
+    this->model = model;
 }
 
 /** Retrouve le nombre le plus grand en caractères.
- * @return maxValue la plus grande taille des numéros en chaîne de caractères.
+ * @return value la plus grande taille des numéros en chaîne de caractères.
  **/
 int Game::getMaxTextLenght() {
     int maxValue = 0;
-    for (int i = 0; i < plateau.size(); i++) {
-        for (int j = 0; j < plateau[i].size(); j++) {
-            if (plateau[i][j] > maxValue) {
-                maxValue = plateau[i][j];
+    for (int i = 0; i < model.getLines(); i++) {
+        for (int j = 0; j < model.getColumns(); j++) {
+            int value = model.validCase(i, j) ? model.getCase(i, j).getValue() : 0;
+            if (value > maxValue) {
+                maxValue = value;
             }
         }
     }
@@ -60,18 +33,18 @@ void Game::printConsole() {
     cout << endl;
     int longMax = getMaxTextLenght();
 
-    cout << "Score actuel: " << score << endl;
+    cout << "Score actuel: " << model.getScore() << endl;
 
     string border = "";
-    for (int a = 0; a < plateau[0].size(); a++){
+    for (int a = 0; a < model.getColumns(); a++){
         border += string(longMax + 3, '*'); //Ajoute une séquence de (longMax + 3) caracteres '*'
     }
     border += "*";
 
-    for (int i = 0; i < plateau.size(); i++) {
+    for (int i = 0; i < model.getLines(); i++) {
         cout << border << endl;
-        for (int j = 0; j < plateau[0].size(); j++) {
-            cout << "* " << setw(longMax) << plateau[i][j] << " "; // Utilisation setw
+        for (int j = 0; j < model.getColumns(); j++) {
+            cout << "* " << setw(longMax) << (model.validCase(i, j) ? model.getCase(i, j).getValue() : 0) << " ";
         }
         cout << "*" << endl;
     }
@@ -101,23 +74,23 @@ string Game::verifyAnswer() {
 bool Game::validMovement() {
     string answer = verifyAnswer();
     if (answer == "g"){
-        if (canMoveLeft()){
-            moveLeft();
+        if (model.canMoveLeft()){
+            model.moveLeft();
             return true;
         }
     } else if (answer == "d"){
-        if (canMoveRight()){
-            moveRight();
+        if (model.canMoveRight()){
+            model.moveRight();
             return true;
         }
     } else if (answer == "h"){
-        if (canMoveUp()){
-            moveUp();
+        if (model.canMoveUp()){
+            model.moveUp();
             return true;
         }
     } else if (answer == "b"){
-        if (canMoveDown()){
-            moveDown();
+        if (model.canMoveDown()){
+            model.moveDown();
             return true;
         }
     }
@@ -136,29 +109,19 @@ void Game::start() {
     } else if (ans == "console") {
         while (true) {
             printConsole();
-            if (canMove()) {
+            if (model.canMove()) {
                 if (validMovement()) {
-                    setRandomElements(1);
+                    model.setRandomElements(1);
                 }
             } else {
                 cout << "Le jeu est fini! Pas de mouvements possibles." << endl;
-                cout << "Score final: " << score << endl;
-                clear();
+                cout << "Score final: " << model.getScore() << endl;
+                model.clear();
             }
         }
     }
 }
 
-void Game::clear() {
-    plateau = vector<vector<int>>(4, vector<int>(4, 0));
-    score = 0;
-    setRandomElements(2);
-}
-
-vector<vector<int>>& Game::getPlateau() {
-    return plateau;
-}
-
-int Game::getScore() {
-    return score;
+Model Game::getModel() {
+    return model;
 }

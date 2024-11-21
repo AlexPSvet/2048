@@ -38,15 +38,15 @@ Color Game::getColor(int caseNumber) {
     } 
 }
 
-void Game::drawCase(RenderWindow& window, int x, int y, int i, int j, float xCase, float yCase, int margin) {
+void Game::drawCase(RenderWindow& window, int value, int x, int y, float xCase, float yCase) {
     RectangleShape rect(Vector2f(xCase, yCase));
     rect.setPosition(Vector2f(x, y));
-    rect.setFillColor(getColor(plateau[i][j]));
+    rect.setFillColor(getColor(value));
     window.draw(rect);
 
     Text text;
     text.setFont(gameFont);
-    text.setString(std::to_string(plateau[i][j]));
+    text.setString(std::to_string(value));
     int amountCharacters = text.getString().getSize();
     text.setCharacterSize( (xCase - 10 * xUnit) / amountCharacters);
     text.setFillColor(Color( 244, 169, 255 ));
@@ -57,53 +57,47 @@ void Game::drawCase(RenderWindow& window, int x, int y, int i, int j, float xCas
     window.draw(text);
 }
 
-void Game::isCaseInAnimation(int i, int j) {
-    for (int k = 0; k < animatedTasks.size(); k++) {
-        MoveEvent moveEvent = animatedTasks[i];
-        if (moveEvent.getiStart() == i && moveEvent.getjStart() == j) {
+bool Game::drawAnimation(RenderWindow& window, Case& caseObjet, float xCase, float yCase, float xStart, float yStart) {
+    MoveEvent& event = caseObjet.getLastAnimation();
+    int iStart = event.getiStart();
+    int jStart = event.getjStart();
+    int iEnd = event.getiEnd();
+    int jEnd = event.getjEnd();
+    if (jStart > jEnd) {
+        // Mouvement gauche
+        // cout << "Left" << endl;
+        event.setCurentX(event.getCurentX() - 3*xUnit);
+        if (event.getCurentX() <= -(jStart - jEnd) * xCase) {
+            cout << "Remove left animation" << endl;
+            return true;
+        }
+    } else if (jStart < jEnd) {
+        // Mouvement droite
+        // cout << "Right" << endl;
+        event.setCurentX(event.getCurentX() + 3*xUnit);
+        if (event.getCurentX() >= (jEnd - jStart) * xCase) {
+            cout << "Remove right animation" << endl;
+            return true;
+        }
+    } else if (iStart > iEnd) {
+        // Mouvement bas
+        // cout << "Up" << endl;
+        event.setCurentY(event.getCurentY() - 3*xUnit);
+        if (event.getCurentY() <= -(iStart - iEnd) * yCase) {
+            cout << "Remove up animation" << endl;
+            return true;
+        }
+    } else if (iStart < iEnd) {
+        // Mouvement haut
+        // cout << "Down" << endl;
+        event.setCurentY(event.getCurentY() + 3*yUnit);
+        if (event.getCurentY() >= (iEnd - iStart) * yCase) {
+            cout << "Remove down animation" << endl;
             return true;
         }
     }
+    drawCase(window, event.getStartValue(), xStart + event.getCurentX(), yStart + event.getCurentY(), xCase, yCase);
     return false;
-}
-
-MoveEvent Game::getMoveEvent(int i, int j) {
-    for (int k = 0; k < animatedTasks.size(); k++) {
-        MoveEvent moveEvent = animatedTasks[i];
-        if (moveEvent.getiStart() == i && moveEvent.getjStart() == j) {
-            return moveEvent;
-        }
-    }
-    return NULL;
-}
-
-void Game::drawAnimation(RenderWindow& window, MoveEvent event, float xCase, float yCase, int margin) {
-    if (event.getiStart < event.getiEnd) {
-        // Mouvement gauche
-        event.getCurrentX += xUnit;
-        if (event.getCurrentX >= (event.getiEnd - event.getiStart + 2) * xCase + event.getStartX()) {
-            animatedTasks.erase()
-        }
-    } else if (event.getiStart > event.getiEnd) {
-        // Mouvement droite
-        event.getCurrentX -= xUnit;
-        if (event.getCurrentX <= (event.getiStart - event.getiEnd + 2) * xCase + event.getStartX()) {
-            
-        }
-    } else if (event.getjStart > event.getjEnd) {
-        // Mouvement bas
-        event.getCurrentY -= xUnit;
-        if (event.getCurrentY <= (event.getjStart - event.getjEnd + 2) * yCase + event.getStartY()) {
-            
-        }
-    } else if (event.getjStart < event.getjEnd) {
-        // Mouvement haut
-        event.getCurrentY += xUnit;
-        if (event.getCurrentY >= (event.getjEnd - event.getjStart + 2) * yCase + event.getStartY()) {
-            
-        }
-    }
-    drawCase(window, event.getCurrentX, event.getCurrentY, event.getiEnd, event.getjEnd, xCase, yCase, margin);
 }
 
 void Game::displayTable(RenderWindow& window) {
@@ -125,15 +119,27 @@ void Game::displayTable(RenderWindow& window) {
     table.setOutlineThickness(outline);
     window.draw(table);
 
-    for (int i = 0; i < plateau.size(); i++) {
-        for (int j = 0; j < plateau[i].size(); j++) {
-            if (plateau[i][j] != 0) {
-                if (isCaseInAnimation(i, j)) {
-                    drawAnimation(wifstream, getMoveEvent(i, j));
+    for (int i = 0; i < model.getLines(); i++) {
+        for (int j = 0; j < model.getColumns(); j++) {
+            if (model.validCase(i, j)) {
+                Case& caseObjet = model.getCase(i, j);
+                if (caseObjet.hasAnimation()) {
+                    MoveEvent& event = caseObjet.getLastAnimation();
+                    int iStart = event.getiStart();
+                    int jStart = event.getjStart();
+                    int x = x_i + jStart * xCase + (jStart+1) * margin;
+                    int y = y_i + iStart * yCase + (iStart+1) * margin;
+                    if (drawAnimation(window, caseObjet, xCase, yCase, x, y)) {
+                        caseObjet.removeLastAnimation();
+                        if (model.getCasesInAnimation() == 0) {
+                            model.setRandomElements(1);
+                            model.printPlateau();
+                        }
+                    }              
                 } else {
                     int x = x_i + j * xCase + (j+1) * margin;
                     int y = y_i + i * yCase + (i+1) * margin;
-                    drawCase(window, plateau[i][j], x, y, i, j, xCase, yCase, margin);
+                    drawCase(window, caseObjet.getValue(), x, y, xCase, yCase);
                 }
             }
         }
@@ -169,7 +175,7 @@ void Game::displayScore(RenderWindow& window) {
     text.setFillColor(Color( 111, 8, 97 ));
     int textCharSize = 25;
     text.setCharacterSize(textCharSize);
-    text.setString("Score : " + to_string(score));
+    text.setString("Score : " + to_string(model.getScore()));
     int charAmount = text.getString().getSize();
     int textSize = textCharSize * charAmount;
 
@@ -194,38 +200,39 @@ bool Game::checkMovement(Event event) {
     switch (event.key.code) {
         case sf::Keyboard::W:
         case sf::Keyboard::Up:
-            if (canMoveUp()) {
-                moveUp();
+            if (model.canMoveUp()) {
+                model.moveUp();
                 return true;
             }
             break;
         case sf::Keyboard::A:
         case sf::Keyboard::Left:
-            if (canMoveLeft()) {
-                moveLeft();
+            if (model.canMoveLeft()) {
+                model.moveLeft();
                 return true;
             }
             break;
         case sf::Keyboard::S:
         case sf::Keyboard::Down:
-            if (canMoveDown()) {
-                moveDown();
+            if (model.canMoveDown()) {
+                model.moveDown();
                 return true;
             }
             break;
         case sf::Keyboard::D:
         case sf::Keyboard::Right:
-            if (canMoveRight()) {
-                moveRight();
+            if (model.canMoveRight()) {
+                model.moveRight();
                 return true;
             }
     }
+    model.printPlateau();
     return false;
 }
 
 void Game::displayWindow() {
     RenderWindow window(VideoMode(600, 600), "2048");
-    window.setFramerateLimit(30);
+    window.setFramerateLimit(60);
     backgroundText.loadFromFile("textures/background.png");
     backgroundText.setSmooth(true);
     gameFont.loadFromFile("fonts/prstart.ttf");
@@ -242,13 +249,13 @@ void Game::displayWindow() {
                     window.close();
                     break;
                 case sf::Event::KeyPressed:
-                    if (animatedTasks.size() == 0) {
-                        if (canMove()) {
+                    if (model.getCasesInAnimation() == 0) {
+                        if (model.canMove()) {
                             if (checkMovement(event)) {
-                                setRandomElements(1);
+                                // model.setRandomElements(1);
                             }
                         } else {
-                            clear();
+                            model.clear();
                         }
                     }
                     break;

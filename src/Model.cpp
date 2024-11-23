@@ -182,24 +182,33 @@ void Model::moveLeftRange(int i, int startIndex, int endIndex) {
  * @param i l'indice de la ligne dans le tableau
  **/
 void Model::addLeftValues(int i) {
+    cout << "----" << endl;
+    printPlateau();
+    cout << "Left" << endl;
     int j = 0;
     while (j < columns - 1) {
         if (validCase(i, j) && validCase(i, j + 1)) {
             Case& caseObjet1 = getCase(i, j);
             Case& caseObjet2 = getCase(i, j + 1);
+            cout << "--" << endl;
+            cout << "i: " << i << "; j + 1: " << j + 1 << endl;
             if (caseObjet1.getValue() == caseObjet2.getValue()) {
+                cout << "Values ==" << endl;
                 int value = caseObjet2.getValue() * 2;
+                caseObjet1.setValue(value);
                 score += value;
                 MoveEvent event(caseObjet2.getValue(), value, i, j + 1, i, j);
                 caseObjet2.addAnimation(event);
                 caseObjet1.addAnimations(caseObjet2);
                 removeCase(caseObjet2);
-                caseObjet1.setValue(value);
                 moveLeftRange(i, j + 1, columns);
             }
+            cout << "--" << endl;
         }      
         j++;
     }
+    printPlateau();
+    cout << "----" << endl;
 }
 
 /** Fait le mouvement de gauche dans la table.
@@ -249,12 +258,12 @@ void Model::addRightValues(int i) {
             Case& caseObjet2 = getCase(i, j - 1);
             if (caseObjet1.getValue() == caseObjet2.getValue()) {
                 int value = caseObjet2.getValue() * 2;
+                caseObjet1.setValue(value);
                 score += value;
                 MoveEvent event(caseObjet2.getValue(), value, i, j - 1, i, j);
                 caseObjet2.addAnimation(event);
                 caseObjet1.addAnimations(caseObjet2);
                 removeCase(caseObjet2);
-                caseObjet1.setValue(value);
                 moveRightRange(i, 0, j - 1);
             }
         }  
@@ -310,12 +319,12 @@ void Model::addUpValues(int j) {
             Case& caseObjet2 = getCase(i, j);
             if (caseObjet1.getValue() == caseObjet2.getValue()) {
                 int value = caseObjet2.getValue() * 2;
+                caseObjet1.setValue(value);
                 score += value;
                 MoveEvent event(caseObjet2.getValue(), value, i, j, i - 1, j);
                 caseObjet2.addAnimation(event);
                 caseObjet1.addAnimations(caseObjet2);
                 removeCase(caseObjet2);
-                caseObjet1.setValue(value);
                 moveUpRange(j, i, lines);
             }
         }  
@@ -371,13 +380,13 @@ void Model::addDownValues(int j) {
             Case& caseObjet2 = getCase(i - 1, j);
             if (caseObjet1.getValue() == caseObjet2.getValue()) {
                 int value = caseObjet2.getValue() * 2;
+                caseObjet1.setValue(value);
                 score += value;
                 MoveEvent event(caseObjet2.getValue(), value, i, j, i - 1, j);
                 caseObjet2.addAnimation(event);
                 caseObjet1.addAnimations(caseObjet2);
                 removeCase(caseObjet2);
-                caseObjet1.setValue(value);
-                moveDownRange(j, 0, i - 1);
+                moveDownRange(j, 0, i);
             }
         }  
         i--;

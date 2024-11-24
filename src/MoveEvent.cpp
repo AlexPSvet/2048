@@ -1,16 +1,16 @@
 #include "MoveEvent.h"
 
-MoveEvent::MoveEvent(int startValue, int endValue, int iStart, int jStart, int iEnd, int jEnd) : startValue(startValue), endValue(endValue), iStart(iStart), jStart(jStart), iEnd(iEnd), jEnd(jEnd) {
+MoveEvent::MoveEvent(int value, bool isAddAnim, int iStart, int jStart, int iEnd, int jEnd) : value(value), isAddAnim(isAddAnim), iStart(iStart), jStart(jStart), iEnd(iEnd), jEnd(jEnd) {
     currentX = 0;
     currentY = 0;
 }
 
-int MoveEvent::getStartValue() {
-    return startValue;
+int MoveEvent::getValue() {
+    return value;
 }
 
-int MoveEvent::getEndValue() {
-    return endValue;
+bool MoveEvent::isAddAnimation() {
+    return isAddAnim;
 }
 
 int MoveEvent::getjStart() {

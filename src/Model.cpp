@@ -9,38 +9,58 @@ Model::Model() {
     columns = 0;
 }
 
+/**
+ * Constructeur de la classe Model pour toutes les fonctions
+ * de logique et de mouvement du jeu.
+ * 
+ * @param lines les lignes du plateau du jeu.
+ * @param columns le nombre de colonnes du jeu.
+ */
 Model::Model(int lines, int columns) {
     this->lines = lines;
     this->columns = columns;
     clear();
 }
 
-bool Model::canMoveGeneral(int i1, int j1, int i2, int j2) {
-    if (validCase(i1, j1) && validCase(i2, j2)) {
-        int value1 = getCase(i1, j1).getValue();
-        int value2 = getCase(i2, j2).getValue();
-        if (value1 == value2) {
+// FONCTIONS POUR VÉRIFICATION DES MOUVEMENTS
+
+/**
+ * Fonction pour comparer deux valeurs proches lors d'un mouvement.
+ * On tiendra en compte l'élément 1 en paramètre est avant l'élément 2 selon le mouvement.
+ * Le mouvement est valide si le premier et le deuxième élément sont de meme valuer, ou si
+ * un espace vide ( premier élément ) se situe avant le deuxième élément.
+ * 
+ * @param i1 l'indice i du premier élément
+ * @param j1 l'indice j du premier élément
+ * @param i2 l'indice i du deuxième élément
+ * @param j2 l'indice j du deuxième élément
+ */
+bool Model::compareValues(int i1, int j1, int i2, int j2) {
+    if (validCase(i2, j2)) {
+        if (validCase(i1, j1)) {
+            if (getCase(i1, j1).getValue() == getCase(i2, j2).getValue()) {
+                return true;
+            }
+        } else {
             return true;
         }
-    } else if (!validCase(i1, j1)) {
-        return true;
     }
     return false;
 }
 
-/** Vérifie si des mouvements horizontales peuvent se faire.
- * @return b booléen : true si au moins un mouvement horizontale est possible, false sinon.
+/**
+ * Vérifie pour chaque ligne en comparant deux à deux les nombres
+ * pour voir si un mouvement à gauche est possible.
+ * On compare les éléments d'indices ( j ) et ( j + 1 ).
+ * On vérifie si un espace avec un élément après ( entre 0 et columns - 2 inclus )
+ * ou deux éléments égaux près l'un de l'autre ( entre 0 et columns - 1 inclus )
+ * 
+ * @return true si un mouvement à gauche est possible, false sinon.
  **/
 bool Model::canMoveLeft() {
     for (int i = 0; i < lines; i++) {
         for (int j = 0; j < columns - 1; j++) {
-            if (validCase(i, j) && validCase(i, j + 1)) {
-                int value1 = getCase(i, j).getValue();
-                int value2 = getCase(i, j + 1).getValue();
-                if (value1 == value2) {
-                    return true;
-                }
-            } else if (!validCase(i, j) && validCase(i, j + 1)) {
+            if (compareValues(i, j, i, j + 1)) {
                 return true;
             }
         }
@@ -48,19 +68,19 @@ bool Model::canMoveLeft() {
     return false;
 }
 
-/** Vérifie si des mouvements à droite peuvent se faire.
- * @return b booléen : true si au moins un mouvement à droite est possible, false sinon.
+/**
+ * Vérifie pour chaque ligne en comparant deux à deux les nombres
+ * pour voir si un mouvement à droite est possible.
+ * On compare les éléments d'indices ( j ) et ( j - 1 ).
+ * On vérifie si un espace avec un élément après ( entre 1 et columns - 1 inclus )
+ * ou deux éléments égaux près l'un de l'autre ( entre 0 et columns - 1 inclus )
+ * 
+ * @return true si un mouvement à gauche est possible, false sinon.
  **/
 bool Model::canMoveRight() {
     for (int i = 0; i < lines; i++) {
         for (int j = columns - 1; j > 0; j--) {
-            if (validCase(i, j) && validCase(i, j - 1)) {
-                int value1 = getCase(i, j).getValue();
-                int value2 = getCase(i, j - 1).getValue();
-                if (value1 == value2) {
-                    return true;
-                }
-            } else if (!validCase(i, j) && validCase(i, j - 1)) {
+            if (compareValues(i, j, i, j - 1)) {
                 return true;
             }
         }
@@ -68,19 +88,19 @@ bool Model::canMoveRight() {
     return false;
 }
 
-/** Vérifie si des mouvements en haut peuvent se faire.
- * @return b booléen : true si au moins un mouvement en haut est possible, false sinon.
+/**
+ * Vérifie pour chaque colonne en comparant deux à deux les nombres
+ * pour voir si un mouvement à droite est possible.
+ * On compare les éléments d'indices ( i ) et ( i + 1 ).
+ * On vérifie si un espace avec un élément après ( entre 0 et lines - 2 inclus )
+ * ou deux éléments égaux près l'un de l'autre ( entre 0 et lines - 1 inclus )
+ * 
+ * @return true si un mouvement à gauche est possible, false sinon.
  **/
 bool Model::canMoveUp() {
     for (int j = 0; j < columns; j++) {
         for (int i = 0; i < lines - 1; i++) {
-            if (validCase(i, j) && validCase(i + 1, j)) {
-                int value1 = getCase(i, j).getValue();
-                int value2 = getCase(i + 1, j).getValue();
-                if (value1 == value2) {
-                    return true;
-                }
-            } else if (!validCase(i, j) && validCase(i + 1, j)) {
+            if (compareValues(i, j, i + 1, j)) {
                 return true;
             }
         }
@@ -88,19 +108,19 @@ bool Model::canMoveUp() {
     return false;
 }
 
-/** Vérifie si des mouvements en bas peuvent se faire.
- * @return b booléen : true si au moins un mouvement en bas est possible, false sinon.
+/**
+ * Vérifie pour chaque colonne en comparant deux à deux les nombres
+ * pour voir si un mouvement à droite est possible.
+ * On compare les éléments d'indices ( i ) et ( i - 1 ).
+ * On vérifie si un espace avec un élément après ( entre 1 et lines - 1 inclus )
+ * ou deux éléments égaux près l'un de l'autre ( entre 0 et lines - 1 inclus )
+ * 
+ * @return true si un mouvement à gauche est possible, false sinon.
  **/
 bool Model::canMoveDown() {
     for (int j = 0; j < columns; j++) {
         for (int i = lines - 1; i > 0; i--) {
-            if (validCase(i, j) && validCase(i - 1, j)) {
-                int value1 = getCase(i, j).getValue();
-                int value2 = getCase(i - 1, j).getValue();
-                if (value1 == value2) {
-                    return true;
-                }
-            } else if (!validCase(i, j) && validCase(i - 1, j)) {
+            if (compareValues(i, j, i - 1, j)) {
                 return true;
             }
         }
@@ -108,50 +128,47 @@ bool Model::canMoveDown() {
     return false;
 }
 
-/** Vérifie si des mouvements horizontales ou verticales peuvent se faire.
- * @return b booléen : true si au moins un mouvement horizontale ou verticale est possible, false sinon.
+/** 
+ * Vérifie si au moins un mouvement en générale peut se faire en utilisant
+ * les 4 fonctions de mouvement.
+ * 
+ * @return true si au moins un mouvement est possible, false sinon.
  **/
 bool Model::canMove() {
     return canMoveLeft() || canMoveRight() || canMoveUp() || canMoveDown();
 }
 
-/*
-void Model::moveRangeGeneral(int i1, int j1, int i2, int j2) {
-    Case& caseObjet1 = getCase(i1, j1);
-    int value = caseObjet1.getValue();
-    Case caseObjet0(i2, j2);
-    MoveEvent event(value, -1, i1, j1, i2, j2);
-    caseObjet1.addAnimation(event);
-    caseObjet0.addAnimations(caseObjet1);
-    removeCase(caseObjet1);
-    caseObjet0.setValue(value);
-    cases.push_back(caseObjet0);
-}
-*/
+// FONCTIONS DE MOUVEMENT
 
-/*
-bool Model::addValues(int i1, int j1, int i2, int j2) {
-    if (validCase(i1, j1) && validCase(i2, j2)) {
-        Case& caseObjet1 = getCase(i1, j1);
-        Case& caseObjet2 = getCase(i2, j2);
-        if (caseObjet1.getValue() == caseObjet2.getValue()) {
-            int value = caseObjet2.getValue() * 2;
-            score += value;
-            MoveEvent event(caseObjet2.getValue(), value, i2, j2, i1, j1);
-            caseObjet2.addAnimation(event);
-            caseObjet1.addAnimations(caseObjet2);
-            removeCase(caseObjet2);
-            caseObjet1.setValue(value);
-            return true;
-        }
-    }
-    return false;
-}
-*/
+/**
+ * Déplace un case vers une case vide dans le plateau.
+ * 
+ * @param i1 l'indice i du premier élément
+ * @param j1 l'indice j du premier élément
+ * @param i2 l'indice i de la case vide
+ * @param j2 l'indice j de la case vide
+ */
+void Model::moveCase(int i1, int j1, int i2, int j2) {
+    Case& firstCase = getCase(i1, j1);
+    int value = firstCase.getValue();
+    Case emptyCase(i2, j2);
+    emptyCase.setValue(value);
 
-/** Décale depuis l'indice startIndex jusqu'à l'indice endIndex exclu les valeurs d'un tableau.
- * @param i l'indice de la ligne dans le tableau
- * @param startIndex l'indice de début.
+    MoveEvent event(value, false, i1, j1, i2, j2);
+    emptyCase.addAnimation(event);
+    emptyCase.addAnimations(firstCase);
+    removeCase(firstCase);
+    
+    cases.push_back(emptyCase);
+}
+
+/** 
+ * Décale depuis l'indice startIndex jusqu'à l'indice endIndex exclu les valeurs d'un tableau
+ * vers la gauche. Garde le dernier indice d'une cas vide, et déplace les valeurs différents de 0
+ * sur ses indices.
+ * 
+ * @param i l'indice de la ligne dans le plateau.
+ * @param startIndex l'indice de début inclu.
  * @param endIndex l'indice de fin exclu.
  **/
 void Model::moveLeftRange(int i, int startIndex, int endIndex) {
@@ -163,67 +180,21 @@ void Model::moveLeftRange(int i, int startIndex, int endIndex) {
             }
         } else {
             if (first0Index != -1) {
-                Case& caseObjet1 = getCase(i, j);
-                int value = caseObjet1.getValue();
-                Case caseObjet0(i, first0Index);
-                MoveEvent event(value, -1, i, j, i, first0Index);
-                caseObjet1.addAnimation(event);
-                caseObjet0.addAnimations(caseObjet1);
-                removeCase(caseObjet1);
-                caseObjet0.setValue(value);
-                cases.push_back(caseObjet0);
+                moveCase(i, j, i, first0Index);
                 first0Index += 1;
             }
         }
     }
 }
 
-/** Rajoute vers la gauche les cases avec les memes valeurs.
- * @param i l'indice de la ligne dans le tableau
- **/
-void Model::addLeftValues(int i) {
-    cout << "----" << endl;
-    printPlateau();
-    cout << "Left" << endl;
-    int j = 0;
-    while (j < columns - 1) {
-        if (validCase(i, j) && validCase(i, j + 1)) {
-            Case& caseObjet1 = getCase(i, j);
-            Case& caseObjet2 = getCase(i, j + 1);
-            cout << "--" << endl;
-            cout << "i: " << i << "; j + 1: " << j + 1 << endl;
-            if (caseObjet1.getValue() == caseObjet2.getValue()) {
-                cout << "Values ==" << endl;
-                int value = caseObjet2.getValue() * 2;
-                caseObjet1.setValue(value);
-                score += value;
-                MoveEvent event(caseObjet2.getValue(), value, i, j + 1, i, j);
-                caseObjet2.addAnimation(event);
-                caseObjet1.addAnimations(caseObjet2);
-                removeCase(caseObjet2);
-                moveLeftRange(i, j + 1, columns);
-            }
-            cout << "--" << endl;
-        }      
-        j++;
-    }
-    printPlateau();
-    cout << "----" << endl;
-}
-
-/** Fait le mouvement de gauche dans la table.
- **/
-void Model::moveLeft() {
-    for (int i = 0; i < lines; i++) {
-        moveLeftRange(i, 0, columns);
-        addLeftValues(i);
-    }
-}
-
-/** Décale depuis l'indice startIndex jusqu'à l'indice endIndex exclu les valeurs d'un tableau.
- * @param i l'indice de la ligne dans le tableau
- * @param startIndex l'indice de début.
- * @param endIndex l'indice de fin.
+/** 
+ * Décale depuis l'indice startIndex jusqu'à l'indice endIndex exclu les valeurs d'un tableau
+ * vers la droite. Garde le dernier indice d'une cas vide, et déplace les valeurs différents de 0
+ * sur ses indices.
+ * 
+ * @param i l'indice de la ligne dans le plateau.
+ * @param startIndex l'indice de début inclu.
+ * @param endIndex l'indice de fin exclu.
  **/
 void Model::moveRightRange(int i, int startIndex, int endIndex) {
     int first0Index = -1;
@@ -233,57 +204,20 @@ void Model::moveRightRange(int i, int startIndex, int endIndex) {
                 first0Index = j;
             }
         } else if (first0Index != -1) {
-            Case& caseObjet1 = getCase(i, j);
-            int value = caseObjet1.getValue();
-            Case caseObjet0(i, first0Index);
-            MoveEvent event(value, -1, i, j, i, first0Index);
-            caseObjet1.addAnimation(event);
-            caseObjet0.addAnimations(caseObjet1);
-            removeCase(caseObjet1);
-            caseObjet0.setValue(value);
-            cases.push_back(caseObjet0);
+            moveCase(i, j, i, first0Index);
             first0Index -= 1;
         }
     }
 }
 
-/** Rajoute vers la droite les cases avec les memes valeurs.
- * @param i l'indice de la ligne dans le tableau
- **/
-void Model::addRightValues(int i) {
-    int j = columns - 1;
-    while (j > 0) {
-        if (validCase(i, j) && validCase(i, j - 1)) {
-            Case& caseObjet1 = getCase(i, j);
-            Case& caseObjet2 = getCase(i, j - 1);
-            if (caseObjet1.getValue() == caseObjet2.getValue()) {
-                int value = caseObjet2.getValue() * 2;
-                caseObjet1.setValue(value);
-                score += value;
-                MoveEvent event(caseObjet2.getValue(), value, i, j - 1, i, j);
-                caseObjet2.addAnimation(event);
-                caseObjet1.addAnimations(caseObjet2);
-                removeCase(caseObjet2);
-                moveRightRange(i, 0, j - 1);
-            }
-        }  
-        j--;
-    } 
-}
-
-/** Fait le mouvement de droite dans la table.
- **/
-void Model::moveRight() {
-    for (int i = 0; i < lines; i++) {
-        moveRightRange(i, 0, columns);
-        addRightValues(i);
-    }
-}
-
-/** Décale depuis l'indice startIndex jusqu'à l'indice endIndex exclu les valeurs d'un tableau.
- * @param i l'indice de la ligne dans le tableau
- * @param startIndex l'indice de début.
- * @param endIndex l'indice de fin.
+/** 
+ * Décale depuis l'indice startIndex jusqu'à l'indice endIndex exclu les valeurs d'un tableau
+ * vers le haut. Garde le dernier indice d'une cas vide, et déplace les valeurs différents de 0
+ * sur ses indices.
+ * 
+ * @param j l'indice de la colonne dans le plateau.
+ * @param startIndex l'indice de début inclu.
+ * @param endIndex l'indice de fin exclu.
  **/
 void Model::moveUpRange(int j, int startIndex, int endIndex) {
     int first0Index = -1;
@@ -293,58 +227,20 @@ void Model::moveUpRange(int j, int startIndex, int endIndex) {
                 first0Index = i;
             }
         } else if (first0Index != -1) {
-            Case& caseObjet1 = getCase(i, j);
-            int value = caseObjet1.getValue();
-            Case caseObjet0(first0Index, j);
-            MoveEvent event(value, -1, i, j, first0Index, j);
-            caseObjet1.addAnimation(event);
-            caseObjet0.addAnimations(caseObjet1);
-            removeCase(caseObjet1);
-            caseObjet0.setValue(value);
-            cases.push_back(caseObjet0);
+            moveCase(i, j, first0Index, j);
             first0Index += 1;
         }
     }
 }
 
-/** Rajoute vers la droite les cases avec les memes valeurs.
- * @param i l'indice de la ligne dans le tableau
- * @param t le tableau.
- **/
-void Model::addUpValues(int j) {
-    int i = 1;
-    while (i < lines - 1) {
-        if (validCase(i, j) && validCase(i - 1, j)) {
-            Case& caseObjet1 = getCase(i - 1, j);
-            Case& caseObjet2 = getCase(i, j);
-            if (caseObjet1.getValue() == caseObjet2.getValue()) {
-                int value = caseObjet2.getValue() * 2;
-                caseObjet1.setValue(value);
-                score += value;
-                MoveEvent event(caseObjet2.getValue(), value, i, j, i - 1, j);
-                caseObjet2.addAnimation(event);
-                caseObjet1.addAnimations(caseObjet2);
-                removeCase(caseObjet2);
-                moveUpRange(j, i, lines);
-            }
-        }  
-        i++;
-    } 
-}
-
-/** Fait le mouvement de bas dans la table.
- **/
-void Model::moveUp() {
-    for (int j = 0; j < columns; j++) {
-        moveUpRange(j, 0, lines);
-        addUpValues(j);
-    }
-}
-
-/** Décale depuis l'indice startIndex jusqu'à l'indice endIndex exclu les valeurs d'un tableau.
- * @param i l'indice de la ligne dans le tableau
- * @param startIndex l'indice de début.
- * @param endIndex l'indice de fin.
+/** 
+ * Décale depuis l'indice startIndex jusqu'à l'indice endIndex exclu les valeurs d'un tableau
+ * vers le bas. Garde le dernier indice d'une cas vide, et déplace les valeurs différents de 0
+ * sur ses indices.
+ * 
+ * @param j l'indice de la colonne dans le plateau.
+ * @param startIndex l'indice de début inclu.
+ * @param endIndex l'indice de fin exclu.
  **/
 void Model::moveDownRange(int j, int startIndex, int endIndex) {
     int first0Index = -1;
@@ -354,18 +250,88 @@ void Model::moveDownRange(int j, int startIndex, int endIndex) {
                 first0Index = i;
             }
         } else if (first0Index != -1) {
-            Case& caseObjet1 = getCase(i, j);
-            int value = caseObjet1.getValue();
-            Case caseObjet0(first0Index, j);
-            MoveEvent event(value, -1, i, j, first0Index, j);
-            caseObjet1.addAnimation(event);
-            caseObjet0.addAnimations(caseObjet1);
-            removeCase(caseObjet1);
-            caseObjet0.setValue(value);
-            cases.push_back(caseObjet0);
+            moveCase(i, j, first0Index, j);
             first0Index -= 1;
         }
     }
+}
+
+// FONCTIONS MOUVEMENT SOMME DES CASES
+
+/**
+ * Vérifie si deux cases peuvent s'ajouter, et dans le cas que oui,
+ * l'addition de la case de départ ( première case ) vers la case
+ * d'arrivée ( deuxième case ) se réalise.
+ * 
+ * @param i1 l'indice i de la case de départ.
+ * @param j1 l'indice j de la case de départ.
+ * @param i2 l'indice i de la case d'arrivé.
+ * @param j2 l'indice j de la case d'arrivé.
+ */
+bool Model::addCases(int i1, int j1, int i2, int j2) {
+    if (validCase(i1, j1) && validCase(i2, j2)) {
+        Case& caseStart = getCase(i1, j1);
+        Case& caseEnd = getCase(i2, j2);
+        if (caseStart.getValue() == caseEnd.getValue()) {
+            int value = caseStart.getValue() * 2;
+            caseEnd.setValue(value);
+            score += value;
+            MoveEvent event(value / 2, true, i1, j1, i2, j2);
+            caseEnd.addAnimation(event);
+            caseEnd.addAnimations(caseStart);
+            removeCase(caseStart);
+            return true;
+        }
+    } 
+    return false;
+}
+
+/** 
+ * Rajoute les éléments l'un près de l'autres égaux de gauche vers la 
+ * droite et décale les éléments pour enlever les espaces.
+ * 
+ * @param i l'indice de la ligne dans le plateau.
+ **/
+void Model::addLeftValues(int i) {
+    int j = 0;
+    while (j < columns - 1) {
+        if (addCases(i, j + 1, i, j)) {
+            moveLeftRange(i, j + 1, columns);
+        }
+        j++;
+    }
+}
+
+/** 
+ * Rajoute les éléments l'un près de l'autres égaux de droite vers la gauche
+ * et décale les éléments pour enlever les espaces.
+ * 
+ * @param i l'indice de la ligne dans le plateau.
+ **/
+void Model::addRightValues(int i) {
+    int j = columns - 1;
+    while (j > 0) {
+        if (addCases(i, j - 1, i, j)) {
+            moveRightRange(i, 0, j);
+        }
+        j--;
+    } 
+}
+
+/** 
+ * Rajoute les éléments l'un près de l'autres égaux du haut vers le bas
+ * et décale les éléments pour enlever les espaces.
+ * 
+ * @param j l'indice de la colonne dans le plateau.
+ **/
+void Model::addUpValues(int j) {
+    int i = 0;
+    while (i < lines - 1) {
+        if (addCases(i, j, i + 1, j)) {
+            moveUpRange(j, i, lines);
+        }
+        i++;
+    } 
 }
 
 /** Rajoute vers la droite les cases avec les memes valeurs.
@@ -375,25 +341,47 @@ void Model::moveDownRange(int j, int startIndex, int endIndex) {
 void Model::addDownValues(int j) {
     int i = lines - 1;
     while (i > 0) {
-        if (validCase(i, j) && validCase(i - 1, j)) {
-            Case& caseObjet1 = getCase(i, j);
-            Case& caseObjet2 = getCase(i - 1, j);
-            if (caseObjet1.getValue() == caseObjet2.getValue()) {
-                int value = caseObjet2.getValue() * 2;
-                caseObjet1.setValue(value);
-                score += value;
-                MoveEvent event(caseObjet2.getValue(), value, i, j, i - 1, j);
-                caseObjet2.addAnimation(event);
-                caseObjet1.addAnimations(caseObjet2);
-                removeCase(caseObjet2);
-                moveDownRange(j, 0, i);
-            }
-        }  
+        if (addCases(i - 1, j, i, j)) {
+            moveDownRange(j, 0, i);
+        }
         i--;
     } 
 }
 
-/** Fait le mouvement de haut dans la table.
+// FONCTIONS DE MOUVEMENT EN GÉNÉRALE
+
+/** 
+ * Fait le mouvement de gauche dans le plateau.
+ **/
+void Model::moveLeft() {
+    for (int i = 0; i < lines; i++) {
+        moveLeftRange(i, 0, columns);
+        addLeftValues(i);
+    }
+}
+
+/** 
+ * Fait le mouvement de droite dans le plateau.
+ **/
+void Model::moveRight() {
+    for (int i = 0; i < lines; i++) {
+        moveRightRange(i, 0, columns);
+        addRightValues(i);
+    }
+}
+
+/** 
+ * Fait le mouvement de haut dans le plateau.
+ **/
+void Model::moveUp() {
+    for (int j = 0; j < columns; j++) {
+        moveUpRange(j, 0, lines);
+        addUpValues(j);
+    }
+}
+
+/** 
+ * Fait le mouvement d'en bas dans le plateau.
  **/
 void Model::moveDown() {
     for (int j = 0; j < columns; j++) {
@@ -402,8 +390,14 @@ void Model::moveDown() {
     }
 }
 
-/** Fonction qui identifie les indices des cases vides (valeurs égales à 0) dans un tableau d'uplets.
- * @return tableau des uplets : premier valeur l'indice du tableau et deuxième valeur l'indice dans le tableau de la case vide.
+// LOGIQUE DES CASES ALÉATOIRES
+
+/** 
+ * Fonction qui cherche dans le plateau les cases sans 
+ * valeurs ( vides ) et en renvoie une liste des indices.
+ * 
+ * @return tableau des uplets : premier valeur l'indice du tableau et 
+ * deuxième valeur l'indice dans le tableau de la case vide.
  **/
 vector<tuple<int, int>> Model::getEmptySlots() {
     vector<tuple<int, int>> emptySlots;
@@ -417,26 +411,30 @@ vector<tuple<int, int>> Model::getEmptySlots() {
     return emptySlots;
 }
 
-/** Fonction qui rajoute un élément de manière aléatoire sur les cases vides de la table.
+/** 
+ * Fonction qui rajoute un élément de manière aléatoire sur les 
+ * cases vides de la table. Probabilité des cases : 9/10 pour une 
+ * valeur égale à 2 et 1/10 pour une valeur égale à 4.
+ * 
+ * @param amount le nombre de cases vides à mettre aléatoirement dans le plateau.
  */
 void Model::setRandomElements(int amount) {
     for (int i = 0; i < amount; i++) {
         vector<tuple<int, int>> emptySlots = getEmptySlots();
-        int k = (int) rand() % emptySlots.size(); /// Choisit un tuple de facon aléatoire
-        tuple<int, int> values = emptySlots[k]; // Choisit les indices d'une case vide de ce sous-tableau de facon aléatoire
-        int r = rand() % 10; // 90% de Chance d'Ajouter un 2, 10% de Chance d'ajouter un 4.
+        int k = (int) rand() % emptySlots.size();
+        tuple<int, int> values = emptySlots[k];
+        int r = rand() % 10;
         Case newCase(get<0>(values), get<1>(values));
         newCase.setValue(r < 9 ? 2 : 4);
         cases.push_back(newCase);
     }
 }
 
-void Model::clear() {
-    cases = {};
-    setRandomElements(2);
-}
+// FONCTIONS POUR FAIRE DÉBOGAGE
 
-/** Fonction pour afficher une ligne du plateau sous forme de tableau.
+/** 
+ * Fonction pour afficher une ligne du plateau sous forme de tableau.
+ * 
  * @param i indice de la ligne dans le plateau.
  **/
 void Model::printLine(int i) {
@@ -454,7 +452,8 @@ void Model::printLine(int i) {
     cout << "]";
 }
 
-/** Fonction pour afficher le plateau sous forme de tableau.
+/** 
+ * Fonction pour afficher le plateau sous forme de tableau.
  **/
 void Model::printPlateau() {
     cout << "[";
@@ -467,14 +466,16 @@ void Model::printPlateau() {
     cout << "]" << endl;
 }
 
-vector<Case>& Model::getCases() {
-    return cases;
-}
+// AUTRES MÉTHODES UTILES
 
-int Model::getScore() {
-    return score;
-}
-
+/** 
+ * Fonction qui vérifie si une case du plateau
+ * est non-vide, donc qu'elle existe.
+ * 
+ * @param i l'indice i de la case à vérifier.
+ * @param j l'indice j de la case à vérifier.
+ * @return true si la case existe, false sinon.
+ **/
 bool Model::validCase(int i, int j) {
     for (int k = 0; k < cases.size(); k++) {
         Case& caseObjet = cases[k];
@@ -485,6 +486,14 @@ bool Model::validCase(int i, int j) {
     return false;
 }
 
+/** 
+ * Fonction qui renvoie une case du plateau.
+ * Renvoie une erreur si la case est invalide.
+ * 
+ * @param i l'indice i de la case.
+ * @param j l'indice j de la case.
+ * @return la case d'indices i,j.
+ **/
 Case& Model::getCase(int i, int j) {
     for (int k = 0; k < cases.size(); k++) {
         Case& caseObjet = cases[k];
@@ -492,10 +501,17 @@ Case& Model::getCase(int i, int j) {
             return caseObjet;
         }
     }
-    cout << "Case error" << endl;
+    cerr << "Case error : case index i : " << i << "; j : " << j << "; not valid." << endl;
+    throw __throw_runtime_error;
     return cases[0];
 }
 
+/** 
+ * Fonction pour vérifier les animations
+ * des cases en cours.
+ * 
+ * @return le nombre des cases en animation.
+ **/
 int Model::getCasesInAnimation() {
     int n = 0;
     for (Case caseObjet : cases) {
@@ -506,6 +522,11 @@ int Model::getCasesInAnimation() {
     return n;
 }
 
+/** 
+ * Fonction pour enlever une case du plateau.
+ * 
+ * @param caseObjet la case du plateau.
+ **/
 void Model::removeCase(Case& caseObjet) {
     int i = caseObjet.getIndexI();
     int j = caseObjet.getIndexJ();
@@ -517,6 +538,25 @@ void Model::removeCase(Case& caseObjet) {
             ++it;
         }
     }
+}
+
+/** 
+ * Fonction pour enlever toutes les valeurs dans le plateau
+ * et mettre deux valeurs aléatoires. ( Pour redémarrer le jeu ).
+ */
+void Model::clear() {
+    cases = {};
+    setRandomElements(2);
+}
+
+// FONCTIONS GET
+
+vector<Case>& Model::getCases() {
+    return cases;
+}
+
+int Model::getScore() {
+    return score;
 }
 
 int Model::getLines() {

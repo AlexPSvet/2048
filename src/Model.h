@@ -10,35 +10,42 @@ class Model {
         // Class constructor
         Model();
         Model(int lines, int columns);
-        // Move methods
-        bool canMoveGeneral(int i1, int j1, int i2, int j2);
+
+        // Can move methos
+        bool compareValues(int i1, int j1, int i2, int j2);
         bool canMoveLeft();
         bool canMoveRight();
         bool canMoveUp();
         bool canMoveDown();
         bool canMove();
-        bool addValues(int i1, int j1, int i2, int j2);
+
+        // Move methods
+        void moveCase(int i1, int j1, int i2, int j2);
         void moveLeftRange(int i, int startIndex, int endIndex);
-        void addLeftValues(int i);
-        void moveLeft();
         void moveRightRange(int i, int startIndex, int endIndex);
-        void addRightValues(int i);
-        void moveRight();
         void moveUpRange(int j, int startIndex, int endIndex);
-        void addUpValues(int j);
-        void moveUp();
         void moveDownRange(int j, int startIndex, int endIndex);
+        // Add cases methods
+        bool addCases(int i1, int j1, int i2, int j2);
+        void addLeftValues(int i);
+        void addRightValues(int i);
+        void addUpValues(int j);
         void addDownValues(int j);
+        // Move functions
+        void moveLeft();
+        void moveRight();
+        void moveUp();
         void moveDown();
-        // Util methods
-        void clear();
-        void removeCase(Case& caseObjet);
+
         // Cases spawn methods
         void setRandomElements(int amount);
         std::vector<std::tuple<int, int>> getEmptySlots();
+
         // Debug methods
         void printLine(int i);
         void printPlateau();
+        void clear();
+        void removeCase(Case& caseObjet);
         // Get methods
         vector<Case>& getCases();
         int getCasesInAnimation();

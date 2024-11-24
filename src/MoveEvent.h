@@ -3,10 +3,10 @@
 
 class MoveEvent {
     public:
-        MoveEvent(int startValue, int endValue, int iStart, int jStart, int iEnd, int jEnd);
+        MoveEvent(int startValue, bool isAddAnim, int iStart, int jStart, int iEnd, int jEnd);
 
-        int getStartValue();
-        int getEndValue();
+        int getValue();
+        bool isAddAnimation();
         int getjStart();
         int getiStart();
         float getCurentX();
@@ -16,8 +16,8 @@ class MoveEvent {
         int getiEnd();
         int getjEnd();
     private:
-        int startValue;
-        int endValue;
+        int value;
+        bool isAddAnim;
         int iStart;
         int jStart;
         float currentX;

@@ -57,7 +57,7 @@ void Game::drawCase(RenderWindow& window, int value, int x, int y, float xCase, 
     window.draw(text);
 }
 
-bool Game::drawAnimation(RenderWindow& window, Case& caseObjet, float xCase, float yCase, float xStart, float yStart) {
+bool Game::drawAnimation(RenderWindow& window, Case& caseObjet, float xCase, float yCase, float xStart, float yStart, float margin) {
     MoveEvent& event = caseObjet.getLastAnimation();
     int iStart = event.getiStart();
     int jStart = event.getjStart();
@@ -71,6 +71,16 @@ bool Game::drawAnimation(RenderWindow& window, Case& caseObjet, float xCase, flo
             cout << "Remove left animation" << endl;
             return true;
         }
+        // Other animations
+        vector<MoveEvent>& events = caseObjet.getEvents();
+        float xCaseEvent = xStart;
+        for (int i = 0; i < events.size(); i++) {
+            MoveEvent& event2 = events[i];
+            xCaseEvent -= (event2.getjStart() - event2.getjEnd()) * xCase - margin * (event2.getjStart() + 1);
+            if (event2.isAddAnimation()) {
+                drawCase(window, event2.getValue(), xCaseEvent, yStart, xCase, yCase);
+            }
+        }
     } else if (jStart < jEnd) {
         // Mouvement droite
         // cout << "Right" << endl;
@@ -78,6 +88,15 @@ bool Game::drawAnimation(RenderWindow& window, Case& caseObjet, float xCase, flo
         if (event.getCurentX() >= (jEnd - jStart) * xCase) {
             cout << "Remove right animation" << endl;
             return true;
+        }
+        vector<MoveEvent>& events = caseObjet.getEvents();
+        float xCaseEvent = xStart;
+        for (int i = 0; i < events.size(); i++) {
+            MoveEvent& event2 = events[i];
+            xCaseEvent += (event2.getjEnd() - event2.getjStart()) * xCase + margin * (event2.getjStart() + 1);
+            if (event2.isAddAnimation()) {
+                drawCase(window, event2.getValue(), xCaseEvent, yStart, xCase, yCase);
+            }
         }
     } else if (iStart > iEnd) {
         // Mouvement bas
@@ -87,6 +106,15 @@ bool Game::drawAnimation(RenderWindow& window, Case& caseObjet, float xCase, flo
             cout << "Remove up animation" << endl;
             return true;
         }
+        vector<MoveEvent>& events = caseObjet.getEvents();
+        float yCaseEvent = yStart;
+        for (int i = 0; i < events.size(); i++) {
+            MoveEvent& event2 = events[i];
+            yCaseEvent -= (event2.getiStart() - event2.getiEnd()) * ( yCase + (margin + 1));
+            if (event2.isAddAnimation()) {
+                drawCase(window, event2.getValue(), xStart, yCaseEvent, xCase, yCase);
+            }
+        }
     } else if (iStart < iEnd) {
         // Mouvement haut
         // cout << "Down" << endl;
@@ -95,8 +123,17 @@ bool Game::drawAnimation(RenderWindow& window, Case& caseObjet, float xCase, flo
             cout << "Remove down animation" << endl;
             return true;
         }
+        vector<MoveEvent>& events = caseObjet.getEvents();
+        float yCaseEvent = yStart;
+        for (int i = 0; i < events.size(); i++) {
+            MoveEvent& event2 = events[i];
+            yCaseEvent += (event2.getiEnd() - event2.getiStart()) * yCase + margin * (event2.getiStart() + 1);
+            if (event2.isAddAnimation()) {
+                drawCase(window, event2.getValue(), xStart, yCaseEvent, xCase, yCase);
+            }
+        }
     }
-    drawCase(window, event.getStartValue(), xStart + event.getCurentX(), yStart + event.getCurentY(), xCase, yCase);
+    drawCase(window, event.getValue(), xStart + event.getCurentX(), yStart + event.getCurentY(), xCase, yCase);
     return false;
 }
 
@@ -129,7 +166,7 @@ void Game::displayTable(RenderWindow& window) {
                     int jStart = event.getjStart();
                     int x = x_i + jStart * xCase + (jStart+1) * margin;
                     int y = y_i + iStart * yCase + (iStart+1) * margin;
-                    if (drawAnimation(window, caseObjet, xCase, yCase, x, y)) {
+                    if (drawAnimation(window, caseObjet, xCase, yCase, x, y, margin)) {
                         caseObjet.removeLastAnimation();
                         if (model.getCasesInAnimation() == 0) {
                             model.setRandomElements(1);
@@ -201,6 +238,7 @@ bool Game::checkMovement(Event event) {
         case sf::Keyboard::W:
         case sf::Keyboard::Up:
             if (model.canMoveUp()) {
+                cout << "Can move up." << endl;
                 model.moveUp();
                 return true;
             }

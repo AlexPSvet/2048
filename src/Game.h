@@ -28,10 +28,10 @@ class Game {
         void displayScore(sf::RenderWindow& window);
         sf::Color getColor(int caseNumber);
         void drawCase(sf::RenderWindow& window, int value, int x, int y, float xCase, float yCase);
-        bool drawAnimation(sf::RenderWindow& window, Case& caseObjet, float xCase, float yCase, float xStart, float yStart);
+        bool drawAnimation(sf::RenderWindow& window, Case& caseObjet, float xCase, float yCase, float xStart, float yStart, float margin);
         bool checkMovement(sf::Event event);
 
-        // Get variables
+        // Get classes
         Model getModel();
     private:
         // Graphics variables

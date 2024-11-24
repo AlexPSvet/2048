@@ -171,7 +171,7 @@ void Graphics::displayTable(RenderWindow& window) {
                     int jStart = event.getjStart();
                     int x = x_i + jStart * xCase + (jStart+1) * margin;
                     int y = y_i + iStart * yCase + (iStart+1) * margin;
-                    if (drawAnimation(caseObjet, xCase, yCase, x, y, margin)) {
+                    if (drawAnimation(window, caseObjet, xCase, yCase, x, y, margin)) {
                         caseObjet.removeLastAnimation();
                         if (model.getCasesInAnimation() == 0) {
                             model.setRandomElements(1);

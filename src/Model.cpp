@@ -150,16 +150,11 @@ bool Model::canMove() {
  */
 void Model::moveCase(int i1, int j1, int i2, int j2) {
     Case& firstCase = getCase(i1, j1);
-    int value = firstCase.getValue();
-    Case emptyCase(i2, j2);
-    emptyCase.setValue(value);
+    firstCase.setIndexI(i2);
+    firstCase.setIndexJ(j2);
 
-    MoveEvent event(value, false, i1, j1, i2, j2);
-    emptyCase.addAnimation(event);
-    emptyCase.addAnimations(firstCase);
-    removeCase(firstCase);
-    
-    cases.push_back(emptyCase);
+    MoveEvent event(firstCase.getValue(), false, i1, j1, i2, j2);
+    firstCase.addAnimation(event);
 }
 
 /** 
@@ -178,11 +173,9 @@ void Model::moveLeftRange(int i, int startIndex, int endIndex) {
             if (first0Index == -1) {
                 first0Index = j;
             }
-        } else {
-            if (first0Index != -1) {
-                moveCase(i, j, i, first0Index);
-                first0Index += 1;
-            }
+        } else if (first0Index != -1) {
+            moveCase(i, j, i, first0Index);
+            first0Index += 1;
         }
     }
 }
@@ -486,7 +479,7 @@ bool Model::validCase(int i, int j) {
     return false;
 }
 
-/** 
+/**
  * Fonction qui renvoie une case du plateau.
  * Renvoie une erreur si la case est invalide.
  * 

@@ -56,7 +56,7 @@ class Model {
         int getScore();
     private:
         vector<Case> cases;
-        int score;
+        int score = 0;
         int lines;
         int columns;
 };

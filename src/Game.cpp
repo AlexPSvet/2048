@@ -105,7 +105,7 @@ void Game::start() {
     string ans;
     cin >> ans;
     if (ans == "screen") {
-        displayWindow();
+        graphics.displayWindow();
     } else if (ans == "console") {
         while (true) {
             printConsole();

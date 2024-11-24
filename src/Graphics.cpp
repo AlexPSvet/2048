@@ -1,16 +1,21 @@
-#include <SFML/Graphics.hpp>
-#include "Game.h"
+#include "Graphics.h"
 #include <iostream>
 using namespace sf;
 
-void Game::displayBackground(RenderWindow& window) {
+Graphics::Graphics() {}
+
+Graphics::Graphics(Model& model) {
+    this->model = model;
+}
+
+void Graphics::displayBackground(RenderWindow& window) {
     Sprite sprite;
     sprite.setTextureRect(IntRect(0, 0, 800, 1000));
     sprite.setTexture(backgroundText);
     window.draw(sprite);
 }
 
-Color Game::getColor(int caseNumber) {
+Color Graphics::getColor(int caseNumber) {
     if (caseNumber == 2) {
         return Color( 204, 0, 255 );
     } else if (caseNumber == 4) {
@@ -38,7 +43,7 @@ Color Game::getColor(int caseNumber) {
     } 
 }
 
-void Game::drawCase(RenderWindow& window, int value, int x, int y, float xCase, float yCase) {
+void Graphics::drawCase(RenderWindow& window, int value, int x, int y, float xCase, float yCase) {
     RectangleShape rect(Vector2f(xCase, yCase));
     rect.setPosition(Vector2f(x, y));
     rect.setFillColor(getColor(value));
@@ -57,7 +62,7 @@ void Game::drawCase(RenderWindow& window, int value, int x, int y, float xCase, 
     window.draw(text);
 }
 
-bool Game::drawAnimation(RenderWindow& window, Case& caseObjet, float xCase, float yCase, float xStart, float yStart, float margin) {
+bool Graphics::drawAnimation(RenderWindow& window, Case& caseObjet, float xCase, float yCase, float xStart, float yStart, float margin) {
     MoveEvent& event = caseObjet.getLastAnimation();
     int iStart = event.getiStart();
     int jStart = event.getjStart();
@@ -137,7 +142,7 @@ bool Game::drawAnimation(RenderWindow& window, Case& caseObjet, float xCase, flo
     return false;
 }
 
-void Game::displayTable(RenderWindow& window) {
+void Graphics::displayTable(RenderWindow& window) {
     Vector2 size = window.getSize();
     float xRectangle = xUnit * 150;
     float yRectangle = yUnit * 120;
@@ -166,7 +171,7 @@ void Game::displayTable(RenderWindow& window) {
                     int jStart = event.getjStart();
                     int x = x_i + jStart * xCase + (jStart+1) * margin;
                     int y = y_i + iStart * yCase + (iStart+1) * margin;
-                    if (drawAnimation(window, caseObjet, xCase, yCase, x, y, margin)) {
+                    if (drawAnimation(caseObjet, xCase, yCase, x, y, margin)) {
                         caseObjet.removeLastAnimation();
                         if (model.getCasesInAnimation() == 0) {
                             model.setRandomElements(1);
@@ -183,7 +188,7 @@ void Game::displayTable(RenderWindow& window) {
     }
 }
 
-void Game::displayTitle(RenderWindow& window) {
+void Graphics::displayTitle(RenderWindow& window) {
     RectangleShape rectangle(Vector2f(xUnit * 100, yUnit * 25));
     rectangle.setFillColor(Color( 204, 8, 224 ));
     rectangle.setPosition(Vector2f(xUnit * 50, yUnit * 10));
@@ -205,8 +210,7 @@ void Game::displayTitle(RenderWindow& window) {
     window.draw(text);
 }
 
-void Game::displayScore(RenderWindow& window) {
-    // Creates text score
+void Graphics::displayScore(RenderWindow& window) {
     Text text;
     text.setFont(gameFont);
     text.setFillColor(Color( 111, 8, 97 ));
@@ -216,7 +220,6 @@ void Game::displayScore(RenderWindow& window) {
     int charAmount = text.getString().getSize();
     int textSize = textCharSize * charAmount;
 
-    // Creates background depending on text width
     Vector2 size = window.getSize();
     float xSize = textSize + xUnit * 10;
     float xUnitsLeft = ( 200 - ( xSize ) / xUnit ) / 2;
@@ -225,7 +228,6 @@ void Game::displayScore(RenderWindow& window) {
     background.setPosition(Vector2f(xUnitsLeft * xUnit, yUnit * 45));
     window.draw(background);
 
-    // Displays text
     Vector2f positionBack = background.getPosition();
     float positionX = positionBack.x + ( xSize - textSize ) / 2;
     float positionY = positionBack.y + ( ySize - textCharSize ) / 2;
@@ -233,12 +235,11 @@ void Game::displayScore(RenderWindow& window) {
     window.draw(text);
 }
 
-bool Game::checkMovement(Event event) {
+bool Graphics::checkMovement(Event event) {
     switch (event.key.code) {
         case sf::Keyboard::W:
         case sf::Keyboard::Up:
             if (model.canMoveUp()) {
-                cout << "Can move up." << endl;
                 model.moveUp();
                 return true;
             }
@@ -264,11 +265,10 @@ bool Game::checkMovement(Event event) {
                 return true;
             }
     }
-    model.printPlateau();
     return false;
 }
 
-void Game::displayWindow() {
+void Graphics::displayWindow() {
     RenderWindow window(VideoMode(600, 600), "2048");
     window.setFramerateLimit(60);
     backgroundText.loadFromFile("textures/background.png");
@@ -278,6 +278,8 @@ void Game::displayWindow() {
     Vector2u windowSize = window.getSize();
     xUnit = windowSize.x / 200;
     yUnit = windowSize.y / 200;
+
+    isValidMovement = false;
 
     while (window.isOpen()) {
         sf::Event event;
@@ -290,7 +292,7 @@ void Game::displayWindow() {
                     if (model.getCasesInAnimation() == 0) {
                         if (model.canMove()) {
                             if (checkMovement(event)) {
-                                // model.setRandomElements(1);
+                                isValidMovement = true;
                             }
                         } else {
                             model.clear();

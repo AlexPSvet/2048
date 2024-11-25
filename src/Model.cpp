@@ -260,6 +260,7 @@ void Model::moveDownRange(int j, int startIndex, int endIndex) {
  * @param j1 l'indice j de la case de départ.
  * @param i2 l'indice i de la case d'arrivé.
  * @param j2 l'indice j de la case d'arrivé.
+ * @return true si l'addition des cases se réalise, false sinon.
  */
 bool Model::addCases(int i1, int j1, int i2, int j2) {
     if (validCase(i1, j1) && validCase(i2, j2)) {
@@ -320,7 +321,7 @@ void Model::addRightValues(int i) {
 void Model::addUpValues(int j) {
     int i = 0;
     while (i < lines - 1) {
-        if (addCases(i, j, i + 1, j)) {
+        if (addCases(i + 1, j, i, j)) {
             moveUpRange(j, i, lines);
         }
         i++;
@@ -414,7 +415,7 @@ vector<tuple<int, int>> Model::getEmptySlots() {
 void Model::setRandomElements(int amount) {
     for (int i = 0; i < amount; i++) {
         vector<tuple<int, int>> emptySlots = getEmptySlots();
-        int k = (int) rand() % emptySlots.size();
+        int k = rand() % emptySlots.size();
         tuple<int, int> values = emptySlots[k];
         int r = rand() % 10;
         Case newCase(get<0>(values), get<1>(values));
@@ -515,7 +516,7 @@ int Model::getCasesInAnimation() {
     return n;
 }
 
-/** 
+/**
  * Fonction pour enlever une case du plateau.
  * 
  * @param caseObjet la case du plateau.
@@ -523,12 +524,10 @@ int Model::getCasesInAnimation() {
 void Model::removeCase(Case& caseObjet) {
     int i = caseObjet.getIndexI();
     int j = caseObjet.getIndexJ();
-    for (auto it = cases.begin(); it != cases.end(); ) {
+    for (auto it = cases.begin(); it != cases.end(); ++it) {
         if (it->getIndexI() == i && it->getIndexJ() == j) {
-            it = cases.erase(it);
+            cases.erase(it);
             return;
-        } else {
-            ++it;
         }
     }
 }

@@ -6,10 +6,7 @@
 using namespace std;
 
 // Class constructor
-Game::Game() {
-    Model model(4, 4);
-    this->model = model;
-}
+Game::Game() : model(Model(4, 4)), graphics(Graphics(model)) {}
 
 /** Retrouve le nombre le plus grand en caractères.
  * @return value la plus grande taille des numéros en chaîne de caractères.

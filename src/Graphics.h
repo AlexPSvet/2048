@@ -8,7 +8,6 @@ using namespace sf;
 
 class Graphics {
     public:
-        Graphics();
         Graphics(Model& model);
 
         void displayWindow();
@@ -28,7 +27,7 @@ class Graphics {
         sf::Texture backgroundText;
         float xUnit;
         float yUnit;
-        Model model;
+        Model& model;
         // Valid movement
         bool isValidMovement;
 };

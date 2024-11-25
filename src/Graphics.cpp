@@ -2,11 +2,7 @@
 #include <iostream>
 using namespace sf;
 
-Graphics::Graphics() {}
-
-Graphics::Graphics(Model& model) {
-    this->model = model;
-}
+Graphics::Graphics(Model& model) : model(model) {}
 
 void Graphics::displayBackground(RenderWindow& window) {
     Sprite sprite;

@@ -51,7 +51,7 @@ int Game::getMaxTextLenght() {
             }
         }
     }
-    return to_string(maxValue).size(); // Renvoie la longueur de la chaîne de caracteres equvialente au numéro
+    return to_string(maxValue).size(); // Renvoie la longueur de la chaîne de caracteres equivalente au numéro
 }
 
 /** Affiche dans la console le tableau à deux dimensions avec les bordures. 

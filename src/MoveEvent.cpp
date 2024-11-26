@@ -1,13 +1,16 @@
-#include "Game.h"
+#include "MoveEvent.h"
 
-MoveEvent::MoveEvent(int iStart, int jStart, float startX, float startY, float currentX, float currentY, int iEnd, int jEnd) : iStart(iStart), jStart(jStart), xStart(xStart), yStart(yStart), currentX(currentX), currentY(currentY), iEnd(iEnd), jEnd(jEnd) {}
-
-float MoveEvent::getStartX() {
-    return xStart;
+MoveEvent::MoveEvent(int value, bool isAddAnim, int iStart, int jStart, int iEnd, int jEnd) : value(value), isAddAnim(isAddAnim), iStart(iStart), jStart(jStart), iEnd(iEnd), jEnd(jEnd) {
+    currentX = 0;
+    currentY = 0;
 }
 
-float MoveEvent::getStartY() {
-    return yStart;
+int MoveEvent::getValue() {
+    return value;
+}
+
+bool MoveEvent::isAddAnimation() {
+    return isAddAnim;
 }
 
 int MoveEvent::getjStart() {
@@ -18,19 +21,19 @@ int MoveEvent::getiStart() {
     return iStart;
 }
 
-float MoveEvent::getCurrentX() {
+float MoveEvent::getCurentX() {
     return currentX;
 }
 
-float MoveEvent::getCurrentY() {
+float MoveEvent::getCurentY() {
     return currentY;
 }
 
-void MoveEvent::setCurrentX(float currentX) {
+void MoveEvent::setCurentX(float currentX) {
     this->currentX = currentX;
 }
 
-void MoveEvent::setCurrentY(float currentY) {
+void MoveEvent::setCurentY(float currentY) {
     this->currentY = currentY;
 }
 

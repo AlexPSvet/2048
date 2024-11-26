@@ -6,6 +6,6 @@ int main() {
 
     Game jeu2048;
     jeu2048.start();
-    
+
     return 0;
 }

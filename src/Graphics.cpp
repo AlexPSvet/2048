@@ -57,9 +57,9 @@ void Game::drawCase(RenderWindow& window, int x, int y, int i, int j, float xCas
     window.draw(text);
 }
 
-void Game::isCaseInAnimation(int i, int j) {
+bool Game::isCaseInAnimation(int i, int j) {
     for (int k = 0; k < animatedTasks.size(); k++) {
-        MoveEvent moveEvent = animatedTasks[i];
+        MoveEvent moveEvent = animatedTasks[k];
         if (moveEvent.getiStart() == i && moveEvent.getjStart() == j) {
             return true;
         }
@@ -69,7 +69,7 @@ void Game::isCaseInAnimation(int i, int j) {
 
 MoveEvent Game::getMoveEvent(int i, int j) {
     for (int k = 0; k < animatedTasks.size(); k++) {
-        MoveEvent moveEvent = animatedTasks[i];
+        MoveEvent moveEvent = animatedTasks[k];
         if (moveEvent.getiStart() == i && moveEvent.getjStart() == j) {
             return moveEvent;
         }

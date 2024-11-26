@@ -39,23 +39,41 @@ Color Graphics::getColor(int caseNumber) {
     } 
 }
 
-void Graphics::drawCase(RenderWindow& window, int value, int x, int y, float xCase, float yCase) {
-    RectangleShape rect(Vector2f(xCase, yCase));
-    rect.setPosition(Vector2f(x, y));
-    rect.setFillColor(getColor(value));
+void Graphics::drawText (
+    RenderWindow& window, 
+    std::string text, 
+    float width, float height, 
+    int x, int y, 
+    float marginWidth, float marginHeight,
+    float outline,
+    Color fillColor, Color outlineColor, Color textColor) 
+{
+    // Créer le rectangle de taille width x height
+    float widthRect = width - 2 * outline;
+    float heightRect = height - 2 * outline;
+    RectangleShape rect(Vector2f(widthRect, heightRect));
+    rect.setPosition(x + outline, y + outline);
+    rect.setFillColor(fillColor);
+    rect.setOutlineColor(outlineColor);
+    rect.setOutlineThickness(outline);
     window.draw(rect);
+    // Désinner le texte
+    Text textObject;
+    textObject.setFont(gameFont);
+    textObject.setString(text);
+    int amountChar = text.size();
+    float widthText = widthRect - 2 * marginWidth;
+    float charSizeHeight = heightRect - 2 * marginHeight;
+    float charSizeWidth = widthText / amountChar;
+    textObject.setCharacterSize(charSizeWidth > charSizeHeight ? charSizeHeight : charSizeWidth);
+    float positionX = rect.getPosition().x + ( widthRect - textObject.getCharacterSize() * amountChar ) / 2;
+    float positionY = rect.getPosition().y + ( heightRect - textObject.getCharacterSize() ) / 2;
+    textObject.setPosition(positionX, positionY);
+    window.draw(textObject);
+}
 
-    Text text;
-    text.setFont(gameFont);
-    text.setString(std::to_string(value));
-    int amountCharacters = text.getString().getSize();
-    text.setCharacterSize( (xCase - 10 * xUnit) / amountCharacters);
-    text.setFillColor(Color( 244, 169, 255 ));
-    int textSize = amountCharacters * text.getCharacterSize();
-    float positionX = x + ( xCase - textSize ) / 2;
-    float positionY = y + ( yCase - text.getCharacterSize() ) / 2;
-    text.setPosition(Vector2f(positionX, positionY));
-    window.draw(text);
+void Graphics::drawCase(RenderWindow& window, int value, float x, float y, float xCase, float yCase) {
+    drawText(window, to_string(value), xCase, yCase, x, y, xCase * 0.1, yCase * 0.1, 10, getColor(value), Color::Magenta, Color::White);
 }
 
 bool Graphics::drawAnimation(RenderWindow& window, Case& caseObjet, float xCase, float yCase, float xStart, float yStart, float margin) {
@@ -67,7 +85,7 @@ bool Graphics::drawAnimation(RenderWindow& window, Case& caseObjet, float xCase,
     if (jStart > jEnd) {
         // Mouvement gauche
         // cout << "Left" << endl;
-        event.setCurentX(event.getCurentX() - 3*xUnit);
+        event.setCurentX(event.getCurentX() - 6*xUnit);
         if (event.getCurentX() <= -(jStart - jEnd) * xCase) {
             cout << "Remove left animation" << endl;
             return true;
@@ -85,7 +103,7 @@ bool Graphics::drawAnimation(RenderWindow& window, Case& caseObjet, float xCase,
     } else if (jStart < jEnd) {
         // Mouvement droite
         // cout << "Right" << endl;
-        event.setCurentX(event.getCurentX() + 3*xUnit);
+        event.setCurentX(event.getCurentX() + 6*xUnit);
         if (event.getCurentX() >= (jEnd - jStart) * xCase) {
             cout << "Remove right animation" << endl;
             return true;
@@ -102,7 +120,7 @@ bool Graphics::drawAnimation(RenderWindow& window, Case& caseObjet, float xCase,
     } else if (iStart > iEnd) {
         // Mouvement bas
         // cout << "Up" << endl;
-        event.setCurentY(event.getCurentY() - 3*xUnit);
+        event.setCurentY(event.getCurentY() - 6*xUnit);
         if (event.getCurentY() <= -(iStart - iEnd) * yCase) {
             cout << "Remove up animation" << endl;
             return true;
@@ -119,7 +137,7 @@ bool Graphics::drawAnimation(RenderWindow& window, Case& caseObjet, float xCase,
     } else if (iStart < iEnd) {
         // Mouvement haut
         // cout << "Down" << endl;
-        event.setCurentY(event.getCurentY() + 3*yUnit);
+        event.setCurentY(event.getCurentY() + 6*yUnit);
         if (event.getCurentY() >= (iEnd - iStart) * yCase) {
             cout << "Remove down animation" << endl;
             return true;
@@ -233,29 +251,29 @@ void Graphics::displayScore(RenderWindow& window) {
 
 bool Graphics::checkMovement(Event event) {
     switch (event.key.code) {
-        case sf::Keyboard::W:
-        case sf::Keyboard::Up:
+        case Keyboard::W:
+        case Keyboard::Up:
             if (model.canMoveUp()) {
                 model.moveUp();
                 return true;
             }
             break;
-        case sf::Keyboard::A:
-        case sf::Keyboard::Left:
+        case Keyboard::A:
+        case Keyboard::Left:
             if (model.canMoveLeft()) {
                 model.moveLeft();
                 return true;
             }
             break;
-        case sf::Keyboard::S:
-        case sf::Keyboard::Down:
+        case Keyboard::S:
+        case Keyboard::Down:
             if (model.canMoveDown()) {
                 model.moveDown();
                 return true;
             }
             break;
-        case sf::Keyboard::D:
-        case sf::Keyboard::Right:
+        case Keyboard::D:
+        case Keyboard::Right:
             if (model.canMoveRight()) {
                 model.moveRight();
                 return true;
@@ -278,13 +296,13 @@ void Graphics::displayWindow() {
     isValidMovement = false;
 
     while (window.isOpen()) {
-        sf::Event event;
+        Event event;
         while (window.pollEvent(event)) {
             switch (event.type) {
-                case sf::Event::Closed:
+                case Event::Closed:
                     window.close();
                     break;
-                case sf::Event::KeyPressed:
+                case Event::KeyPressed:
                     if (model.getCasesInAnimation() == 0) {
                         if (model.canMove()) {
                             if (checkMovement(event)) {

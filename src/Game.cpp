@@ -32,11 +32,10 @@ void Game::printConsole() {
 
     cout << "Score actuel: " << model.getScore() << endl;
 
-    string border = "";
+    string border = "*";
     for (int a = 0; a < model.getColumns(); a++){
         border += string(longMax + 3, '*'); //Ajoute une séquence de (longMax + 3) caracteres '*'
     }
-    border += "*";
 
     for (int i = 0; i < model.getLines(); i++) {
         cout << border << endl;

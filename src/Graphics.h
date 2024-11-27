@@ -20,22 +20,21 @@ class Graphics {
             Color fillColor, Color outlineColor, Color textColor);
 
         void displayWindow();
-        void displayScore(RenderWindow& window);
-        void displayTitle(RenderWindow& window);
         void displayTable(RenderWindow& window);
+        void displayInfo(RenderWindow& window);
         void displayBackground(RenderWindow& window);
 
-        void drawCase(RenderWindow& window, int value, float x, float y, float width, float height);
-        bool drawAnimation(RenderWindow& window, Case& caseObjet, float xCase, float yCase, float xStart, float yStart, float margin);
+        void drawAnimLeftDown(RenderWindow& window, Case& caseObjet, float caseLenght, float margin, float xRemove, float yRemove);
+        void drawAnimRightUp(RenderWindow& window, Case& caseObjet, float caseLenght, float margin, float xAdd, float yAdd);
+        void drawAnimation(RenderWindow& window, Case& caseObjet, float caseLenght, float margin);
+        
         Color getColor(int caseNumber);
-
         bool checkMovement(Event event);
     private:
         // Graphics variables
         Font gameFont;
         Texture backgroundText;
-        float xUnit;
-        float yUnit;
+        float unit;
         Model& model;
         // Valid movement
         bool isValidMovement;

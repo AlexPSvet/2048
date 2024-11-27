@@ -270,9 +270,11 @@ bool Model::addCases(int i1, int j1, int i2, int j2) {
             int value = caseStart.getValue() * 2;
             caseEnd.setValue(value);
             score += value;
+
             MoveEvent event(value / 2, true, i1, j1, i2, j2);
-            caseEnd.addAnimation(event);
             caseEnd.addAnimations(caseStart);
+            caseEnd.addAnimation(event);
+            
             removeCase(caseStart);
             return true;
         }
@@ -501,19 +503,18 @@ Case& Model::getCase(int i, int j) {
 }
 
 /** 
- * Fonction pour vérifier les animations
- * des cases en cours.
+ * Fonction pour vérifier s'il reste au moins
+ * une case en animation.
  * 
- * @return le nombre des cases en animation.
+ * @return true si au moins une case en animation, false sinon.
  **/
-int Model::getCasesInAnimation() {
-    int n = 0;
+bool Model::isCasesInAnimation() {
     for (Case caseObjet : cases) {
         if (caseObjet.hasAnimation()) {
-            n += 1;
+            return true;
         } 
     }
-    return n;
+    return false;
 }
 
 /**

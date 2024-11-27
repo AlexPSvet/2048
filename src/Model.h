@@ -48,7 +48,7 @@ class Model {
         void removeCase(Case& caseObjet);
         // Get methods
         vector<Case>& getCases();
-        int getCasesInAnimation();
+        bool isCasesInAnimation();
         Case& getCase(int i, int j);
         bool validCase(int i, int j);
         int getLines();

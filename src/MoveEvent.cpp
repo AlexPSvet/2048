@@ -21,6 +21,22 @@ int MoveEvent::getiStart() {
     return iStart;
 }
 
+float MoveEvent::getStartX() {
+    return xStart;
+}
+
+float MoveEvent::getStartY() {
+    return yStart;
+}
+
+void MoveEvent::setStartX(float xStart) {
+    this->xStart = xStart;
+}
+
+void MoveEvent::setStartY(float yStart) {
+    this->yStart = yStart;
+}
+
 float MoveEvent::getCurentX() {
     return currentX;
 }

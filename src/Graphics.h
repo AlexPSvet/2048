@@ -8,7 +8,7 @@ using namespace sf;
 
 class Graphics {
     public:
-        Graphics(Model& model);
+        Graphics(Model& game);
 
         void drawText(
             RenderWindow& window, 
@@ -19,7 +19,7 @@ class Graphics {
             float outline,
             Color fillColor, Color outlineColor, Color textColor);
 
-        void displayWindow();
+        void displayGame();
         void displayTable(RenderWindow& window);
         void displayInfo(RenderWindow& window);
         void displayBackground(RenderWindow& window);
@@ -31,11 +31,11 @@ class Graphics {
         Color getColor(int caseNumber);
         bool checkMovement(Event event);
     private:
+        Model& model;
         // Graphics variables
         Font gameFont;
         Texture backgroundText;
         float unit;
-        Model& model;
         // Valid movement
         bool isValidMovement;
 };

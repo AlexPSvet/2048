@@ -5,29 +5,34 @@
 #include "MoveEvent.h"
 #include "Case.h"
 #include "Model.h"
+#include "Console.h"
 #include "Graphics.h"
-#include <string>
 #include <vector>
+#include <fstream>
+#include <sstream>
 using namespace std;
 
 class Game {
     public:
-        Game();
+        Game(string pathFile);
 
-        // Game screen functions
         void start();
-        bool validMovement();
-        string verifyAnswer();
-        void printConsole();
-        int getMaxTextLenght();
+        void restart();
 
         // Get classes
-        Model getModel();
-        Graphics getGraphics();
+        Model& getModel();
+        Graphics& getGraphics();
+        Console& getConsole();
     private:
         // Logic variables
         Model model;
         Graphics graphics;
+        Console console;
+
+        // Related score
+        string pathFile;
+        int getBestScoreFile();
+        void setBestScoreFile(int bestScore);
 
         // General variables
         vector<Case> cases;

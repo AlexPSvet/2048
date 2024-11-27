@@ -8,7 +8,6 @@ using namespace std;
 class Model {
     public:
         // Class constructor
-        Model();
         Model(int lines, int columns);
 
         // Can move methos
@@ -50,13 +49,18 @@ class Model {
         vector<Case>& getCases();
         bool isCasesInAnimation();
         Case& getCase(int i, int j);
+        void updateScore();
         bool validCase(int i, int j);
+        int getBestScore();
+        void setBestScore(int bestScore);
         int getLines();
         int getColumns();
         int getScore();
+        void setScore(int score);
     private:
         vector<Case> cases;
         int score = 0;
+        int bestScore;
         int lines;
         int columns;
 };

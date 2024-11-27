@@ -2,9 +2,7 @@
 #include <iostream>
 using namespace sf;
 
-Graphics::Graphics(Model& model) : model(model) {
-    this->model = model;
-}
+Graphics::Graphics(Model& model) : model(model) {}
 
 void Graphics::displayBackground(RenderWindow& window) {
     Sprite sprite;
@@ -212,17 +210,17 @@ void Graphics::displayInfo(RenderWindow& window) {
         100 * unit, 70 * unit, 
         150 * unit, 22.5 * unit, 
         5 * unit, 7 * unit,
-        3 * unit,
+        10 * unit,
         Color( 204, 8, 224 ), Color( 99, 22, 89 ),
         Color( 111, 8, 97 ));
     // Best Score
     drawText(
         window, 
-        "Best Score : 0", 
+        "Best : " + to_string(model.getBestScore()), 
         160 * unit, 50 * unit, 
         20 * unit, 105 * unit, 
         2 * unit, 2 * unit,
-        2 * unit,
+        15 * unit,
         Color( 236, 6, 132 ), Color( 139, 12, 105 ),
         Color( 255, 255, 255 ));
     // Score
@@ -232,7 +230,7 @@ void Graphics::displayInfo(RenderWindow& window) {
         160 * unit, 50 * unit, 
         220 * unit, 105 * unit, 
         2 * unit, 2 * unit,
-        2 * unit,
+        15 * unit,
         Color( 213, 183, 227 ), Color( 141, 98, 161 ),
         Color( 255, 255, 255 ));
 }
@@ -270,7 +268,7 @@ bool Graphics::checkMovement(Event event) {
     return false;
 }
 
-void Graphics::displayWindow() {
+void Graphics::displayGame() {
     RenderWindow window(VideoMode(600, 600), "2048");
     window.setFramerateLimit(60);
     backgroundText.loadFromFile("textures/background.png");
@@ -291,12 +289,13 @@ void Graphics::displayWindow() {
                     break;
                 case Event::KeyPressed:
                     if (!model.isCasesInAnimation()) {
-                        if (model.canMove()) {
-                            if (checkMovement(event)) {
-                                isValidMovement = true;
-                            }
-                        } else {
-                            model.clear();
+                        if (checkMovement(event)) {
+                            model.updateScore();
+                            isValidMovement = true;
+                        }
+                        if (!model.canMove()) {
+                            // Loose / Win screen
+                            return;
                         }
                     }
                     break;

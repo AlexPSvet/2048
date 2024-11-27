@@ -4,11 +4,6 @@
 #include "Model.h"
 using namespace std;
 
-Model::Model() {
-    lines = 0;
-    columns = 0;
-}
-
 /**
  * Constructeur de la classe Model pour toutes les fonctions
  * de logique et de mouvement du jeu.
@@ -502,6 +497,14 @@ Case& Model::getCase(int i, int j) {
     return cases[0];
 }
 
+void Model::updateScore() {
+    int bestScore = getBestScore();
+    int score = getScore();
+    if (score > bestScore) {
+        setBestScore(score);
+    }
+}
+
 /** 
  * Fonction pour vérifier s'il reste au moins
  * une case en animation.
@@ -534,12 +537,14 @@ void Model::removeCase(Case& caseObjet) {
 }
 
 /** 
- * Fonction pour enlever toutes les valeurs dans le plateau
- * et mettre deux valeurs aléatoires. ( Pour redémarrer le jeu ).
+ * Fonction pour enlever toutes les valeurs dans le plateau, rétablir
+ * le score et mettre deux valeurs aléatoires. ( Pour redémarrer le jeu ).
  */
 void Model::clear() {
     cases = {};
     setRandomElements(2);
+    score = 0;
+    bestScore = 0;
 }
 
 // FONCTIONS GET
@@ -548,8 +553,20 @@ vector<Case>& Model::getCases() {
     return cases;
 }
 
+int Model::getBestScore() {
+    return bestScore;
+}
+
+void Model::setBestScore(int bestScore) {
+    this->bestScore = bestScore;
+}
+
 int Model::getScore() {
     return score;
+}
+
+void Model::setScore(int score) {
+    this->score = score;
 }
 
 int Model::getLines() {

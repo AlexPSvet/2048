@@ -35,7 +35,7 @@ void Game::setBestScoreFile(int bestScore) {
  * aléatoires et demande à l'utilisateur les mouvements. 
  **/
 void Game::start() {
-    model.clear();
+    model.restart();
     while (true) {
         cout << "Game type (screen, console): ";
         model.setBestScore(getBestScoreFile());
@@ -47,12 +47,8 @@ void Game::start() {
             console.displayGame();
         }
         setBestScoreFile(model.getBestScore());
-        restart();
+        model.restart();
     }
-}
-
-void Game::restart() {
-    model.clear();
 }
 
 Model& Game::getModel() {

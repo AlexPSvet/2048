@@ -3,7 +3,8 @@
 
 class MoveEvent {
     public:
-        MoveEvent(int value, bool isAddAnim, int iStart, int jStart, int iEnd, int jEnd);
+        MoveEvent();
+        MoveEvent(int value, bool isAddAnim, bool canEndMoveAfter, int iStart, int jStart, int iEnd, int jEnd);
 
         int getValue();
         int getjStart();
@@ -12,6 +13,7 @@ class MoveEvent {
         int getjEnd();
 
         bool isAddAnimation();
+        bool canMoveAfter();
         float getCurentX();
         float getCurentY();
         float getStartX();
@@ -23,6 +25,7 @@ class MoveEvent {
     private:
         int value;
         bool isAddAnim;
+        bool canEndMoveAfter;
         int iStart;
         int jStart;
         float xStart;

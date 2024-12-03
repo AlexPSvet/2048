@@ -18,7 +18,7 @@ class Case {
         void setIndexJ(int j);
 
         MoveEvent& getLastAnimation();
-        void removeLastAnimation();
+        void removeAnimation(int i);
         bool hasAnimation();
         void addAnimation(MoveEvent event);
         void addAnimations(Case& caseObjet);

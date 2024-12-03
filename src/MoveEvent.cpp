@@ -1,8 +1,27 @@
 #include "MoveEvent.h"
 
-MoveEvent::MoveEvent(int value, bool isAddAnim, int iStart, int jStart, int iEnd, int jEnd) : value(value), isAddAnim(isAddAnim), iStart(iStart), jStart(jStart), iEnd(iEnd), jEnd(jEnd) {
-    currentX = 0;
-    currentY = 0;
+MoveEvent::MoveEvent() {}
+
+MoveEvent::MoveEvent(
+    int value, 
+    bool isAddAnim, 
+    bool canEndMoveAfter,
+    int iStart, 
+    int jStart, 
+    int iEnd, 
+    int jEnd) : 
+    value(value), 
+    isAddAnim(isAddAnim), 
+    canEndMoveAfter(canEndMoveAfter),
+    iStart(iStart), 
+    jStart(jStart), 
+    iEnd(iEnd), 
+    jEnd(jEnd)
+{
+    xStart = -1;
+    yStart = -1;
+    currentX = -1;
+    currentY = -1;
 }
 
 int MoveEvent::getValue() {
@@ -11,6 +30,10 @@ int MoveEvent::getValue() {
 
 bool MoveEvent::isAddAnimation() {
     return isAddAnim;
+}
+
+bool MoveEvent::canMoveAfter() {
+    return canEndMoveAfter;
 }
 
 int MoveEvent::getjStart() {

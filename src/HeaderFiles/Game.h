@@ -1,12 +1,12 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include <SFML/Graphics.hpp>
-#include "MoveEvent.h"
 #include "Case.h"
 #include "Model.h"
-#include "Console.h"
 #include "Graphics.h"
+#include "Console.h"
+#include "MoveEvent.h"
+#include <iostream>
 #include <vector>
 #include <fstream>
 #include <sstream>
@@ -17,7 +17,6 @@ class Game {
         Game(string pathFile);
 
         void start();
-        void restart();
 
         // Get classes
         Model& getModel();
@@ -28,7 +27,7 @@ class Game {
         Model model;
         Graphics graphics;
         Console console;
-
+        
         // Related score
         string pathFile;
         int getBestScoreFile();

@@ -73,8 +73,8 @@ MoveEvent& Case::getLastAnimation() {
     return events[0];
 }
 
-void Case::removeLastAnimation() {
-    events.erase(events.begin());
+void Case::removeAnimation(int i) {
+    events.erase(events.begin() + i);
 }
 
 bool Case::hasAnimation() {

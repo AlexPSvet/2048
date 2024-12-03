@@ -2,7 +2,6 @@
 #define GRAPHICS_H
 
 #include <SFML/Graphics.hpp>
-#include "Case.h"
 #include "Model.h"
 using namespace sf;
 
@@ -20,22 +19,38 @@ class Graphics {
             Color fillColor, Color outlineColor, Color textColor);
 
         void displayGame();
-        void displayTable(RenderWindow& window);
+        void updateUnits(RenderWindow& window);
+
+        void drawRestartMenu(RenderWindow& window);
+        void checkButtons(RenderWindow& window);
+
+        void updateGame(RenderWindow& window);
+
+        void displayTable(RenderWindow& window, float timeElapsed);
         void displayInfo(RenderWindow& window);
         void displayBackground(RenderWindow& window);
 
-        void drawAnimLeftDown(RenderWindow& window, Case& caseObjet, float caseLenght, float margin, float xRemove, float yRemove);
-        void drawAnimRightUp(RenderWindow& window, Case& caseObjet, float caseLenght, float margin, float xAdd, float yAdd);
-        void drawAnimation(RenderWindow& window, Case& caseObjet, float caseLenght, float margin);
+        bool endAnimation(Case& caseObjet, int i, float xEnd, float yEnd);
+        void checkAnimation(RenderWindow& window, Case& caseObjet, float caseLenght, float margin, float timeElapsed);
+        void drawAnimation(RenderWindow& window, Case& caseObjet, float caseLenght, float margin, float x, float y);
         
-        Color getColor(int caseNumber);
+        sf::Color getColor(int caseNumber);
         bool checkMovement(Event event);
+
+        bool isCasesInAnimation();
     private:
         Model& model;
         // Graphics variables
         Font gameFont;
         Texture backgroundText;
         float unit;
+        float xRectangle;
+        float yRectangle;
+        float rectangleLenght;
+        float caseLenght;
+        float caseMargin;
+        // Animation
+        Clock clock;
         // Valid movement
         bool isValidMovement;
 };

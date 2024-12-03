@@ -16,7 +16,8 @@ int Game::getBestScoreFile() {
         entier >> value;
         return value;
     } else {
-        throw runtime_error("Erreur : fichier non valide ou indisponible au programme.");
+        cerr << "Erreur: fichier non valide ou indisponible au programme";
+        return 0;
     }
 }
 
@@ -27,7 +28,7 @@ void Game::setBestScoreFile(int bestScore) {
         scoreFile << bestScore;
         scoreFile.close();
     } else {
-        throw runtime_error("Erreur : fichier non valide ou indisponible au programme.");
+        cerr << "Erreur: fichier non valide ou indisponible au programme";
     }
 }
 

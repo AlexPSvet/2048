@@ -1,5 +1,5 @@
 TARGET_EXEC := 2048
-PATH_ROOT := /home/alex/Documents/Projet-2048/2048
+PATH_ROOT := /home/andresfsanchez0310/Documents/2048
 SRC_DIR := $(PATH_ROOT)/src
 BUILD_DIR := $(PATH_ROOT)/target
 INCLUDE := $(PATH_ROOT)/include
@@ -7,7 +7,7 @@ LIB := $(PATH_ROOT)/lib
 
 CXX := g++
 CXXFLAGS := -I$(SRC_DIR)/HeaderFiles
-SFML_FLAG := -lsfml-graphics -lsfml-window -lsfml-system
+SFML_FLAG := -lsfml-graphics -lsfml-windsow -lsfml-system
 
 SRCS := $(shell find $(SRC_DIR) -type f -name "*.cpp")
 OBJS := $(SRCS:$(SRC_DIR)/%.cpp=$(BUILD_DIR)/%.o)

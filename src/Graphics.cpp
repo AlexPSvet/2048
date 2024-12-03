@@ -1,12 +1,13 @@
 #include "Graphics.h"
 #include <iostream>
+#include <vector>
 using namespace sf;
 
 Graphics::Graphics(Model& model) : model(model) {}
 
 void Graphics::displayBackground(RenderWindow& window) {
     Sprite sprite;
-    sprite.setTextureRect(IntRect(0, 0, 800, 1000));
+    sprite.setTextureRect(IntRect(0, 0, 800, 800));
     sprite.setTexture(backgroundText);
     window.draw(sprite);
 }
@@ -72,181 +73,184 @@ void Graphics::drawText (
     window.draw(textObject);
 }
 
-void Graphics::drawCase(RenderWindow& window, int value, float x, float y, float xCase, float yCase) {
-    drawText(window, to_string(value), xCase, yCase, x, y, xCase * 0.1, yCase * 0.1, 10, getColor(value), Color::Magenta, Color::White);
-}
+bool Graphics::endAnimation(Case& caseObjet, int i, float xEnd, float yEnd) {
+    MoveEvent& event = caseObjet.getEvents()[0];
+    float iStart = event.getiStart();
+    float jStart = event.getjStart();
+    float iEnd = event.getiEnd();
+    float jEnd = event.getjEnd();
 
-bool Graphics::drawAnimation(RenderWindow& window, Case& caseObjet, float xCase, float yCase, float xStart, float yStart, float margin) {
-    MoveEvent& event = caseObjet.getLastAnimation();
-    int iStart = event.getiStart();
-    int jStart = event.getjStart();
-    int iEnd = event.getiEnd();
-    int jEnd = event.getjEnd();
-    if (jStart > jEnd) {
-        // Mouvement gauche
-        // cout << "Left" << endl;
-        event.setCurentX(event.getCurentX() - 6*xUnit);
-        if (event.getCurentX() <= -(jStart - jEnd) * xCase) {
-            cout << "Remove left animation" << endl;
+    if (jStart > jEnd || iStart > iEnd) {
+        // Mouvement Gauche ou Mouvement Haut
+        if ((event.getCurentX() < xEnd && yEnd == event.getStartY()) || (xEnd == event.getStartX() && event.getCurentY() < yEnd)) {
+            caseObjet.removeAnimation(i);
             return true;
         }
-        // Other animations
-        vector<MoveEvent>& events = caseObjet.getEvents();
-        float xCaseEvent = xStart;
-        for (int i = 0; i < events.size(); i++) {
-            MoveEvent& event2 = events[i];
-            xCaseEvent -= (event2.getjStart() - event2.getjEnd()) * xCase - margin * (event2.getjStart() + 1);
-            if (event2.isAddAnimation()) {
-                drawCase(window, event2.getValue(), xCaseEvent, yStart, xCase, yCase);
-            }
-        }
-    } else if (jStart < jEnd) {
-        // Mouvement droite
-        // cout << "Right" << endl;
-        event.setCurentX(event.getCurentX() + 6*xUnit);
-        if (event.getCurentX() >= (jEnd - jStart) * xCase) {
-            cout << "Remove right animation" << endl;
+    } else {
+        // Mouvement Droite ou Mouvement Bas
+        if ((event.getCurentX() > xEnd && yEnd == event.getStartY()) || (xEnd == event.getStartX() && event.getCurentY() > yEnd)) {
+            caseObjet.removeAnimation(i);
             return true;
-        }
-        vector<MoveEvent>& events = caseObjet.getEvents();
-        float xCaseEvent = xStart;
-        for (int i = 0; i < events.size(); i++) {
-            MoveEvent& event2 = events[i];
-            xCaseEvent += (event2.getjEnd() - event2.getjStart()) * xCase + margin * (event2.getjStart() + 1);
-            if (event2.isAddAnimation()) {
-                drawCase(window, event2.getValue(), xCaseEvent, yStart, xCase, yCase);
-            }
-        }
-    } else if (iStart > iEnd) {
-        // Mouvement bas
-        // cout << "Up" << endl;
-        event.setCurentY(event.getCurentY() - 6*xUnit);
-        if (event.getCurentY() <= -(iStart - iEnd) * yCase) {
-            cout << "Remove up animation" << endl;
-            return true;
-        }
-        vector<MoveEvent>& events = caseObjet.getEvents();
-        float yCaseEvent = yStart;
-        for (int i = 0; i < events.size(); i++) {
-            MoveEvent& event2 = events[i];
-            yCaseEvent -= (event2.getiStart() - event2.getiEnd()) * ( yCase + (margin + 1));
-            if (event2.isAddAnimation()) {
-                drawCase(window, event2.getValue(), xStart, yCaseEvent, xCase, yCase);
-            }
-        }
-    } else if (iStart < iEnd) {
-        // Mouvement haut
-        // cout << "Down" << endl;
-        event.setCurentY(event.getCurentY() + 6*yUnit);
-        if (event.getCurentY() >= (iEnd - iStart) * yCase) {
-            cout << "Remove down animation" << endl;
-            return true;
-        }
-        vector<MoveEvent>& events = caseObjet.getEvents();
-        float yCaseEvent = yStart;
-        for (int i = 0; i < events.size(); i++) {
-            MoveEvent& event2 = events[i];
-            yCaseEvent += (event2.getiEnd() - event2.getiStart()) * yCase + margin * (event2.getiStart() + 1);
-            if (event2.isAddAnimation()) {
-                drawCase(window, event2.getValue(), xStart, yCaseEvent, xCase, yCase);
-            }
         }
     }
-    drawCase(window, event.getValue(), xStart + event.getCurentX(), yStart + event.getCurentY(), xCase, yCase);
     return false;
 }
 
-void Graphics::displayTable(RenderWindow& window) {
-    Vector2 size = window.getSize();
-    float xRectangle = xUnit * 150;
-    float yRectangle = yUnit * 120;
-    float margin = 10.0;
-    float xCase = xRectangle / 4 - margin * 1.25;
-    float yCase = yRectangle / 4 - margin * 1.25;
-    float x_i = xUnit * 25;
-    float y_i = yUnit * 75;
+void Graphics::drawAnimation(RenderWindow& window, Case& caseObjet, float caseLenght, float margin, float xMove, float yMove) {
+    vector<MoveEvent>& events = caseObjet.getEvents();
+    bool addAnimationDone = false;
+    for (int i = 0; i < events.size(); i++) {
+        MoveEvent& event = events[i];
 
-    RectangleShape table(Vector2f(xRectangle, yRectangle));
-    float outline = 20.0;
-    y_i -= outline;
-    table.setPosition(x_i, y_i);
+        // Indices et valeurcontinue
+        int iStart = event.getiStart();
+        int jStart = event.getjStart();
+        int iEnd = event.getiEnd();
+        int jEnd = event.getjEnd();
+        int value = event.getValue();
+        // Calcul coordonnées finales
+        int signeX = xMove == 0 ? 0 : xMove / abs(xMove);
+        int signeY = yMove == 0 ? 0 : yMove / abs(yMove);
+        float xEnd = event.getStartX() + signeX * ( margin + caseLenght ) * ( abs(event.getjStart() - event.getjEnd()) );
+        float yEnd = event.getStartY() + signeY * ( margin + caseLenght ) * ( abs(event.getiEnd() - event.getiStart()) );
+
+        if (event.isAddAnimation()) {
+            drawText(window, to_string(value), caseLenght, caseLenght, xEnd, yEnd, caseLenght * 0.1, caseLenght * 0.1, unit * 2, getColor(value), Color::Magenta, Color::White);
+
+            if (i != 0) {
+                continue;
+            } else if (!addAnimationDone) {
+                addAnimationDone = true;
+            } else {
+                continue;
+            }
+        }
+
+        if (addAnimationDone && i != 0) {
+            continue;
+        }
+
+        if (endAnimation(caseObjet, i, xEnd, yEnd)) {
+            continue;
+        }
+
+        event.setCurentX(event.getCurentX() + xMove);
+        event.setCurentY(event.getCurentY() + yMove);
+
+        drawText(window, to_string(value), caseLenght, caseLenght, event.getCurentX(), event.getCurentY(), caseLenght * 0.1, caseLenght * 0.1, unit * 2, getColor(value), Color::Magenta, Color::White);
+    }
+}
+
+void Graphics::checkAnimation(RenderWindow& window, Case& caseObjet, float caseLenght, float margin, float timeElapsed) {
+    MoveEvent& event = caseObjet.getLastAnimation();
+    float iStart = event.getiStart();
+    float jStart = event.getjStart();
+    float iEnd = event.getiEnd();
+    float jEnd = event.getjEnd();
+
+    float movePixels = timeElapsed * ( 8 * unit * 60 );
+    if (jStart < jEnd) {
+        // Mouvement droite
+        drawAnimation(window, caseObjet, caseLenght, margin, movePixels, 0);
+    } else if (jStart > jEnd) {
+        // Mouvement gauche
+        drawAnimation(window, caseObjet, caseLenght, margin, - movePixels, 0);
+    } else if (iStart < iEnd) {
+        // Mouvement bas
+        drawAnimation(window, caseObjet, caseLenght, margin, 0, movePixels);
+    } else {
+        // Mouvement haut
+        drawAnimation(window, caseObjet, caseLenght, margin, 0, - movePixels);
+    }
+}
+
+void Graphics::displayTable(RenderWindow& window, float timeElapsed) {
+    Vector2 size = window.getSize();
+
+    // Draw table background
+    RectangleShape table(Vector2f(rectangleLenght, rectangleLenght));
+    float outline = 5 * unit;
+    table.setPosition(xRectangle, yRectangle);
     table.setFillColor(Color(113, 16, 66));
     table.setOutlineColor(Color(205, 54, 132));
     table.setOutlineThickness(outline);
     window.draw(table);
 
+    // Draw animation
+    int x = xRectangle + caseMargin;
+    int y = yRectangle + caseMargin;
+    for (Case& caseObjet : model.getCases()) {
+        for (MoveEvent& event : caseObjet.getEvents()) {
+            int iStart = event.getiStart();
+            int jStart = event.getjStart();
+            int iEnd = event.getiEnd();
+            int jEnd = event.getjEnd();
+            int yStart = y + iStart * ( caseMargin + caseLenght );
+            int xStart = x + jStart * ( caseMargin + caseLenght );
+            event.setStartX(xStart);
+            event.setStartY(yStart);
+            if (event.getCurentX() == -1) {
+                event.setCurentX(xStart);
+                event.setCurentY(yStart);
+            }
+        }
+        if (caseObjet.getEvents().size() != 0) {
+            checkAnimation(window, caseObjet, caseLenght, caseMargin, timeElapsed);
+            if (!isCasesInAnimation() && isValidMovement) {
+                model.setRandomElements(1);
+                model.updateScore();
+                isValidMovement = false;          
+            }
+        }
+    }
+
+    // Draw other cases
     for (int i = 0; i < model.getLines(); i++) {
         for (int j = 0; j < model.getColumns(); j++) {
             if (model.validCase(i, j)) {
                 Case& caseObjet = model.getCase(i, j);
-                if (caseObjet.hasAnimation()) {
-                    MoveEvent& event = caseObjet.getLastAnimation();
-                    int iStart = event.getiStart();
-                    int jStart = event.getjStart();
-                    int x = x_i + jStart * xCase + (jStart+1) * margin;
-                    int y = y_i + iStart * yCase + (iStart+1) * margin;
-                    if (drawAnimation(window, caseObjet, xCase, yCase, x, y, margin)) {
-                        caseObjet.removeLastAnimation();
-                        if (model.getCasesInAnimation() == 0) {
-                            model.setRandomElements(1);
-                            model.printPlateau();
-                        }
-                    }              
-                } else {
-                    int x = x_i + j * xCase + (j+1) * margin;
-                    int y = y_i + i * yCase + (i+1) * margin;
-                    drawCase(window, caseObjet.getValue(), x, y, xCase, yCase);
+                int value = caseObjet.getValue();
+                if (!caseObjet.hasAnimation()) {
+                    int x_case = x + j * ( caseMargin + caseLenght );
+                    int y_case = y + i * ( caseMargin + caseLenght );
+                    drawText(window, to_string(value), caseLenght, caseLenght, x_case, y_case, caseLenght * 0.1, caseLenght * 0.1, unit * 2, getColor(value), Color::Magenta, Color::White);
                 }
             }
         }
     }
 }
 
-void Graphics::displayTitle(RenderWindow& window) {
-    RectangleShape rectangle(Vector2f(xUnit * 100, yUnit * 25));
-    rectangle.setFillColor(Color( 204, 8, 224 ));
-    rectangle.setPosition(Vector2f(xUnit * 50, yUnit * 10));
-    rectangle.setOutlineColor(Color( 99, 22, 89 ));
-    rectangle.setOutlineThickness(15);
-    window.draw(rectangle);
-
-    Text text;
-    text.setFont(gameFont);
-    text.setString("2048");
-    text.setCharacterSize(yUnit * 25 / 2);
-    text.setFillColor(Color( 111, 8, 97 ));
-    Vector2f position = rectangle.getPosition();
-    Vector2f rectangleSize = rectangle.getSize();
-    int textSize = text.getCharacterSize() * 4;
-    float positionX = position.x + ( rectangleSize.x - textSize ) / 2;
-    float positionY = position.y + ( rectangleSize.y - text.getCharacterSize() ) / 2;
-    text.setPosition(Vector2f(positionX, positionY));
-    window.draw(text);
-}
-
-void Graphics::displayScore(RenderWindow& window) {
-    Text text;
-    text.setFont(gameFont);
-    text.setFillColor(Color( 111, 8, 97 ));
-    int textCharSize = 25;
-    text.setCharacterSize(textCharSize);
-    text.setString("Score : " + to_string(model.getScore()));
-    int charAmount = text.getString().getSize();
-    int textSize = textCharSize * charAmount;
-
-    Vector2 size = window.getSize();
-    float xSize = textSize + xUnit * 10;
-    float xUnitsLeft = ( 200 - ( xSize ) / xUnit ) / 2;
-    float ySize = yUnit * 15;
-    RectangleShape background(Vector2f(xSize, ySize));
-    background.setPosition(Vector2f(xUnitsLeft * xUnit, yUnit * 45));
-    window.draw(background);
-
-    Vector2f positionBack = background.getPosition();
-    float positionX = positionBack.x + ( xSize - textSize ) / 2;
-    float positionY = positionBack.y + ( ySize - textCharSize ) / 2;
-    text.setPosition(Vector2f(positionX, positionY));
-    window.draw(text);
+void Graphics::displayInfo(RenderWindow& window) {
+    // Title
+    drawText(
+        window, 
+        "2048", 
+        100 * unit, 70 * unit, 
+        150 * unit, 22.5 * unit, 
+        5 * unit, 5 * unit,
+        8 * unit,
+        Color( 204, 8, 224 ), Color( 99, 22, 89 ),
+        Color( 111, 8, 97 ));
+    // Best Score
+    drawText(
+        window, 
+        "Best : " + to_string(model.getBestScore()), 
+        160 * unit, 50 * unit, 
+        20 * unit, 105 * unit, 
+        2 * unit, 2 * unit,
+        5 * unit,
+        Color( 236, 6, 132 ), Color( 139, 12, 105 ),
+        Color( 255, 255, 255 ));
+    // Score
+    drawText(
+        window, 
+        "Score : " + to_string(model.getScore()), 
+        160 * unit, 50 * unit, 
+        220 * unit, 105 * unit, 
+        1 * unit, 1 * unit,
+        5 * unit,
+        Color( 213, 183, 227 ), Color( 141, 98, 161 ),
+        Color( 255, 255, 255 ));
 }
 
 bool Graphics::checkMovement(Event event) {
@@ -282,18 +286,72 @@ bool Graphics::checkMovement(Event event) {
     return false;
 }
 
-void Graphics::displayWindow() {
+void Graphics::updateGame(RenderWindow& window) {
+    float elapsedTimeSec = clock.getElapsedTime().asSeconds();
+    clock.restart();
+    displayBackground(window);
+    displayInfo(window);
+    displayTable(window, elapsedTimeSec);
+}
+
+void Graphics::checkButtons(RenderWindow& window) {
+    sf::Vector2i mousePosition = sf::Mouse::getPosition(window);
+    float x = mousePosition.x;
+    float y = mousePosition.y;
+    if (model.getGameState() == GameState::End) {
+        float textWidth = rectangleLenght * 0.8;
+        float textHeight = rectangleLenght * 0.3;
+        float xButtonStart = xRectangle + (rectangleLenght - textWidth) / 2;
+        float yButtonStart = yRectangle + 2.5 * (rectangleLenght - textHeight) / 4;
+        float xButtonEnd = xButtonStart + textWidth;
+        float yButtonEnd = yButtonStart + textHeight;
+        if (x >= xButtonStart && x <= xButtonEnd && y >= yButtonStart && y <= yButtonEnd) {
+            model.restart();
+            model.setGameState(GameState::Running);
+        }
+    }
+}
+
+void Graphics::drawRestartMenu(RenderWindow& window) {
+    bool win = model.didPlayerWin();
+    Vector2u size = window.getSize();
+    sf::RectangleShape rectangle(sf::Vector2f(rectangleLenght, rectangleLenght));
+    rectangle.setFillColor(sf::Color( 160, 5, 191, 100 ));
+    rectangle.setPosition(xRectangle, yRectangle);
+    window.draw(rectangle);
+    float textWidth = rectangleLenght * 0.8;
+    float textHeight = rectangleLenght * 0.3;
+    float xrText = xRectangle + (rectangleLenght - textWidth) / 2;
+    float yrText = (rectangleLenght - textHeight) / 4;
+    Color fillColor = win ? Color( 47, 142, 11, 140 ) : Color( 231, 83, 24, 140 );
+    Color outlineColor = Color( 255, 255, 255, 0 );
+    Color textColor = win ? Color( 31, 218, 229, 255) : Color( 225, 25, 104, 255 );
+    string text = win ? "T'as gagné!" : "T'as perdu...";
+    drawText(window, text, textWidth, textHeight, xrText, yRectangle + yrText, 5 * unit, 7 * unit, 10 * unit, fillColor, outlineColor, textColor);
+    drawText(window, "RECOMMENCER", textWidth, textHeight, xrText, yRectangle + 2.5 * yrText, 5 * unit, 7 * unit, 10 * unit, fillColor, outlineColor, textColor);
+}
+
+void Graphics::updateUnits(RenderWindow& window) {
+    Vector2u windowSize = window.getSize();
+    unit = windowSize.x / 400.0;
+    rectangleLenght = 200 * unit;
+    caseMargin = 8 * unit;
+    caseLenght = 40 * unit;
+    xRectangle = 100 * unit;
+    yRectangle = 177.5 * unit;
+}
+
+void Graphics::displayGame() {
     RenderWindow window(VideoMode(600, 600), "2048");
-    window.setFramerateLimit(60);
+    window.setFramerateLimit(240);
     backgroundText.loadFromFile("textures/background.png");
     backgroundText.setSmooth(true);
     gameFont.loadFromFile("fonts/prstart.ttf");
-
-    Vector2u windowSize = window.getSize();
-    xUnit = windowSize.x / 200;
-    yUnit = windowSize.y / 200;
+    
+    updateUnits(window);
 
     isValidMovement = false;
+    model.setGameState(GameState::Running);
 
     while (window.isOpen()) {
         Event event;
@@ -303,23 +361,40 @@ void Graphics::displayWindow() {
                     window.close();
                     break;
                 case Event::KeyPressed:
-                    if (model.getCasesInAnimation() == 0) {
+                    if (!isCasesInAnimation()) {
                         if (model.canMove()) {
                             if (checkMovement(event)) {
                                 isValidMovement = true;
                             }
                         } else {
-                            model.clear();
+                            model.setGameState(GameState::End);
                         }
                     }
+                    break;
+                case Event::MouseButtonPressed:
+                    checkButtons(window);
                     break;
             }
         }
         window.clear();
-        displayBackground(window);
-        displayTitle(window);
-        displayScore(window);
-        displayTable(window);
+        switch (model.getGameState()) {
+            case GameState::Running:
+                updateGame(window);
+                break;
+            case GameState::End:
+                updateGame(window);
+                drawRestartMenu(window);
+                break;
+        }
         window.display();
     }
+}
+
+bool Graphics::isCasesInAnimation() {
+    for (Case& caseObjet : model.getCases()) {
+        if (caseObjet.getEvents().size() != 0) {
+            return true;
+        }
+    }
+    return false;
 }

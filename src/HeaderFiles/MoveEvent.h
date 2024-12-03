@@ -3,23 +3,33 @@
 
 class MoveEvent {
     public:
-        MoveEvent(int startValue, bool isAddAnim, int iStart, int jStart, int iEnd, int jEnd);
+        MoveEvent();
+        MoveEvent(int value, bool isAddAnim, bool canEndMoveAfter, int iStart, int jStart, int iEnd, int jEnd);
 
         int getValue();
-        bool isAddAnimation();
         int getjStart();
         int getiStart();
-        float getCurentX();
-        float getCurentY();
-        void setCurentX(float currentX);
-        void setCurentY(float currentY);
         int getiEnd();
         int getjEnd();
+
+        bool isAddAnimation();
+        bool canMoveAfter();
+        float getCurentX();
+        float getCurentY();
+        float getStartX();
+        float getStartY();
+        void setStartX(float startX);
+        void setStartY(float startY);
+        void setCurentX(float currentX);
+        void setCurentY(float currentY);
     private:
         int value;
         bool isAddAnim;
+        bool canEndMoveAfter;
         int iStart;
         int jStart;
+        float xStart;
+        float yStart;
         float currentX;
         float currentY;
         int iEnd;

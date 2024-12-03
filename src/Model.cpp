@@ -4,11 +4,6 @@
 #include "Model.h"
 using namespace std;
 
-Model::Model() {
-    lines = 0;
-    columns = 0;
-}
-
 /**
  * Constructeur de la classe Model pour toutes les fonctions
  * de logique et de mouvement du jeu.
@@ -19,7 +14,7 @@ Model::Model() {
 Model::Model(int lines, int columns) {
     this->lines = lines;
     this->columns = columns;
-    clear();
+    restart();
 }
 
 // FONCTIONS POUR VÉRIFICATION DES MOUVEMENTS
@@ -48,6 +43,42 @@ bool Model::compareValues(int i1, int j1, int i2, int j2) {
     return false;
 }
 
+bool Model::canMoveLeftLine(int i, int startIndex, int endIndex) {
+    for (int j = startIndex; j < endIndex - 1; j++) {
+        if (compareValues(i, j, i, j + 1)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool Model::canMoveRightLine(int i, int startIndex, int endIndex) {
+    for (int j = endIndex - 1; j > startIndex; j--) {
+        if (compareValues(i, j, i, j - 1)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool Model::canMoveUpLine(int j, int startIndex, int endIndex) {
+    for (int i = startIndex; i < endIndex - 1; i++) {
+        if (compareValues(i, j, i + 1, j)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool Model::canMoveDownLine(int j, int startIndex, int endIndex) {
+    for (int i = endIndex - 1; i > startIndex; i--) {
+        if (compareValues(i, j, i - 1, j)) {
+            return true;
+        }
+    }
+    return false;
+}
+
 /**
  * Vérifie pour chaque ligne en comparant deux à deux les nombres
  * pour voir si un mouvement à gauche est possible.
@@ -59,10 +90,8 @@ bool Model::compareValues(int i1, int j1, int i2, int j2) {
  **/
 bool Model::canMoveLeft() {
     for (int i = 0; i < lines; i++) {
-        for (int j = 0; j < columns - 1; j++) {
-            if (compareValues(i, j, i, j + 1)) {
-                return true;
-            }
+        if (canMoveLeftLine(i, 0, columns)) {
+            return true;
         }
     }
     return false;
@@ -79,10 +108,8 @@ bool Model::canMoveLeft() {
  **/
 bool Model::canMoveRight() {
     for (int i = 0; i < lines; i++) {
-        for (int j = columns - 1; j > 0; j--) {
-            if (compareValues(i, j, i, j - 1)) {
-                return true;
-            }
+        if (canMoveRightLine(i, 0, columns)) {
+            return true;
         }
     }
     return false;
@@ -99,10 +126,8 @@ bool Model::canMoveRight() {
  **/
 bool Model::canMoveUp() {
     for (int j = 0; j < columns; j++) {
-        for (int i = 0; i < lines - 1; i++) {
-            if (compareValues(i, j, i + 1, j)) {
-                return true;
-            }
+        if (canMoveUpLine(j, 0, lines)) {
+            return true;
         }
     }
     return false;
@@ -119,10 +144,8 @@ bool Model::canMoveUp() {
  **/
 bool Model::canMoveDown() {
     for (int j = 0; j < columns; j++) {
-        for (int i = lines - 1; i > 0; i--) {
-            if (compareValues(i, j, i - 1, j)) {
-                return true;
-            }
+        if (canMoveDownLine(j, 0, lines)) {
+            return true;
         }
     }
     return false;
@@ -153,7 +176,7 @@ void Model::moveCase(int i1, int j1, int i2, int j2) {
     firstCase.setIndexI(i2);
     firstCase.setIndexJ(j2);
 
-    MoveEvent event(firstCase.getValue(), false, i1, j1, i2, j2);
+    MoveEvent event(firstCase.getValue(), false, true, i1, j1, i2, j2);
     firstCase.addAnimation(event);
 }
 
@@ -270,10 +293,6 @@ bool Model::addCases(int i1, int j1, int i2, int j2) {
             int value = caseStart.getValue() * 2;
             caseEnd.setValue(value);
             score += value;
-            MoveEvent event(value / 2, true, i1, j1, i2, j2);
-            caseEnd.addAnimation(event);
-            caseEnd.addAnimations(caseStart);
-            removeCase(caseStart);
             return true;
         }
     } 
@@ -290,6 +309,12 @@ void Model::addLeftValues(int i) {
     int j = 0;
     while (j < columns - 1) {
         if (addCases(i, j + 1, i, j)) {
+            Case& caseStart = getCase(i, j + 1);
+            Case& caseEnd = getCase(i, j);
+            MoveEvent event(caseEnd.getValue() / 2, true, canMoveLeftLine(i, 0, j + 2), i, j + 1, i, j);
+            caseEnd.addAnimations(caseStart);
+            caseEnd.addAnimation(event);
+            removeCase(caseStart);
             moveLeftRange(i, j + 1, columns);
         }
         j++;
@@ -306,6 +331,12 @@ void Model::addRightValues(int i) {
     int j = columns - 1;
     while (j > 0) {
         if (addCases(i, j - 1, i, j)) {
+            Case& caseStart = getCase(i, j - 1);
+            Case& caseEnd = getCase(i, j);
+            MoveEvent event(caseEnd.getValue() / 2, true, canMoveRightLine(i, j, columns), i, j - 1, i, j);
+            caseEnd.addAnimations(caseStart);
+            caseEnd.addAnimation(event);
+            removeCase(caseStart);
             moveRightRange(i, 0, j);
         }
         j--;
@@ -322,6 +353,12 @@ void Model::addUpValues(int j) {
     int i = 0;
     while (i < lines - 1) {
         if (addCases(i + 1, j, i, j)) {
+            Case& caseStart = getCase(i + 1, j);
+            Case& caseEnd = getCase(i, j);
+            MoveEvent event(caseEnd.getValue() / 2, true, canMoveUpLine(j, 0, i + 2), i + 1, j, i, j);
+            caseEnd.addAnimations(caseStart);
+            caseEnd.addAnimation(event);
+            removeCase(caseStart);
             moveUpRange(j, i, lines);
         }
         i++;
@@ -336,6 +373,12 @@ void Model::addDownValues(int j) {
     int i = lines - 1;
     while (i > 0) {
         if (addCases(i - 1, j, i, j)) {
+            Case& caseStart = getCase(i - 1, j);
+            Case& caseEnd = getCase(i, j);
+            MoveEvent event(caseEnd.getValue() / 2, true, canMoveDownLine(j, i - 1, lines), i - 1, j, i, j);
+            caseEnd.addAnimations(caseStart);
+            caseEnd.addAnimation(event);
+            removeCase(caseStart);
             moveDownRange(j, 0, i);
         }
         i--;
@@ -500,20 +543,12 @@ Case& Model::getCase(int i, int j) {
     return cases[0];
 }
 
-/** 
- * Fonction pour vérifier les animations
- * des cases en cours.
- * 
- * @return le nombre des cases en animation.
- **/
-int Model::getCasesInAnimation() {
-    int n = 0;
-    for (Case caseObjet : cases) {
-        if (caseObjet.hasAnimation()) {
-            n += 1;
-        } 
+void Model::updateScore() {
+    int bestScore = getBestScore();
+    int score = getScore();
+    if (score > bestScore) {
+        setBestScore(score);
     }
-    return n;
 }
 
 /**
@@ -533,22 +568,58 @@ void Model::removeCase(Case& caseObjet) {
 }
 
 /** 
- * Fonction pour enlever toutes les valeurs dans le plateau
- * et mettre deux valeurs aléatoires. ( Pour redémarrer le jeu ).
+ * Fonction pour enlever toutes les valeurs dans le plateau, rétablir
+ * le score et mettre deux valeurs aléatoires. ( Pour redémarrer le jeu ).
  */
-void Model::clear() {
+void Model::restart() {
     cases = {};
     setRandomElements(2);
+    score = 0;
 }
 
 // FONCTIONS GET
+
+bool Model::didPlayerWin() {
+    return getMaxCaseNumber() >= 2048;
+}
+
+GameState Model::getGameState() {
+    return state;
+}
+
+void Model::setGameState(GameState state) {
+    this->state = state;
+}
 
 vector<Case>& Model::getCases() {
     return cases;
 }
 
+int Model::getMaxCaseNumber() {
+    int max = 0;
+    for (Case& caseObjet : cases) {
+        int value = caseObjet.getValue();
+        if (value > max) {
+            max = value;
+        }
+    }
+    return max;
+}
+
+int Model::getBestScore() {
+    return bestScore;
+}
+
+void Model::setBestScore(int bestScore) {
+    this->bestScore = bestScore;
+}
+
 int Model::getScore() {
     return score;
+}
+
+void Model::setScore(int score) {
+    this->score = score;
 }
 
 int Model::getLines() {

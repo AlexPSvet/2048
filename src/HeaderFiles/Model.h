@@ -5,14 +5,23 @@
 #include <vector>
 using namespace std;
 
+enum class GameState {
+    Running,
+    End
+};
+
 class Model {
     public:
         // Class constructor
-        Model();
         Model(int lines, int columns);
 
         // Can move methos
         bool compareValues(int i1, int j1, int i2, int j2);
+
+        bool canMoveLeftLine(int i, int startIndex, int endIndex);
+        bool canMoveRightLine(int i, int startIndex, int endIndex);
+        bool canMoveUpLine(int j, int startIndex, int endIndex);
+        bool canMoveDownLine(int j, int startIndex, int endIndex);
         bool canMoveLeft();
         bool canMoveRight();
         bool canMoveUp();
@@ -44,19 +53,29 @@ class Model {
         // Debug methods
         void printLine(int i);
         void printPlateau();
-        void clear();
-        void removeCase(Case& caseObjet);
+
         // Get methods
+        void restart();
+        void removeCase(Case& caseObjet);
+        bool didPlayerWin();
+        GameState getGameState();
+        void setGameState(GameState state);
         vector<Case>& getCases();
-        int getCasesInAnimation();
         Case& getCase(int i, int j);
+        int getMaxCaseNumber();
+        void updateScore();
         bool validCase(int i, int j);
+        int getBestScore();
+        void setBestScore(int bestScore);
         int getLines();
         int getColumns();
         int getScore();
+        void setScore(int score);
     private:
+        GameState state;
         vector<Case> cases;
         int score = 0;
+        int bestScore;
         int lines;
         int columns;
 };

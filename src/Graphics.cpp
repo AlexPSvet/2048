@@ -115,6 +115,11 @@ void Graphics::drawAnimation(RenderWindow& window, Case& caseObjet, float caseLe
         float yEnd = event.getStartY() + signeY * ( margin + caseLenght ) * ( abs(event.getiEnd() - event.getiStart()) );
 
         if (event.isAddAnimation()) {
+            for (int k = 0; k < i; k++) {
+                if (events[k].isAddAnimation()) {
+                    continue;
+                }
+            }
             drawText(window, to_string(value), caseLenght, caseLenght, xEnd, yEnd, caseLenght * 0.1, caseLenght * 0.1, unit * 2, getColor(value), Color::Magenta, Color::White);
 
             if (i != 0) {

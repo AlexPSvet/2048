@@ -1,6 +1,4 @@
 #include "Console.h"
-#include <iostream>
-#include <iomanip>
 using namespace std;
 
 Console::Console(Model& model) : model(model) {}

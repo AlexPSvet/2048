@@ -2,7 +2,9 @@
 #define CONSOLE_H
 
 #include "Model.h"
+#include "ncurses.h"
 #include <iostream>
+#include <iomanip>
 using namespace std;
 
 class Console {

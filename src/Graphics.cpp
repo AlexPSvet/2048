@@ -1,6 +1,4 @@
 #include "Graphics.h"
-#include <iostream>
-#include <vector>
 using namespace sf;
 
 Graphics::Graphics(Model& model) : model(model) {}

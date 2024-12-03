@@ -3,6 +3,8 @@
 
 #include <SFML/Graphics.hpp>
 #include "Model.h"
+#include <iostream>
+#include <vector>
 using namespace sf;
 
 class Graphics {

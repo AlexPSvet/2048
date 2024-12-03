@@ -3,6 +3,8 @@
 
 #include "Case.h"
 #include <vector>
+#include <iostream>
+#include <string>
 using namespace std;
 
 enum class GameState {

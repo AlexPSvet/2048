@@ -1,6 +1,5 @@
 #include "Case.h"
 
-#include <vector>
 using namespace std;
 
 Case::Case() {

@@ -293,6 +293,12 @@ bool Model::addCases(int i1, int j1, int i2, int j2) {
             int value = caseStart.getValue() * 2;
             caseEnd.setValue(value);
             score += value;
+
+            MoveEvent event(caseEnd.getValue() / 2, true, i1, j1, i2, j2);
+            caseEnd.addAnimations(caseStart);
+            caseEnd.addAnimation(event);
+            removeCase(caseStart);
+
             return true;
         }
     } 
@@ -309,12 +315,6 @@ void Model::addLeftValues(int i) {
     int j = 0;
     while (j < columns - 1) {
         if (addCases(i, j + 1, i, j)) {
-            Case& caseStart = getCase(i, j + 1);
-            Case& caseEnd = getCase(i, j);
-            MoveEvent event(caseEnd.getValue() / 2, true, canMoveLeftLine(i, 0, j + 2), i, j + 1, i, j);
-            caseEnd.addAnimations(caseStart);
-            caseEnd.addAnimation(event);
-            removeCase(caseStart);
             moveLeftRange(i, j + 1, columns);
         }
         j++;
@@ -331,12 +331,6 @@ void Model::addRightValues(int i) {
     int j = columns - 1;
     while (j > 0) {
         if (addCases(i, j - 1, i, j)) {
-            Case& caseStart = getCase(i, j - 1);
-            Case& caseEnd = getCase(i, j);
-            MoveEvent event(caseEnd.getValue() / 2, true, canMoveRightLine(i, j, columns), i, j - 1, i, j);
-            caseEnd.addAnimations(caseStart);
-            caseEnd.addAnimation(event);
-            removeCase(caseStart);
             moveRightRange(i, 0, j);
         }
         j--;
@@ -353,12 +347,6 @@ void Model::addUpValues(int j) {
     int i = 0;
     while (i < lines - 1) {
         if (addCases(i + 1, j, i, j)) {
-            Case& caseStart = getCase(i + 1, j);
-            Case& caseEnd = getCase(i, j);
-            MoveEvent event(caseEnd.getValue() / 2, true, canMoveUpLine(j, 0, i + 2), i + 1, j, i, j);
-            caseEnd.addAnimations(caseStart);
-            caseEnd.addAnimation(event);
-            removeCase(caseStart);
             moveUpRange(j, i, lines);
         }
         i++;
@@ -373,12 +361,6 @@ void Model::addDownValues(int j) {
     int i = lines - 1;
     while (i > 0) {
         if (addCases(i - 1, j, i, j)) {
-            Case& caseStart = getCase(i - 1, j);
-            Case& caseEnd = getCase(i, j);
-            MoveEvent event(caseEnd.getValue() / 2, true, canMoveDownLine(j, i - 1, lines), i - 1, j, i, j);
-            caseEnd.addAnimations(caseStart);
-            caseEnd.addAnimation(event);
-            removeCase(caseStart);
             moveDownRange(j, 0, i);
         }
         i--;
@@ -539,7 +521,6 @@ Case& Model::getCase(int i, int j) {
         }
     }
     cerr << "Case error : case index i : " << i << "; j : " << j << "; not valid." << endl;
-    throw __throw_runtime_error;
     return cases[0];
 }
 

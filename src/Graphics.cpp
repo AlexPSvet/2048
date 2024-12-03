@@ -1,12 +1,13 @@
 #include "Graphics.h"
 #include <iostream>
+#include <vector>
 using namespace sf;
 
 Graphics::Graphics(Model& model) : model(model) {}
 
 void Graphics::displayBackground(RenderWindow& window) {
     Sprite sprite;
-    sprite.setTextureRect(IntRect(0, 0, 800, 1000));
+    sprite.setTextureRect(IntRect(0, 0, 800, 800));
     sprite.setTexture(backgroundText);
     window.draw(sprite);
 }
@@ -72,80 +73,93 @@ void Graphics::drawText (
     window.draw(textObject);
 }
 
-void Graphics::drawAnimLeftDown(RenderWindow& window, Case& caseObjet, float caseLenght, float margin, float xRemove, float yRemove) {
-    vector<MoveEvent>& events = caseObjet.getEvents();
-    MoveEvent event = events[0];
-    for (int i = 0; i < events.size(); i++) {
-        MoveEvent& event = events[i];
-        if (event.isAddAnimation() && (i - 1 >= 0 && !events[i-1].isAddAnimation())) {
-            continue;
-        }
-        int value = event.getValue();
+bool Graphics::endAnimation(int k, float xEnd, float yEnd) {
+    vector<MoveLine>& movements = model.getMovements();
+    MoveLine& line = movements[k];
+    MoveEvent& event = line.get();
+    float iStart = event.getiStart();
+    float jStart = event.getjStart();
+    float iEnd = event.getiEnd();
+    float jEnd = event.getjEnd();
 
-        float xEnd = event.getStartX() - ( margin + caseLenght ) * ( event.getjStart() - event.getjEnd() );
-        float yEnd = event.getStartY() - ( margin + caseLenght ) * ( event.getiStart() - event.getiEnd() );
-
-        if (event.isAddAnimation()) {
-            drawText(window, to_string(value), caseLenght, caseLenght, xEnd, yEnd, caseLenght * 0.1, caseLenght * 0.1, unit * 2, getColor(value), Color::Magenta, Color::White);
-        }
-
-        event.setCurentX(event.getCurentX() - xRemove);
-        event.setCurentY(event.getCurentY() - yRemove);
-        drawText(window, to_string(value), caseLenght, caseLenght, event.getCurentX(), event.getCurentY(), caseLenght * 0.1, caseLenght * 0.1, unit * 2, getColor(value), Color::Magenta, Color::White);
+    if (jStart > jEnd || iStart > iEnd) {
+        // Mouvement Gauche ou Mouvement Haut
         if ((event.getCurentX() < xEnd && yEnd == event.getStartY()) || (xEnd == event.getStartX() && event.getCurentY() < yEnd)) {
-            caseObjet.removeLastAnimation();
+            return true;
+        }
+    } else {
+        // Mouvement Droite ou Mouvement Bas
+        if ((event.getCurentX() > xEnd && yEnd == event.getStartY()) || (xEnd == event.getStartX() && event.getCurentY() > yEnd)) {
+            return true;
         }
     }
+    return false;
 }
 
-void Graphics::drawAnimRightUp(RenderWindow& window, Case& caseObjet, float caseLenght, float margin, float xAdd, float yAdd) {
-    // Draw static event cases.
-    vector<MoveEvent>& events = caseObjet.getEvents();
-    for (int i = 0; i < events.size(); i++) {
-        MoveEvent& event = events[i];
-        if (event.isAddAnimation() && (i - 1 >= 0 && !events[i-1].isAddAnimation())) {
-            continue;
-        }
-        int value = event.getValue();
+void Graphics::drawAnimation(RenderWindow& window, int k, float caseLenght, float margin, float xMove, float yMove) {
+    MoveLine& line = model.getMovements()[k];
+    for (int l = 0; l < line.getSize(); l++) {
+        MoveEvent& event = line.get(l);
 
-        float xEnd = event.getStartX() + ( margin + caseLenght ) * ( event.getjEnd() - event.getjStart() );
-        float yEnd = event.getStartY() + ( margin + caseLenght ) * ( event.getiEnd() - event.getiStart() );
+        // Indices et valeur
+        int iStart = event.getiStart();
+        int jStart = event.getjStart();
+        int iEnd = event.getiEnd();
+        int jEnd = event.getjEnd();
+        int value = event.getValue();
+        // Calcul coordonnées finales
+        int signeX = xMove == 0 ? 0 : xMove / abs(xMove);
+        int signeY = yMove == 0 ? 0 : yMove / abs(yMove);
+        float xEnd = event.getStartX() + signeX * ( margin + caseLenght ) * ( abs(event.getjStart() - event.getjEnd()) );
+        float yEnd = event.getStartY() + signeY * ( margin + caseLenght ) * ( abs(event.getiEnd() - event.getiStart()) );
 
         if (event.isAddAnimation()) {
             drawText(window, to_string(value), caseLenght, caseLenght, xEnd, yEnd, caseLenght * 0.1, caseLenght * 0.1, unit * 2, getColor(value), Color::Magenta, Color::White);
         }
 
-        event.setCurentX(event.getCurentX() + xAdd);
-        event.setCurentY(event.getCurentY() + yAdd);    
-        drawText(window, to_string(value), caseLenght, caseLenght, event.getCurentX(), event.getCurentY(), caseLenght * 0.1, caseLenght * 0.1, unit * 2, getColor(value), Color::Magenta, Color::White);
-        if ((event.getCurentX() > xEnd && yEnd == event.getStartY()) || (xEnd == event.getStartX() && event.getCurentY() > yEnd)) {
-            caseObjet.removeLastAnimation();
+        if (l != line.getPosition()) {
+            continue;
         }
+
+        event.setCurentX(event.getCurentX() + xMove);
+        event.setCurentY(event.getCurentY() + yMove);
+
+        if (endAnimation(k, xEnd, yEnd)) {
+            if (!line.next()) {
+                model.removeMoveLine(k);
+                break;
+            }
+            continue;
+        }
+
+        drawText(window, to_string(value), caseLenght, caseLenght, event.getCurentX(), event.getCurentY(), caseLenght * 0.1, caseLenght * 0.1, unit * 2, getColor(value), Color::Magenta, Color::White);
     }
 }
 
-void Graphics::drawAnimation(RenderWindow& window, Case& caseObjet, float caseLenght, float margin) {
-    MoveEvent& event = caseObjet.getLastAnimation();
-    int iStart = event.getiStart();
-    int jStart = event.getjStart();
-    int iEnd = event.getiEnd();
-    int jEnd = event.getjEnd();
-    if (jStart > jEnd) {
-        // Mouvement gauche
-        drawAnimLeftDown(window, caseObjet, caseLenght, margin, 20, 0);
-    } else if (jStart < jEnd) {
+void Graphics::checkAnimation(RenderWindow& window, int k, float caseLenght, float margin, float timeElapsed) {
+    MoveEvent& event = model.getMovements()[k].get();
+    float iStart = event.getiStart();
+    float jStart = event.getjStart();
+    float iEnd = event.getiEnd();
+    float jEnd = event.getjEnd();
+
+    float movePixels = 2 * unit;
+    if (jStart < jEnd) {
         // Mouvement droite
-        drawAnimRightUp(window, caseObjet, caseLenght, margin, 20, 0);
-    } else if (iStart > iEnd) {
-        // Mouvement bas
-        drawAnimLeftDown(window, caseObjet, caseLenght, margin, 0, 20);
+        drawAnimation(window, k, caseLenght, margin, movePixels, 0);
+    } else if (jStart > jEnd) {
+        // Mouvement gauche
+        drawAnimation(window, k, caseLenght, margin, - movePixels, 0);
     } else if (iStart < iEnd) {
+        // Mouvement bas
+        drawAnimation(window, k, caseLenght, margin, 0, movePixels);
+    } else {
         // Mouvement haut
-        drawAnimRightUp(window, caseObjet, caseLenght, margin, 0, 20);
+        drawAnimation(window, k, caseLenght, margin, 0, - movePixels);
     }
 }
 
-void Graphics::displayTable(RenderWindow& window) {
+void Graphics::displayTable(RenderWindow& window, float timeElapsed) {
     Vector2 size = window.getSize();
     float squareLenght = 200 * unit;
     float margin = 8 * unit;
@@ -162,40 +176,48 @@ void Graphics::displayTable(RenderWindow& window) {
     table.setOutlineThickness(outline);
     window.draw(table);
 
-    // Draw cases
+    // Draw cases in animation
+    int x = x_i + margin;
+    int y = y_i + margin;
+    vector<MoveLine>& movements = model.getMovements();
+    for (int k = 0; k < movements.size(); k++) {
+        MoveLine& line = movements[k];
+        for (int l = 0; l < line.getSize(); l++) {
+            MoveEvent& event = line.get(l);
+            int iStart = event.getiStart();
+            int jStart = event.getjStart();
+            int yStart = y + iStart * ( margin + caseLenght );
+            int xStart = x + jStart * ( margin + caseLenght );
+            event.setStartX(xStart);
+            event.setStartY(yStart);
+            if (event.getCurentX() == -1) {
+                event.setCurentX(xStart);
+                event.setCurentY(yStart);
+            }
+        }
+        checkAnimation(window, k, caseLenght, margin, timeElapsed);
+    }
+
+    // Draw other cases
     for (int i = 0; i < model.getLines(); i++) {
         for (int j = 0; j < model.getColumns(); j++) {
             if (model.validCase(i, j)) {
                 Case& caseObjet = model.getCase(i, j);
-                int value = caseObjet.getValue();
-                int x = x_i + margin;
-                int y = y_i + margin;
-                if (caseObjet.hasAnimation()) {
-                    for (MoveEvent& event : caseObjet.getEvents()) {
-                        int iStart = event.getiStart();
-                        int jStart = event.getjStart();
-                        int yStart = y + iStart * ( margin + caseLenght );
-                        int xStart = x + jStart * ( margin + caseLenght );
-                        event.setStartX(xStart);
-                        event.setStartY(yStart);
-                        if (event.getCurentX() == 0) {
-                            event.setCurentX(xStart);
-                        }
-                        if (event.getCurentY() == 0) {
-                            event.setCurentY(yStart);
-                        }
-                    }
-                    drawAnimation(window, caseObjet, caseLenght, margin);
-                    if (!model.isCasesInAnimation()) {
-                        if (isValidMovement) {
-                            model.setRandomElements(1);
-                            isValidMovement = false;
-                        }
-                    }
-                } else {
+                if (!isCaseInAnimation(caseObjet)) {
+                    int value = caseObjet.getValue();
                     int x_case = x + j * ( margin + caseLenght );
                     int y_case = y + i * ( margin + caseLenght );
                     drawText(window, to_string(value), caseLenght, caseLenght, x_case, y_case, caseLenght * 0.1, caseLenght * 0.1, unit * 2, getColor(value), Color::Magenta, Color::White);
+                }
+                if (!isCasesInAnimation()) {
+                    if (isValidMovement) {
+                        model.setRandomElements(1);
+                        if (!model.canMove()) {
+                            // Loose / Win screen
+                            return;
+                        }
+                        isValidMovement = false;
+                    }
                 }
             }
         }
@@ -268,6 +290,16 @@ bool Graphics::checkMovement(Event event) {
     return false;
 }
 
+void Graphics::updateScreen(RenderWindow& window) {
+    float elapsedTimeSec = clock.getElapsedTime().asSeconds();
+    clock.restart();
+    window.clear();
+    displayBackground(window);
+    displayInfo(window);
+    displayTable(window, elapsedTimeSec);
+    window.display();
+}
+
 void Graphics::displayGame() {
     RenderWindow window(VideoMode(600, 600), "2048");
     window.setFramerateLimit(60);
@@ -288,23 +320,36 @@ void Graphics::displayGame() {
                     window.close();
                     break;
                 case Event::KeyPressed:
-                    if (!model.isCasesInAnimation()) {
+                    if (!isCasesInAnimation()) {
                         if (checkMovement(event)) {
                             model.updateScore();
                             isValidMovement = true;
-                        }
-                        if (!model.canMove()) {
-                            // Loose / Win screen
-                            return;
                         }
                     }
                     break;
             }
         }
-        window.clear();
-        displayBackground(window);
-        displayInfo(window);
-        displayTable(window);
-        window.display();
+        updateScreen(window);
     }
+}
+
+bool Graphics::isCasesInAnimation() {
+    for (Case& caseObjet : model.getCases()) {
+        if (isCaseInAnimation(caseObjet)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool Graphics::isCaseInAnimation(Case& caseObjet) {
+    int i = caseObjet.getIndexI();
+    int j = caseObjet.getIndexJ();
+    vector<MoveLine>& movements = model.getMovements();
+    for (int k = 0; k < movements.size(); k++) {
+        if (movements[k].isCaseInAnimation(caseObjet)) {
+            return true;
+        }
+    }
+    return false;
 }

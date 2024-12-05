@@ -68,7 +68,7 @@ void Tile::setIndexJ(int j) {
     this->j = j;
 }
 
-MoveEvent& Tile::getLastAnimation() {
+MoveEvent& Tile::getFirstAnimation() {
     return events[0];
 }
 

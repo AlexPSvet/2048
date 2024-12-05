@@ -180,7 +180,7 @@ void Graphics::drawAnimation(RenderWindow& window, Tile& tile, float xMove, floa
         }
 
         if (endAnimation(tile, i, xEnd, yEnd)) {
-            continue;
+            break;
         }
 
         // Rajoute les composantes en x,y et dessine la case dans sa nouvelle position.
@@ -202,7 +202,7 @@ void Graphics::drawAnimation(RenderWindow& window, Tile& tile, float xMove, floa
 void Graphics::checkAnimation(RenderWindow& window, Tile& tile, float timeElapsed) {
     // On obtient le premier mouvement pour savoir dans quel direction
     // le mouvement s'effectue.
-    MoveEvent& event = tile.getLastAnimation();
+    MoveEvent& event = tile.getFirstAnimation();
     float iStart = event.getiStart();
     float jStart = event.getjStart();
     float iEnd = event.getiEnd();

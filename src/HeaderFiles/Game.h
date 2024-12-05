@@ -1,7 +1,7 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include "Case.h"
+#include "Tile.h"
 #include "Model.h"
 #include "Graphics.h"
 #include "Console.h"
@@ -34,7 +34,7 @@ class Game {
         void setBestScoreFile(int bestScore);
 
         // General variables
-        vector<Case> cases;
+        vector<Tile> cases;
 };
 
 #endif

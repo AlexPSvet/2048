@@ -1,7 +1,7 @@
 #ifndef MODEL_H
 #define MODEL_H
 
-#include "Case.h"
+#include "Tile.h"
 #include <vector>
 #include <iostream>
 #include <string>
@@ -58,15 +58,15 @@ class Model {
 
         // Get methods
         void restart();
-        void removeCase(Case& caseObjet);
+        void removeTile(Tile& caseObjet);
         bool didPlayerWin();
         GameState getGameState();
         void setGameState(GameState state);
-        vector<Case>& getCases();
-        Case& getCase(int i, int j);
-        int getMaxCaseNumber();
+        vector<Tile>& getTiles();
+        Tile& getTile(int i, int j);
+        int getMaxTileNumber();
         void updateScore();
-        bool validCase(int i, int j);
+        bool validTile(int i, int j);
         int getBestScore();
         void setBestScore(int bestScore);
         int getLines();
@@ -75,7 +75,7 @@ class Model {
         void setScore(int score);
     private:
         GameState state;
-        vector<Case> cases;
+        vector<Tile> tiles;
         int score = 0;
         int bestScore;
         int lines;

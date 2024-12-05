@@ -28,48 +28,12 @@ Model::Model(int lines, int columns) {
  * @param j2 l'indice j du deuxième élément
  */
 bool Model::compareValues(int i1, int j1, int i2, int j2) {
-    if (validCase(i2, j2)) {
-        if (validCase(i1, j1)) {
-            if (getCase(i1, j1).getValue() == getCase(i2, j2).getValue()) {
+    if (validTile(i2, j2)) {
+        if (validTile(i1, j1)) {
+            if (getTile(i1, j1).getValue() == getTile(i2, j2).getValue()) {
                 return true;
             }
         } else {
-            return true;
-        }
-    }
-    return false;
-}
-
-bool Model::canMoveLeftLine(int i, int startIndex, int endIndex) {
-    for (int j = startIndex; j < endIndex - 1; j++) {
-        if (compareValues(i, j, i, j + 1)) {
-            return true;
-        }
-    }
-    return false;
-}
-
-bool Model::canMoveRightLine(int i, int startIndex, int endIndex) {
-    for (int j = endIndex - 1; j > startIndex; j--) {
-        if (compareValues(i, j, i, j - 1)) {
-            return true;
-        }
-    }
-    return false;
-}
-
-bool Model::canMoveUpLine(int j, int startIndex, int endIndex) {
-    for (int i = startIndex; i < endIndex - 1; i++) {
-        if (compareValues(i, j, i + 1, j)) {
-            return true;
-        }
-    }
-    return false;
-}
-
-bool Model::canMoveDownLine(int j, int startIndex, int endIndex) {
-    for (int i = endIndex - 1; i > startIndex; i--) {
-        if (compareValues(i, j, i - 1, j)) {
             return true;
         }
     }
@@ -87,8 +51,10 @@ bool Model::canMoveDownLine(int j, int startIndex, int endIndex) {
  **/
 bool Model::canMoveLeft() {
     for (int i = 0; i < lines; i++) {
-        if (canMoveLeftLine(i, 0, columns)) {
-            return true;
+        for (int j = 0; j < columns - 1; j++) {
+            if (compareValues(i, j, i, j + 1)) {
+                return true;
+            }
         }
     }
     return false;
@@ -105,8 +71,10 @@ bool Model::canMoveLeft() {
  **/
 bool Model::canMoveRight() {
     for (int i = 0; i < lines; i++) {
-        if (canMoveRightLine(i, 0, columns)) {
-            return true;
+        for (int j = columns - 1; j > 0; j--) {
+            if (compareValues(i, j, i, j - 1)) {
+                return true;
+            }
         }
     }
     return false;
@@ -123,8 +91,10 @@ bool Model::canMoveRight() {
  **/
 bool Model::canMoveUp() {
     for (int j = 0; j < columns; j++) {
-        if (canMoveUpLine(j, 0, lines)) {
-            return true;
+        for (int i = 0; i < lines - 1; i++) {
+            if (compareValues(i, j, i + 1, j)) {
+                return true;
+            }
         }
     }
     return false;
@@ -141,8 +111,10 @@ bool Model::canMoveUp() {
  **/
 bool Model::canMoveDown() {
     for (int j = 0; j < columns; j++) {
-        if (canMoveDownLine(j, 0, lines)) {
-            return true;
+        for (int i = lines - 1; i > 0; i--) {
+            if (compareValues(i, j, i - 1, j)) {
+                return true;
+            }
         }
     }
     return false;
@@ -169,12 +141,12 @@ bool Model::canMove() {
  * @param j2 l'indice j de la case vide
  */
 void Model::moveCase(int i1, int j1, int i2, int j2) {
-    Case& firstCase = getCase(i1, j1);
-    firstCase.setIndexI(i2);
-    firstCase.setIndexJ(j2);
+    Tile& tile = getTile(i1, j1);
+    tile.setIndexI(i2);
+    tile.setIndexJ(j2);
 
-    MoveEvent event(firstCase.getValue(), false, i1, j1, i2, j2);
-    firstCase.addAnimation(event);
+    MoveEvent event(tile.getValue(), false, i1, j1, i2, j2);
+    tile.addAnimation(event);
 }
 
 /** 
@@ -189,7 +161,7 @@ void Model::moveCase(int i1, int j1, int i2, int j2) {
 void Model::moveLeftRange(int i, int startIndex, int endIndex) {
     int first0Index = -1;
     for (int j = startIndex; j < endIndex; j++) {
-        if (!validCase(i, j)) {
+        if (!validTile(i, j)) {
             if (first0Index == -1) {
                 first0Index = j;
             }
@@ -212,7 +184,7 @@ void Model::moveLeftRange(int i, int startIndex, int endIndex) {
 void Model::moveRightRange(int i, int startIndex, int endIndex) {
     int first0Index = -1;
     for (int j = endIndex - 1; j >= startIndex; j--) {
-        if (!validCase(i, j)) {
+        if (!validTile(i, j)) {
             if (first0Index == -1) {
                 first0Index = j;
             }
@@ -235,7 +207,7 @@ void Model::moveRightRange(int i, int startIndex, int endIndex) {
 void Model::moveUpRange(int j, int startIndex, int endIndex) {
     int first0Index = -1;
     for (int i = startIndex; i < endIndex; i++) {
-        if (!validCase(i, j)) {
+        if (!validTile(i, j)) {
             if (first0Index == -1) {
                 first0Index = i;
             }
@@ -258,7 +230,7 @@ void Model::moveUpRange(int j, int startIndex, int endIndex) {
 void Model::moveDownRange(int j, int startIndex, int endIndex) {
     int first0Index = -1;
     for (int i = endIndex - 1; i >= startIndex; i--) {
-        if (!validCase(i, j)) {
+        if (!validTile(i, j)) {
             if (first0Index == -1) {
                 first0Index = i;
             }
@@ -283,18 +255,18 @@ void Model::moveDownRange(int j, int startIndex, int endIndex) {
  * @return true si l'addition des cases se réalise, false sinon.
  */
 bool Model::addCases(int i1, int j1, int i2, int j2) {
-    if (validCase(i1, j1) && validCase(i2, j2)) {
-        Case& caseStart = getCase(i1, j1);
-        Case& caseEnd = getCase(i2, j2);
-        if (caseStart.getValue() == caseEnd.getValue()) {
-            int value = caseStart.getValue() * 2;
-            caseEnd.setValue(value);
+    if (validTile(i1, j1) && validTile(i2, j2)) {
+        Tile& tileStart = getTile(i1, j1);
+        Tile& tileEnd = getTile(i2, j2);
+        if (tileStart.getValue() == tileEnd.getValue()) {
+            int value = tileStart.getValue() * 2;
+            tileEnd.setValue(value);
             score += value;
 
-            MoveEvent event(caseEnd.getValue() / 2, true, i1, j1, i2, j2);
-            caseEnd.addAnimations(caseStart);
-            caseEnd.addAnimation(event);
-            removeCase(caseStart);
+            MoveEvent event(tileEnd.getValue() / 2, true, i1, j1, i2, j2);
+            tileEnd.addAnimations(tileStart);
+            tileEnd.addAnimation(event);
+            removeTile(tileStart);
 
             return true;
         }
@@ -419,7 +391,7 @@ vector<tuple<int, int>> Model::getEmptySlots() {
     vector<tuple<int, int>> emptySlots;
     for (int i = 0; i < lines; i++) {
         for (int j = 0; j < columns; j++) {
-            if (!validCase(i, j)) {
+            if (!validTile(i, j)) {
                 emptySlots.push_back({i, j});
             }
         }
@@ -440,9 +412,9 @@ void Model::setRandomElements(int amount) {
         int k = rand() % emptySlots.size();
         tuple<int, int> values = emptySlots[k];
         int r = rand() % 10;
-        Case newCase(get<0>(values), get<1>(values));
-        newCase.setValue(r < 9 ? 2 : 4);
-        cases.push_back(newCase);
+        Tile newTile(get<0>(values), get<1>(values));
+        newTile.setValue(r < 9 ? 2 : 4);
+        tiles.push_back(newTile);
     }
 }
 
@@ -457,8 +429,8 @@ void Model::printLine(int i) {
     cout << "[";
     for (int j = 0; j < columns; j++) {
         int value = 0;
-        if (validCase(i, j)) {
-            value = getCase(i, j).getValue();
+        if (validTile(i, j)) {
+            value = getTile(i, j).getValue();
         }
         cout << value;
         if (j != columns - 1) {
@@ -492,10 +464,10 @@ void Model::printPlateau() {
  * @param j l'indice j de la case à vérifier.
  * @return true si la case existe, false sinon.
  **/
-bool Model::validCase(int i, int j) {
-    for (int k = 0; k < cases.size(); k++) {
-        Case& caseObjet = cases[k];
-        if (caseObjet.getIndexI() == i && caseObjet.getIndexJ() == j) {
+bool Model::validTile(int i, int j) {
+    for (int k = 0; k < tiles.size(); k++) {
+        Tile& tile = tiles[k];
+        if (tile.getIndexI() == i && tile.getIndexJ() == j) {
             return true;
         }
     }
@@ -503,24 +475,30 @@ bool Model::validCase(int i, int j) {
 }
 
 /**
- * Fonction qui renvoie une case du plateau.
+ * Fonction qui renvoie une tuile du plateau.
  * Renvoie une erreur si la case est invalide.
  * 
  * @param i l'indice i de la case.
  * @param j l'indice j de la case.
  * @return la case d'indices i,j.
  **/
-Case& Model::getCase(int i, int j) {
-    for (int k = 0; k < cases.size(); k++) {
-        Case& caseObjet = cases[k];
-        if (caseObjet.getIndexI() == i && caseObjet.getIndexJ() == j) {
-            return caseObjet;
+Tile& Model::getTile(int i, int j) {
+    for (int k = 0; k < tiles.size(); k++) {
+        Tile& tile = tiles[k];
+        if (tile.getIndexI() == i && tile.getIndexJ() == j) {
+            return tile;
         }
     }
     cerr << "Case error : case index i : " << i << "; j : " << j << "; not valid." << endl;
-    return cases[0];
+    return tiles[0];
 }
 
+/**
+ * Fonction qui compare le score avec le
+ * meilleur score, et si le meilleur score est
+ * plus petit que le score actuel, il
+ * change le meilleur score.
+ **/
 void Model::updateScore() {
     int bestScore = getBestScore();
     int score = getScore();
@@ -534,12 +512,12 @@ void Model::updateScore() {
  * 
  * @param caseObjet la case du plateau.
  **/
-void Model::removeCase(Case& caseObjet) {
-    int i = caseObjet.getIndexI();
-    int j = caseObjet.getIndexJ();
-    for (auto it = cases.begin(); it != cases.end(); ++it) {
+void Model::removeTile(Tile& tile) {
+    int i = tile.getIndexI();
+    int j = tile.getIndexJ();
+    for (auto it = tiles.begin(); it != tiles.end(); ++it) {
         if (it->getIndexI() == i && it->getIndexJ() == j) {
-            cases.erase(it);
+            tiles.erase(it);
             return;
         }
     }
@@ -550,15 +528,20 @@ void Model::removeCase(Case& caseObjet) {
  * le score et mettre deux valeurs aléatoires. ( Pour redémarrer le jeu ).
  */
 void Model::restart() {
-    cases = {};
+    tiles = {};
     setRandomElements(2);
     score = 0;
 }
 
 // FONCTIONS GET
 
+/** 
+ * Vérifie si le joueur a gagné la partie
+ * @return true si la tuile de plus grande valeur est supérieur
+ * à 2048, false sinon.
+ */
 bool Model::didPlayerWin() {
-    return getMaxCaseNumber() >= 2048;
+    return getMaxTileNumber() >= 2048;
 }
 
 GameState Model::getGameState() {
@@ -569,13 +552,18 @@ void Model::setGameState(GameState state) {
     this->state = state;
 }
 
-vector<Case>& Model::getCases() {
-    return cases;
+vector<Tile>& Model::getTiles() {
+    return tiles;
 }
 
-int Model::getMaxCaseNumber() {
+/** 
+ * Fonction pour retrouver la tuile avec la plus
+ * grande valeur.
+ * @return max la tuile avec le plus grand nombre.
+ */
+int Model::getMaxTileNumber() {
     int max = 0;
-    for (Case& caseObjet : cases) {
+    for (Tile& caseObjet : tiles) {
         int value = caseObjet.getValue();
         if (value > max) {
             max = value;

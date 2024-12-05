@@ -3,41 +3,73 @@ using namespace sf;
 
 Graphics::Graphics(Model& model) : model(model) {}
 
+/** 
+ * Fonction pour dessiner une image de fond pour le jeu.
+ * Elle crée un sprite pour lui appliquer la texture étant
+ * l'image de fond du jeu.
+ * 
+ * @param window la fenetre dans laquelle dessiner.
+ **/
 void Graphics::displayBackground(RenderWindow& window) {
     Sprite sprite;
-    sprite.setTextureRect(IntRect(0, 0, 800, 800));
+    Vector2u size = window.getSize();
+    sprite.setTextureRect(IntRect(0, 0, size.x, size.y));
     sprite.setTexture(backgroundText);
     window.draw(sprite);
 }
 
-Color Graphics::getColor(int caseNumber) {
-    if (caseNumber == 2) {
+/** 
+ * Fonction pour obtenir la couleur d'une tuile.
+ * 
+ * @param tileNumber le numéro de la tuile.
+ * @return la couleur de la tuile sur le plateau.
+ **/
+Color Graphics::getColor(int tileNumber) {
+    if (tileNumber == 2) {
         return Color( 204, 0, 255 );
-    } else if (caseNumber == 4) {
+    } else if (tileNumber == 4) {
         return Color( 135, 14, 166 );
-    } else if (caseNumber == 8) {
+    } else if (tileNumber == 8) {
         return Color( 189, 9, 147 );
-    } else if (caseNumber == 16) {
+    } else if (tileNumber == 16) {
         return Color( 118, 11, 93 );
-    } else if (caseNumber == 32) {
+    } else if (tileNumber == 32) {
         return Color( 86, 9, 160 );
-    } else if (caseNumber == 64) {
+    } else if (tileNumber == 64) {
         return Color( 16, 9, 160 );
-    } else if (caseNumber == 128) {
+    } else if (tileNumber == 128) {
         return Color( 20, 151, 206 );
-    } else if (caseNumber == 256) {
+    } else if (tileNumber == 256) {
         return Color( 20, 206, 108 );
-    } else if (caseNumber == 512) {
+    } else if (tileNumber == 512) {
         return Color( 172, 206, 20 );
-    } else if (caseNumber == 1024) {
+    } else if (tileNumber == 1024) {
         return Color( 206, 100, 20 );
-    } else if (caseNumber == 2048) {
+    } else if (tileNumber == 2048) {
         return Color( 227, 24, 4 );
     } else {
         return Color( 120, 13, 2 );
     } 
 }
 
+/** 
+ * Fonction pour dessiner dans une fentre un rectangle
+ * de taille fixe et a l'intérieur du text d'une taille
+ * qui dépend de la taille du rectangle.
+ * 
+ * @param window la fentre dans laquelle dessiner la figure.
+ * @param text le texte à afficher dans le rectangle.
+ * @param width la largeur du rectangle.
+ * @param height la longueur du rectangle.
+ * @param x la coordonnée x du rectangle.
+ * @param y la coordonnée y du rectangle.
+ * @param marginWidth la largeur de la marge.
+ * @param marginHeight la hauteur de la marge.
+ * @param outline les pixels de bordure du rectangle.
+ * @param fillColor la couleur à l'intérieur du rectangle.
+ * @param outlineColor la couleur de la bordure du rectangle.
+ * @param textColor la couleur du texte à l'intérieur du rectangle.
+ **/
 void Graphics::drawText (
     RenderWindow& window, 
     std::string text, 
@@ -47,7 +79,7 @@ void Graphics::drawText (
     float outline,
     Color fillColor, Color outlineColor, Color textColor) 
 {
-    // Créer le rectangle de taille width x height
+    // Créer le rectangle de taille width x height.
     float widthRect = width - 2 * outline;
     float heightRect = height - 2 * outline;
     RectangleShape rect(Vector2f(widthRect, heightRect));
@@ -56,7 +88,7 @@ void Graphics::drawText (
     rect.setOutlineColor(outlineColor);
     rect.setOutlineThickness(outline);
     window.draw(rect);
-    // Désinner le texte
+    // Désinner le texte en fonction de la taille de l'image.
     Text textObject;
     textObject.setFont(gameFont);
     textObject.setString(text);
@@ -71,8 +103,18 @@ void Graphics::drawText (
     window.draw(textObject);
 }
 
-bool Graphics::endAnimation(Case& caseObjet, int i, float xEnd, float yEnd) {
-    MoveEvent& event = caseObjet.getEvents()[0];
+/** 
+ * Fonction pour vérifier si une animation dans le plateau est términée.
+ * 
+ * @param tile la case avec une animation à vérifier.
+ * @param i l'indice de l'événement à vérifier dans la liste des événements
+ * de la case.
+ * @param xEnd la coordonnée de fin de mouvement pour x.
+ * @param yEnd la coordonnées de fin de mouvement pour y.
+ * @return true si le mouvement est fini, false sinon.
+ **/
+bool Graphics::endAnimation(Tile& tile, int i, float xEnd, float yEnd) {
+    MoveEvent& event = tile.getEvents()[0];
     float iStart = event.getiStart();
     float jStart = event.getjStart();
     float iEnd = event.getiEnd();
@@ -81,62 +123,67 @@ bool Graphics::endAnimation(Case& caseObjet, int i, float xEnd, float yEnd) {
     if (jStart > jEnd || iStart > iEnd) {
         // Mouvement Gauche ou Mouvement Haut
         if ((event.getCurentX() < xEnd && yEnd == event.getStartY()) || (xEnd == event.getStartX() && event.getCurentY() < yEnd)) {
-            caseObjet.removeAnimation(i);
+            tile.removeAnimation(i);
             return true;
         }
     } else {
         // Mouvement Droite ou Mouvement Bas
         if ((event.getCurentX() > xEnd && yEnd == event.getStartY()) || (xEnd == event.getStartX() && event.getCurentY() > yEnd)) {
-            caseObjet.removeAnimation(i);
+            tile.removeAnimation(i);
             return true;
         }
     }
     return false;
 }
 
-void Graphics::drawAnimation(RenderWindow& window, Case& caseObjet, float caseLenght, float margin, float xMove, float yMove) {
-    vector<MoveEvent>& events = caseObjet.getEvents();
-    bool addAnimationDone = false;
+/** 
+ * Fonction pour dessiner les animations de mouvement pour une tuile spécifique.
+ * On considère que deux tuiles rajoutées représentent en soi la meme 
+ * tuile avec leurs animations rajoutées.
+ * 
+ * @param window la fenetre dans laquelle dessiner l'animation.
+ * @param tile la tuile laquelle il faut dessiner en premier.
+ * @param xMove la composante en x à rajouter dans la position de la tuile (inclus valeurs négatifs).
+ * @param yMove la composante en y à rajouter dans la position de la tuile (inclus valeurs négatifs).
+ **/
+void Graphics::drawAnimation(RenderWindow& window, Tile& tile, float xMove, float yMove) {
+    vector<MoveEvent>& events = tile.getEvents();
     for (int i = 0; i < events.size(); i++) {
         MoveEvent& event = events[i];
 
-        // Indices et valeurcontinue
+        // Indices et valeur de la tuile
         int iStart = event.getiStart();
         int jStart = event.getjStart();
         int iEnd = event.getiEnd();
         int jEnd = event.getjEnd();
         int value = event.getValue();
-        // Calcul coordonnées finales
+        // Calcul de coordonnées finales pour une animation.
         int signeX = xMove == 0 ? 0 : xMove / abs(xMove);
         int signeY = yMove == 0 ? 0 : yMove / abs(yMove);
-        float xEnd = event.getStartX() + signeX * ( margin + caseLenght ) * ( abs(event.getjStart() - event.getjEnd()) );
-        float yEnd = event.getStartY() + signeY * ( margin + caseLenght ) * ( abs(event.getiEnd() - event.getiStart()) );
+        float xEnd = event.getStartX() + signeX * ( caseMargin + caseLenght ) * ( abs(event.getjStart() - event.getjEnd()) );
+        float yEnd = event.getStartY() + signeY * ( caseMargin + caseLenght ) * ( abs(event.getiEnd() - event.getiStart()) );
 
+        // Pour dessiner la case rajouté lors de son addition, on doit la dessiner lorsqu'elle
+        // a finit de se déplacer, c'est-à-dire que si un mouvement c'est produit à 2 événements,
+        // alors il ne faut pas la dessiner.
+        // Les animations elles se dessinent une fois toutes les autres animations de mouvements términées.
         if (event.isAddAnimation()) {
-            for (int k = 0; k < i; k++) {
-                if (events[k].isAddAnimation()) {
-                    continue;
-                }
+            if (i - 2 >= 0) {
+                continue;
             }
+
             drawText(window, to_string(value), caseLenght, caseLenght, xEnd, yEnd, caseLenght * 0.1, caseLenght * 0.1, unit * 2, getColor(value), Color::Magenta, Color::White);
 
             if (i != 0) {
                 continue;
-            } else if (!addAnimationDone) {
-                addAnimationDone = true;
-            } else {
-                continue;
             }
         }
 
-        if (addAnimationDone && i != 0) {
+        if (endAnimation(tile, i, xEnd, yEnd)) {
             continue;
         }
 
-        if (endAnimation(caseObjet, i, xEnd, yEnd)) {
-            continue;
-        }
-
+        // Rajoute les composantes en x,y et dessine la case dans sa nouvelle position.
         event.setCurentX(event.getCurentX() + xMove);
         event.setCurentY(event.getCurentY() + yMove);
 
@@ -144,33 +191,90 @@ void Graphics::drawAnimation(RenderWindow& window, Case& caseObjet, float caseLe
     }
 }
 
-void Graphics::checkAnimation(RenderWindow& window, Case& caseObjet, float caseLenght, float margin, float timeElapsed) {
-    MoveEvent& event = caseObjet.getLastAnimation();
+/** 
+ * Fonction qui vérifie selon le mouvement à effectuer quel composante en x,y
+ * ajouter ou diminuer pour faire l'animation.
+ * 
+ * @param window la fenetre dans laquelle dessiner l'animation.
+ * @param tile la tuile laquelle il faut dessiner en premier.
+ * @param timeElapsed le temps passé pour dessiner l'image précédente du jeu.
+ **/
+void Graphics::checkAnimation(RenderWindow& window, Tile& tile, float timeElapsed) {
+    // On obtient le premier mouvement pour savoir dans quel direction
+    // le mouvement s'effectue.
+    MoveEvent& event = tile.getLastAnimation();
     float iStart = event.getiStart();
     float jStart = event.getjStart();
     float iEnd = event.getiEnd();
     float jEnd = event.getjEnd();
-
+    // Produit en croix pour calculer le mouvement à faire
+    // selon le temps mis pour produire une image.
     float movePixels = timeElapsed * ( 8 * unit * 60 );
+
     if (jStart < jEnd) {
         // Mouvement droite
-        drawAnimation(window, caseObjet, caseLenght, margin, movePixels, 0);
+        drawAnimation(window, tile, movePixels, 0);
     } else if (jStart > jEnd) {
         // Mouvement gauche
-        drawAnimation(window, caseObjet, caseLenght, margin, - movePixels, 0);
+        drawAnimation(window, tile, - movePixels, 0);
     } else if (iStart < iEnd) {
         // Mouvement bas
-        drawAnimation(window, caseObjet, caseLenght, margin, 0, movePixels);
+        drawAnimation(window, tile, 0, movePixels);
     } else {
         // Mouvement haut
-        drawAnimation(window, caseObjet, caseLenght, margin, 0, - movePixels);
+        drawAnimation(window, tile, 0, - movePixels);
     }
 }
 
-void Graphics::displayTable(RenderWindow& window, float timeElapsed) {
+/** 
+ * Fonction pour dessiner toutes les animations des cases.
+ * 
+ * @param window la fenetre dans laquelle dessiner l'animation.
+ * @param timeElapsed le temps passé pour dessiner l'image précédente du jeu.
+ **/
+void Graphics::drawAnimations(RenderWindow& window, float timeElapsed) {
+    int x = xRectangle + caseMargin;
+    int y = yRectangle + caseMargin;
+    for (Tile& tile : model.getTiles()) {
+        for (MoveEvent& event : tile.getEvents()) {
+            int iStart = event.getiStart();
+            int jStart = event.getjStart();
+            int iEnd = event.getiEnd();
+            int jEnd = event.getjEnd();
+            // Calcul des coordonnées initiales de la case.
+            int yStart = y + iStart * ( caseMargin + caseLenght );
+            int xStart = x + jStart * ( caseMargin + caseLenght );
+            event.setStartX(xStart);
+            event.setStartY(yStart);
+            // Si les valeurs ne sont pas initialisées, les mettre à jour.
+            if (event.getCurentX() == -1) {
+                event.setCurentX(xStart);
+                event.setCurentY(yStart);
+            }
+        }
+        // Vérifie si plus de mouvements à dessiner, pour ainsi
+        // dessinner la nouvelle tuile et mettre à jour le score.
+        if (tile.getEvents().size() != 0) {
+            checkAnimation(window, tile, timeElapsed);
+            if (!isCasesInAnimation() && isValidMovement) {
+                model.setRandomElements(1);
+                model.updateScore();
+                isValidMovement = false;          
+            }
+        }
+    }
+}
+
+/** 
+ * Fonction pour dessiner le plateau avec toutes les cases qui ne sont
+ * pas en animation.
+ * 
+ * @param window la fenetre dans laquelle dessiner.
+ **/
+void Graphics::displayTable(RenderWindow& window) {
     Vector2 size = window.getSize();
 
-    // Draw table background
+    // Dessiner le fond du plateau
     RectangleShape table(Vector2f(rectangleLenght, rectangleLenght));
     float outline = 5 * unit;
     table.setPosition(xRectangle, yRectangle);
@@ -179,41 +283,15 @@ void Graphics::displayTable(RenderWindow& window, float timeElapsed) {
     table.setOutlineThickness(outline);
     window.draw(table);
 
-    // Draw animation
+    // Dessiner les tuiles
     int x = xRectangle + caseMargin;
     int y = yRectangle + caseMargin;
-    for (Case& caseObjet : model.getCases()) {
-        for (MoveEvent& event : caseObjet.getEvents()) {
-            int iStart = event.getiStart();
-            int jStart = event.getjStart();
-            int iEnd = event.getiEnd();
-            int jEnd = event.getjEnd();
-            int yStart = y + iStart * ( caseMargin + caseLenght );
-            int xStart = x + jStart * ( caseMargin + caseLenght );
-            event.setStartX(xStart);
-            event.setStartY(yStart);
-            if (event.getCurentX() == -1) {
-                event.setCurentX(xStart);
-                event.setCurentY(yStart);
-            }
-        }
-        if (caseObjet.getEvents().size() != 0) {
-            checkAnimation(window, caseObjet, caseLenght, caseMargin, timeElapsed);
-            if (!isCasesInAnimation() && isValidMovement) {
-                model.setRandomElements(1);
-                model.updateScore();
-                isValidMovement = false;          
-            }
-        }
-    }
-
-    // Draw other cases
     for (int i = 0; i < model.getLines(); i++) {
         for (int j = 0; j < model.getColumns(); j++) {
-            if (model.validCase(i, j)) {
-                Case& caseObjet = model.getCase(i, j);
-                int value = caseObjet.getValue();
-                if (!caseObjet.hasAnimation()) {
+            if (model.validTile(i, j)) {
+                Tile& tile = model.getTile(i, j);
+                int value = tile.getValue();
+                if (!tile.hasAnimation()) {
                     int x_case = x + j * ( caseMargin + caseLenght );
                     int y_case = y + i * ( caseMargin + caseLenght );
                     drawText(window, to_string(value), caseLenght, caseLenght, x_case, y_case, caseLenght * 0.1, caseLenght * 0.1, unit * 2, getColor(value), Color::Magenta, Color::White);
@@ -223,8 +301,15 @@ void Graphics::displayTable(RenderWindow& window, float timeElapsed) {
     }
 }
 
+/** 
+ * Fonction pour dessiner toutes les informations du jeu
+ * dans la fenetre : le titre du jeu, le meilleur score
+ * et le score actuel du jeu.
+ * 
+ * @param window la fenetre dans laquelle dessiner.
+ **/
 void Graphics::displayInfo(RenderWindow& window) {
-    // Title
+    // Afficher le titre du jeu.
     drawText(
         window, 
         "2048", 
@@ -234,17 +319,17 @@ void Graphics::displayInfo(RenderWindow& window) {
         8 * unit,
         Color( 204, 8, 224 ), Color( 99, 22, 89 ),
         Color( 111, 8, 97 ));
-    // Best Score
+    // Afficher le meilleur score de toutes les jeus.
     drawText(
         window, 
-        "Best : " + to_string(model.getBestScore()), 
+        "Meilleur : " + to_string(model.getBestScore()), 
         160 * unit, 50 * unit, 
         20 * unit, 105 * unit, 
         2 * unit, 2 * unit,
         5 * unit,
         Color( 236, 6, 132 ), Color( 139, 12, 105 ),
         Color( 255, 255, 255 ));
-    // Score
+    // Afficher le score actuel du jeu.
     drawText(
         window, 
         "Score : " + to_string(model.getScore()), 
@@ -256,10 +341,18 @@ void Graphics::displayInfo(RenderWindow& window) {
         Color( 255, 255, 255 ));
 }
 
+/** 
+ * Vérifier si le mouvement en question est valide, 
+ * c'est-à-dire si un mouvement est réalisée.
+ * 
+ * @param window la fenetre dans laquelle dessiner.
+ * @return true si un mouvement se réalise, false sinon.
+ **/
 bool Graphics::checkMovement(Event event) {
     switch (event.key.code) {
         case Keyboard::W:
         case Keyboard::Up:
+            // Mouvement haut
             if (model.canMoveUp()) {
                 model.moveUp();
                 return true;
@@ -267,6 +360,7 @@ bool Graphics::checkMovement(Event event) {
             break;
         case Keyboard::A:
         case Keyboard::Left:
+            // Mouvement gauche
             if (model.canMoveLeft()) {
                 model.moveLeft();
                 return true;
@@ -274,6 +368,7 @@ bool Graphics::checkMovement(Event event) {
             break;
         case Keyboard::S:
         case Keyboard::Down:
+            // Mouvement bas
             if (model.canMoveDown()) {
                 model.moveDown();
                 return true;
@@ -281,6 +376,7 @@ bool Graphics::checkMovement(Event event) {
             break;
         case Keyboard::D:
         case Keyboard::Right:
+            // Mouvement droite
             if (model.canMoveRight()) {
                 model.moveRight();
                 return true;
@@ -289,14 +385,26 @@ bool Graphics::checkMovement(Event event) {
     return false;
 }
 
+/** 
+ * Fonction pour dessiner tout le jeu, et vérifie
+ * le temps mis par l'ordinateur pour afficher l'image.
+ * 
+ * @param window la fenetre dans laquelle dessiner.
+ **/
 void Graphics::updateGame(RenderWindow& window) {
     float elapsedTimeSec = clock.getElapsedTime().asSeconds();
     clock.restart();
     displayBackground(window);
     displayInfo(window);
-    displayTable(window, elapsedTimeSec);
+    displayTable(window);
+    drawAnimations(window, elapsedTimeSec);
 }
 
+/** 
+ * Fonction pour vérifier si des bouton sont appuyées.
+ * 
+ * @param window la fenetre dans laquelle vérifier.
+ **/
 void Graphics::checkButtons(RenderWindow& window) {
     sf::Vector2i mousePosition = sf::Mouse::getPosition(window);
     float x = mousePosition.x;
@@ -319,15 +427,15 @@ void Graphics::drawRestartMenu(RenderWindow& window) {
     bool win = model.didPlayerWin();
     Vector2u size = window.getSize();
     sf::RectangleShape rectangle(sf::Vector2f(rectangleLenght, rectangleLenght));
-    rectangle.setFillColor(sf::Color( 160, 5, 191, 100 ));
+    rectangle.setFillColor(sf::Color( 160, 5, 191, 175 ));
     rectangle.setPosition(xRectangle, yRectangle);
     window.draw(rectangle);
     float textWidth = rectangleLenght * 0.8;
     float textHeight = rectangleLenght * 0.3;
     float xrText = xRectangle + (rectangleLenght - textWidth) / 2;
     float yrText = (rectangleLenght - textHeight) / 4;
-    Color fillColor = win ? Color( 47, 142, 11, 140 ) : Color( 231, 83, 24, 140 );
-    Color outlineColor = Color( 255, 255, 255, 0 );
+    Color fillColor = win ? Color( 47, 142, 11, 255 ) : Color( 231, 83, 24, 255 );
+    Color outlineColor = Color( 255, 255, 255, 255 );
     Color textColor = win ? Color( 31, 218, 229, 255) : Color( 225, 25, 104, 255 );
     string text = win ? "T'as gagné!" : "T'as perdu...";
     drawText(window, text, textWidth, textHeight, xrText, yRectangle + yrText, 5 * unit, 7 * unit, 10 * unit, fillColor, outlineColor, textColor);
@@ -346,7 +454,8 @@ void Graphics::updateUnits(RenderWindow& window) {
 
 void Graphics::displayGame() {
     RenderWindow window(VideoMode(600, 600), "2048");
-    window.setFramerateLimit(240);
+    window.setFramerateLimit(60);
+    window.setVerticalSyncEnabled(true);
     backgroundText.loadFromFile("textures/background.png");
     backgroundText.setSmooth(true);
     gameFont.loadFromFile("fonts/prstart.ttf");
@@ -394,8 +503,8 @@ void Graphics::displayGame() {
 }
 
 bool Graphics::isCasesInAnimation() {
-    for (Case& caseObjet : model.getCases()) {
-        if (caseObjet.getEvents().size() != 0) {
+    for (Tile& tile : model.getTiles()) {
+        if (tile.getEvents().size() != 0) {
             return true;
         }
     }

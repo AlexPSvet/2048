@@ -2,6 +2,7 @@
 #define CONSOLE_H
 
 #include "Model.h"
+#include <ncurses.h>
 #include <iostream>
 using namespace std;
 

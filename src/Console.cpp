@@ -1,4 +1,5 @@
 #include "Console.h"
+#include <ncurses.h>
 #include <iostream>
 #include <iomanip>
 using namespace std;
@@ -93,6 +94,10 @@ bool Console::validMovement() {
 }
 
 void Console::displayGame() {
+    initscr();
+    int h, w;
+    getmaxyx(stdscr, h, w);
+    WINDOW * win = newwin(30, 30, h, w); //WINDOW * win = newwin(nlines, ncols, y0, x0);
     while (true) {
         printConsole();
         if (validMovement()) {

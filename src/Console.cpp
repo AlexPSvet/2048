@@ -1,7 +1,4 @@
 #include "Console.h"
-#include <ncurses.h>
-#include <iostream>
-#include <iomanip>
 using namespace std;
 
 Console::Console(Model& model) : model(model) {}
@@ -13,7 +10,7 @@ int Console::getMaxTextLenght() {
     int maxValue = 0;
     for (int i = 0; i < model.getLines(); i++) {
         for (int j = 0; j < model.getColumns(); j++) {
-            int value = model.validCase(i, j) ? model.getCase(i, j).getValue() : 0;
+            int value = model.validTile(i, j) ? model.getTile(i, j).getValue() : 0;
             if (value > maxValue) {
                 maxValue = value;
             }
@@ -39,7 +36,7 @@ void Console::printConsole() {
     for (int i = 0; i < model.getLines(); i++) {
         cout << border << endl;
         for (int j = 0; j < model.getColumns(); j++) {
-            cout << "* " << setw(longMax) << (model.validCase(i, j) ? model.getCase(i, j).getValue() : 0) << " ";
+            cout << "* " << setw(longMax) << (model.validTile(i, j) ? model.getTile(i, j).getValue() : 0) << " ";
         }
         cout << "*" << endl;
     }
@@ -94,10 +91,6 @@ bool Console::validMovement() {
 }
 
 void Console::displayGame() {
-    initscr();
-    int h, w;
-    getmaxyx(stdscr, h, w);
-    WINDOW * win = newwin(30, 30, h, w); //WINDOW * win = newwin(nlines, ncols, y0, x0);
     while (true) {
         printConsole();
         if (validMovement()) {

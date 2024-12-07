@@ -1,14 +1,14 @@
-#ifndef CASE_H
-#define CASE_H
+#ifndef TILE_H
+#define TILE_H
 
 #include "MoveEvent.h"
 #include <vector>
 using namespace std;
 
-class Case {
+class Tile {
     public:
-        Case();
-        Case(int i, int j);
+        Tile();
+        Tile(int i, int j);
 
         int getValue();
         void setValue(int value);
@@ -17,11 +17,11 @@ class Case {
         void setIndexI(int i);
         void setIndexJ(int j);
 
-        MoveEvent& getLastAnimation();
+        MoveEvent& getFirstAnimation();
         void removeAnimation(int i);
         bool hasAnimation();
         void addAnimation(MoveEvent event);
-        void addAnimations(Case& caseObjet);
+        void addAnimations(Tile& caseObjet);
         vector<MoveEvent>& getEvents();
     private:
         int value = 0;

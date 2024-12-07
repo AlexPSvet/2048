@@ -3,6 +3,8 @@
 
 #include <SFML/Graphics.hpp>
 #include "Model.h"
+#include <iostream>
+#include <vector>
 using namespace sf;
 
 class Graphics {
@@ -26,13 +28,14 @@ class Graphics {
 
         void updateGame(RenderWindow& window);
 
-        void displayTable(RenderWindow& window, float timeElapsed);
+        void displayTable(RenderWindow& window);
         void displayInfo(RenderWindow& window);
         void displayBackground(RenderWindow& window);
 
-        bool endAnimation(Case& caseObjet, int i, float xEnd, float yEnd);
-        void checkAnimation(RenderWindow& window, Case& caseObjet, float caseLenght, float margin, float timeElapsed);
-        void drawAnimation(RenderWindow& window, Case& caseObjet, float caseLenght, float margin, float x, float y);
+        bool endAnimation(Tile& tile, int i, float xEnd, float yEnd);
+        void checkAnimation(RenderWindow& window, Tile& tile, float timeElapsed);
+        void drawAnimation(RenderWindow& window, Tile& tile, float x, float y);
+        void drawAnimations(RenderWindow& window, float timeElapsed);
         
         sf::Color getColor(int caseNumber);
         bool checkMovement(Event event);

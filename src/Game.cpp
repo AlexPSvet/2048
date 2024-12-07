@@ -16,7 +16,7 @@ int Game::getBestScoreFile() {
         entier >> value;
         return value;
     } else {
-        cerr << "Erreur: fichier non valide ou indisponible au programme";
+        cerr << "Erreur : fichier non valide ou indisponibe au programme." << endl;
         return 0;
     }
 }
@@ -28,7 +28,7 @@ void Game::setBestScoreFile(int bestScore) {
         scoreFile << bestScore;
         scoreFile.close();
     } else {
-        cerr << "Erreur: fichier non valide ou indisponible au programme";
+        cerr << "Erreur : fichier non valide ou indisponibe au programme." << endl;
     }
 }
 

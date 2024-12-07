@@ -5,14 +5,12 @@ MoveEvent::MoveEvent() {}
 MoveEvent::MoveEvent(
     int value, 
     bool isAddAnim, 
-    bool canEndMoveAfter,
     int iStart, 
     int jStart, 
     int iEnd, 
     int jEnd) : 
     value(value), 
     isAddAnim(isAddAnim), 
-    canEndMoveAfter(canEndMoveAfter),
     iStart(iStart), 
     jStart(jStart), 
     iEnd(iEnd), 
@@ -30,10 +28,6 @@ int MoveEvent::getValue() {
 
 bool MoveEvent::isAddAnimation() {
     return isAddAnim;
-}
-
-bool MoveEvent::canMoveAfter() {
-    return canEndMoveAfter;
 }
 
 int MoveEvent::getjStart() {

@@ -26,7 +26,7 @@ Model::Model(int lines, int columns) {
  * @param j1 l'indice j du premier élément
  * @param i2 l'indice i du deuxième élément
  * @param j2 l'indice j du deuxième élément
- */
+ **/
 bool Model::compareValues(int i1, int j1, int i2, int j2) {
     if (validTile(i2, j2)) {
         if (validTile(i1, j1)) {
@@ -139,7 +139,7 @@ bool Model::canMove() {
  * @param j1 l'indice j du premier élément
  * @param i2 l'indice i de la case vide
  * @param j2 l'indice j de la case vide
- */
+ **/
 void Model::moveCase(int i1, int j1, int i2, int j2) {
     Tile& tile = getTile(i1, j1);
     tile.setIndexI(i2);
@@ -253,7 +253,7 @@ void Model::moveDownRange(int j, int startIndex, int endIndex) {
  * @param i2 l'indice i de la case d'arrivé.
  * @param j2 l'indice j de la case d'arrivé.
  * @return true si l'addition des cases se réalise, false sinon.
- */
+ **/
 bool Model::addCases(int i1, int j1, int i2, int j2) {
     if (validTile(i1, j1) && validTile(i2, j2)) {
         Tile& tileStart = getTile(i1, j1);
@@ -405,7 +405,7 @@ vector<tuple<int, int>> Model::getEmptySlots() {
  * valeur égale à 2 et 1/10 pour une valeur égale à 4.
  * 
  * @param amount le nombre de cases vides à mettre aléatoirement dans le plateau.
- */
+ **/
 void Model::setRandomElements(int amount) {
     for (int i = 0; i < amount; i++) {
         vector<tuple<int, int>> emptySlots = getEmptySlots();
@@ -560,7 +560,7 @@ vector<Tile>& Model::getTiles() {
  * Fonction pour retrouver la tuile avec la plus
  * grande valeur.
  * @return max la tuile avec le plus grand nombre.
- */
+ **/
 int Model::getMaxTileNumber() {
     int max = 0;
     for (Tile& caseObjet : tiles) {

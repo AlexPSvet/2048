@@ -12,7 +12,7 @@ Tile::Tile() {
  * Constructeur de la classe Tile (Tuile).
  * @param i l'indice de la ligne de la tuile.
  * @param j l'indice de la colonne de la tuile.
- */
+ **/
 Tile::Tile(int i, int j) {
     this->i = i;
     this->j = j;
@@ -24,7 +24,7 @@ Tile::Tile(int i, int j) {
  * Ceci permet de stocker toutes les mouvements précédents
  * jusqu'à arriver au point final dans un tableau.
  * @param event la classe mouvement.
- */
+ **/
 void Tile::addAnimation(MoveEvent event) {
     events.push_back(event);
 }
@@ -35,7 +35,7 @@ void Tile::addAnimation(MoveEvent event) {
  * événements de cette tuile.
  * Ceci est utile lors d'un mouvement d'addition, pour conserver les mouvements
  * de la case précédente qui s'additionne.
- */
+ **/
 void Tile::addAnimations(Tile& tile) {
     vector<MoveEvent>& eventsOtherTile = tile.getEvents();
     for (int i = 0; i < events.size(); i++) {

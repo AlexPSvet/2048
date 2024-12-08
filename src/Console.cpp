@@ -90,7 +90,7 @@ bool Console::validMovement() {
     return false;
 }
 
-void Console::displayGame() {
+/* void Console::displayGame() {
     while (true) {
         printConsole();
         if (validMovement()) {
@@ -103,4 +103,54 @@ void Console::displayGame() {
             }
         }
     }
+}
+*/
+
+void Console::setupColors() {
+    // Initialisation des couleurs
+    if (has_colors() && can_change_color()) {
+        start_color();
+        // Exemple : définir des paires de couleurs pour différentes valeurs de cases
+        init_pair(1, COLOR_WHITE, COLOR_BLACK); // Valeur par défaut
+        init_pair(2, COLOR_YELLOW, COLOR_BLACK); // Par exemple, pour les cases avec une petite valeur
+        init_pair(3, COLOR_GREEN, COLOR_BLACK);  // Pour des valeurs plus grandes, etc.
+    }
+}
+
+void Console::displayGame() {
+    initscr();               // Initialiser ncurses
+    noecho();                // Désactiver l'affichage des touches pressées
+    cbreak();                // Désactiver la mise en tampon des entrées
+    keypad(stdscr, TRUE);    // Activer les flèches du clavier
+    curs_set(0);             // Masquer le curseur
+
+    setupColors();           // Configurer les couleurs
+
+    // Récupérer les dimensions du terminal
+    int height, width;
+    getmaxyx(stdscr, height, width);
+
+    // Définir les dimensions du tableau (4x4)
+    int boardHeight = 9; // 4 lignes + bordures
+    int boardWidth = 17; // 4 colonnes + bordures
+
+    // Calculer la position centrale
+    int startY = (height - boardHeight) / 2;
+    int startX = (width - boardWidth) / 2;
+
+    // Dessiner le tableau
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            int value = model.validTile(i,j) ? model.getTile(i,j).getValue() : 0;
+            int colorPair = (value > 0) ? (value % 3 + 1) : 1; // Exemple de logique pour les couleurs
+
+            attron(COLOR_PAIR(colorPair));
+            mvprintw(startY + i * 2, startX + j * 4, "[%d]", value); // Afficher la valeur centrée
+            attroff(COLOR_PAIR(colorPair));
+        }
+    }
+
+    refresh(); // Rafraîchir l'affichage
+    getch();   // Attendre une touche pour quitter
+    endwin();  // Terminer ncurses
 }

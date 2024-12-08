@@ -17,11 +17,11 @@ all: $(TARGET_EXEC)
 
 $(TARGET_EXEC): $(OBJS)
 	@mkdir -p $(dir $@)
-	$(CXX) $(NCURSES_FLAG) -o $@ $^ $(CXXFLAGS) $(SFML_FLAG)
+	$(CXX) $(CXXFLAGS) -o $@ $^ $(SFML_FLAG) $(NCURSES_FLAG)
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
 	@mkdir -p $(dir $@)
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) -c $< -o $@ $(NCURSES_FLAG)
 
 clean:
 	rm -rf $(BUILD_DIR) $(TARGET_EXEC)

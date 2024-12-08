@@ -12,6 +12,7 @@ class Console {
         Console(Model& game);
 
         void displayGame();
+        void setupColors();
     private:
         Model& model;
 

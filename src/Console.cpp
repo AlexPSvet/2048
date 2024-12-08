@@ -156,17 +156,17 @@ void Console::displayGame() {
 
         // Dessiner le plateau
         drawBoard(gameWin, cellHeight, cellWidth, 0, 0);
-
+        
         // Dessiner le score
         attron(COLOR_PAIR(2));
-        string score = "Score: " + to_string(model.getScore());  // Use to_string to convert int to string
-        mvprintw(startY + boardHeight + 1, (width - score.size()) / 2, "%s", score.c_str()); // Use %s for strings
+        string score = "Score: " + to_string(model.getScore());
+        mvprintw(startY + boardHeight + 1, (width - score.size()) / 2, "%s", score.c_str());
         attroff(COLOR_PAIR(2));
 
         // Dessiner le meilleur score
         attron(COLOR_PAIR(3));
-        string bestScore = "Meilleur score: " + to_string(model.getBestScore());  // Use to_string for bestScore
-        mvprintw(startY + boardHeight + 2, (width - bestScore.size()) / 2, "%s", bestScore.c_str()); // Use %s for strings
+        string bestScore = "Meilleur score: " + to_string(model.getBestScore());
+        mvprintw(startY + boardHeight + 2, (width - bestScore.size()) / 2, "%s", bestScore.c_str());
         attroff(COLOR_PAIR(3));
 
         refresh();

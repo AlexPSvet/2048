@@ -209,7 +209,7 @@ void Graphics::checkAnimation(RenderWindow& window, Tile& tile, float timeElapse
     float jEnd = event.getjEnd();
     // Produit en croix pour calculer le mouvement à faire
     // selon le temps mis pour produire une image.
-    float movePixels = timeElapsed * ( 8 * unit * 60 );
+    float movePixels = timeElapsed * ( 2 * unit * 60 );
 
     if (jStart < jEnd) {
         // Mouvement droite

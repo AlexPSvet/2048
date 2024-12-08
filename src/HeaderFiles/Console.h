@@ -12,14 +12,14 @@ class Console {
         Console(Model& game);
 
         void displayGame();
+        bool isValidMove(int key);
+        void drawBoard(WINDOW* win, int cellHeight, int cellWidth, int startY, int startX);
         void setupColors();
+        int findNumberColor(int value);
     private:
         Model& model;
 
         int getMaxTextLenght();
-        void printConsole();
-        string verifyAnswer();
-        bool validMovement();
 };
 
 #endif

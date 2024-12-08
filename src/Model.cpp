@@ -30,7 +30,9 @@ Model::Model(int lines, int columns) {
 bool Model::compareValues(int i1, int j1, int i2, int j2) {
     if (validTile(i2, j2)) {
         if (validTile(i1, j1)) {
-            if (getTile(i1, j1).getValue() == getTile(i2, j2).getValue()) {
+            int value1 = getTile(i1, j1).getValue();
+            int value2 = getTile(i2, j2).getValue();
+            if (value1 == value2) {
                 return true;
             }
         } else {

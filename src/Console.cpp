@@ -1,122 +1,124 @@
 #include "Console.h"
+#include <ncurses.h>
 using namespace std;
 
 Console::Console(Model& model) : model(model) {}
 
-/** Retrouve le nombre le plus grand en caractères.
- * @return value la plus grande taille des numéros en chaîne de caractères.
- **/
+/** Retrouve le nombre le plus grand en caractères. */
 int Console::getMaxTextLenght() {
-    int maxValue = 0;
+    int maxValue = 1;
+    for (Tile tile : model.getTiles()) {
+        int value = tile.getValue();
+        if (value > maxValue) {
+            maxValue = value;
+        }
+    }
+    return to_string(maxValue).size();
+}
+
+/** Configuration des couleurs pour ncurses. */
+void Console::setupColors() {
+    if (has_colors() && can_change_color()) {
+        start_color();
+        // Couleurs pour texte normal
+        init_pair(1, COLOR_WHITE, COLOR_MAGENTA);
+        init_pair(2, COLOR_WHITE, COLOR_RED);
+        init_pair(3, COLOR_WHITE, COLOR_MAGENTA);
+
+        // Couleurs pour les tuiles
+        use_default_colors(); // Use the terminal's default background
+        // Define custom RGB colors (scaled from 0 to 1000)
+        init_color(10, 804, 0, 1000);  // Tile 2: RGB(204, 0, 255)
+        init_color(11, 529, 55, 651); // Tile 4: RGB(135, 14, 166)
+        init_color(12, 741, 35, 576); // Tile 8: RGB(189, 9, 147)
+        init_color(13, 463, 43, 365); // Tile 16: RGB(118, 11, 93)
+        init_color(14, 337, 35, 627); // Tile 32: RGB(86, 9, 160)
+        init_color(15, 63, 35, 627);  // Tile 64: RGB(16, 9, 160)
+        init_color(16, 78, 592, 808); // Tile 128: RGB(20, 151, 206)
+        init_color(17, 78, 808, 424); // Tile 256: RGB(20, 206, 108)
+        init_color(18, 675, 808, 78); // Tile 512: RGB(172, 206, 20)
+        init_color(19, 808, 392, 78); // Tile 1024: RGB(206, 100, 20)
+        init_color(20, 890, 94, 15);  // Tile 2048: RGB(227, 24, 4)
+        init_color(21, 471, 51, 8);   // Default tile: RGB(120, 13, 2)
+
+        // Assign color pairs (foreground: white, background: custom color)
+        for (int i = 10; i <= 21; i++) {
+            init_pair(i, COLOR_WHITE, i); // White text on a colored background
+        }
+    }
+}
+
+int Console::findNumberColor(int value) {
+    int exposant = 0;
+    while (value % 2 == 0) {
+        value /= 2;
+        exposant += 1;
+    }
+    return exposant;
+}
+
+/** Affiche le plateau de jeu en utilisant ncurses. */
+void Console::drawBoard(WINDOW* win, int cellHeight, int cellWidth, int startY, int startX) {
     for (int i = 0; i < model.getLines(); i++) {
         for (int j = 0; j < model.getColumns(); j++) {
-            int value = model.validTile(i, j) ? model.getTile(i, j).getValue() : 0;
-            if (value > maxValue) {
-                maxValue = value;
+            if (!model.validTile(i, j)) continue;
+            int value = model.getTile(i, j).getValue();
+            int colorPair = 9 + findNumberColor(value); // Couleur selon la valeu
+            colorPair = 0 <= colorPair and colorPair <= 20 ? colorPair : 21;
+
+            // Déterminer les coordonnées pour la case
+            int cellStartY = startY + i * cellHeight;
+            int cellStartX = startX + j * cellWidth;
+
+            // Dessiner la case
+            wattron(win, COLOR_PAIR(colorPair));
+            for (int y = 0; y < cellHeight; ++y) {
+                mvwprintw(win, cellStartY + y, cellStartX, "%*s", cellWidth, "");
             }
+
+            // Dessiner la valeur centrée dans la case
+            if (value > 0) {
+                mvwprintw(win, cellStartY + cellHeight / 2, cellStartX + (cellWidth - getMaxTextLenght()) / 2, "%d", value);
+            }
+
+            wattroff(win, COLOR_PAIR(colorPair));
         }
     }
-    return to_string(maxValue).size(); // Renvoie la longueur de la chaîne de caracteres equvialente au numéro
+
+    wrefresh(win); // Rafraîchir l'affichage
 }
 
-/** Affiche dans la console le tableau à deux dimensions avec les bordures. 
- **/
-void Console::printConsole() {
-    cout << endl;
-    int longMax = getMaxTextLenght();
-
-    cout << "Score actuel: " << model.getScore() << endl;
-    cout << "Meilleur score : " << model.getBestScore() << endl;
-
-    string border = "*";
-    for (int a = 0; a < model.getColumns(); a++){
-        border += string(longMax + 3, '*'); //Ajoute une séquence de (longMax + 3) caracteres '*'
+bool Console::isValidMove(int key) {
+    switch (key) {
+        case KEY_UP:
+            if (model.canMoveUp()) {
+                model.moveUp();
+                return true;
+            }
+            break;
+        case KEY_DOWN:
+            if (model.canMoveDown()) {
+                model.moveDown();
+                return true;
+            }
+            break;
+        case KEY_LEFT:
+            if (model.canMoveLeft()) {
+                model.moveLeft();
+                return true;
+            }
+            break;
+        case KEY_RIGHT:
+            if (model.canMoveRight()) {
+                model.moveRight();
+                return true;
+            }
+            break;
     }
-
-    for (int i = 0; i < model.getLines(); i++) {
-        cout << border << endl;
-        for (int j = 0; j < model.getColumns(); j++) {
-            cout << "* " << setw(longMax) << (model.validTile(i, j) ? model.getTile(i, j).getValue() : 0) << " ";
-        }
-        cout << "*" << endl;
-    }
-    cout << border << endl;
-    cout << endl;
-}
-
-/** Vérifier que la commande est valide à un type de mouvement.
- * @return answer la réponse vérifiée de l'utilisateur.
- **/
-string Console::verifyAnswer() {
-    string answer;
-    cout << "Saisir une valeur de mouvement : ";
-    cin >> answer;
-    while (answer != "d" && answer != "g" && answer != "h" && answer != "b") {
-        cout << "Votre commande est invalide." << endl;
-        printConsole();
-        cout << "Mouvemant haut : h\nMouvemant bas : b\nMouvemant gauche : g\nMouvemant droite : d\n" << endl;
-        cout << "Saisir une valeur de mouvement : ";
-        cin >> answer;
-    }
-    return answer;
-}
-
-/** Vérifie que la commande de l'utilisateur est un mouvement valide, et réalise le mouvement.
- **/
-bool Console::validMovement() {
-    string answer = verifyAnswer();
-    if (answer == "g"){
-        if (model.canMoveLeft()){
-            model.moveLeft();
-            return true;
-        }
-    } else if (answer == "d"){
-        if (model.canMoveRight()){
-            model.moveRight();
-            return true;
-        }
-    } else if (answer == "h"){
-        if (model.canMoveUp()){
-            model.moveUp();
-            return true;
-        }
-    } else if (answer == "b"){
-        if (model.canMoveDown()){
-            model.moveDown();
-            return true;
-        }
-    }
-    cout << "Le mouvement saisi est invalide." << endl;
     return false;
 }
 
-/* void Console::displayGame() {
-    while (true) {
-        printConsole();
-        if (validMovement()) {
-            model.setRandomElements(1);
-            if (!model.canMove()) {
-                cout << "Le jeu est fini." << endl;
-                cout << "Score final : " << model.getScore() << endl;
-                cout << "Best score : " << model.getBestScore() << endl;
-                return;
-            }
-        }
-    }
-}
-*/
-
-void Console::setupColors() {
-    // Initialisation des couleurs
-    if (has_colors() && can_change_color()) {
-        start_color();
-        // Exemple : définir des paires de couleurs pour différentes valeurs de cases
-        init_pair(1, COLOR_WHITE, COLOR_BLACK); // Valeur par défaut
-        init_pair(2, COLOR_YELLOW, COLOR_BLACK); // Par exemple, pour les cases avec une petite valeur
-        init_pair(3, COLOR_GREEN, COLOR_BLACK);  // Pour des valeurs plus grandes, etc.
-    }
-}
-
+/** Gestionnaire principal du jeu avec ncurses. */
 void Console::displayGame() {
     initscr();               // Initialiser ncurses
     noecho();                // Désactiver l'affichage des touches pressées
@@ -130,27 +132,63 @@ void Console::displayGame() {
     int height, width;
     getmaxyx(stdscr, height, width);
 
-    // Définir les dimensions du tableau (4x4)
-    int boardHeight = 9; // 4 lignes + bordures
-    int boardWidth = 17; // 4 colonnes + bordures
+    // Calculer les dimensions du plateau
+    int boardHeight = height * 2 / 3; // 2/3 de la hauteur du terminal
+    int boardWidth = width * 2 / 3;   // 2/3 de la largeur du terminal
+    int cellHeight = boardHeight / model.getLines();  // Hauteur des cases
+    int cellWidth = boardWidth / model.getColumns();  // Largeur des cases
 
     // Calculer la position centrale
     int startY = (height - boardHeight) / 2;
     int startX = (width - boardWidth) / 2;
 
-    // Dessiner le tableau
-    for (int i = 0; i < 4; i++) {
-        for (int j = 0; j < 4; j++) {
-            int value = model.validTile(i,j) ? model.getTile(i,j).getValue() : 0;
-            int colorPair = (value > 0) ? (value % 3 + 1) : 1; // Exemple de logique pour les couleurs
+    // Créer une fenêtre pour le plateau
+    WINDOW* gameWin = newwin(boardHeight, boardWidth, startY, startX);
 
-            attron(COLOR_PAIR(colorPair));
-            mvprintw(startY + i * 2, startX + j * 4, "[%d]", value); // Afficher la valeur centrée
-            attroff(COLOR_PAIR(colorPair));
+    while (true) {
+        werase(gameWin);
+        box(gameWin, 0, 0);
+
+        // Dessiner le titre du jeu
+        attron(COLOR_PAIR(1));
+        mvprintw(startY - 2, (width - 8) / 2, " 2048 ");
+        attroff(COLOR_PAIR(1));
+
+        // Dessiner le plateau
+        drawBoard(gameWin, cellHeight, cellWidth, 0, 0);
+
+        // Dessiner le score
+        attron(COLOR_PAIR(2));
+        string score = "Score: " + to_string(model.getScore());  // Use to_string to convert int to string
+        mvprintw(startY + boardHeight + 1, (width - score.size()) / 2, "%s", score.c_str()); // Use %s for strings
+        attroff(COLOR_PAIR(2));
+
+        // Dessiner le meilleur score
+        attron(COLOR_PAIR(3));
+        string bestScore = "Meilleur score: " + to_string(model.getBestScore());  // Use to_string for bestScore
+        mvprintw(startY + boardHeight + 2, (width - bestScore.size()) / 2, "%s", bestScore.c_str()); // Use %s for strings
+        attroff(COLOR_PAIR(3));
+
+        refresh();
+
+        int key = getch();
+
+        if (key == 'q') {
+            break;
+        }
+
+        if (isValidMove(key)) {
+            model.setRandomElements(1);
+        }
+
+        if (!model.canMove()) {
+            mvprintw(height / 2, (width - 20) / 2, "Jeu terminé !");
+            refresh();
+            getch();
+            model.restart();
         }
     }
 
-    refresh(); // Rafraîchir l'affichage
-    getch();   // Attendre une touche pour quitter
-    endwin();  // Terminer ncurses
+    delwin(gameWin);
+    endwin();
 }

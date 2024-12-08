@@ -163,6 +163,10 @@ void Graphics::drawAnimation(RenderWindow& window, Tile& tile, float xMove, floa
         float xEnd = event.getStartX() + signeX * ( caseMargin + caseLenght ) * ( abs(event.getjStart() - event.getjEnd()) );
         float yEnd = event.getStartY() + signeY * ( caseMargin + caseLenght ) * ( abs(event.getiEnd() - event.getiStart()) );
 
+        if (endAnimation(tile, i, xEnd, yEnd)) {
+            break;
+        }
+
         // Pour dessiner la case rajouté lors de son addition, on doit la dessiner lorsqu'elle
         // a finit de se déplacer, c'est-à-dire que si un mouvement c'est produit à 2 événements,
         // alors il ne faut pas la dessiner.
@@ -177,10 +181,6 @@ void Graphics::drawAnimation(RenderWindow& window, Tile& tile, float xMove, floa
             if (i != 0) {
                 continue;
             }
-        }
-
-        if (endAnimation(tile, i, xEnd, yEnd)) {
-            break;
         }
 
         // Rajoute les composantes en x,y et dessine la case dans sa nouvelle position.
@@ -209,7 +209,7 @@ void Graphics::checkAnimation(RenderWindow& window, Tile& tile, float timeElapse
     float jEnd = event.getjEnd();
     // Produit en croix pour calculer le mouvement à faire
     // selon le temps mis pour produire une image.
-    float movePixels = timeElapsed * ( 2 * unit * 60 );
+    float movePixels = timeElapsed * ( 10 * unit * 60 );
 
     if (jStart < jEnd) {
         // Mouvement droite
@@ -235,6 +235,7 @@ void Graphics::checkAnimation(RenderWindow& window, Tile& tile, float timeElapse
 void Graphics::drawAnimations(RenderWindow& window, float timeElapsed) {
     int x = xRectangle + caseMargin;
     int y = yRectangle + caseMargin;
+    bool noMoreEvents = false;
     for (Tile& tile : model.getTiles()) {
         for (MoveEvent& event : tile.getEvents()) {
             int iStart = event.getiStart();
@@ -252,16 +253,16 @@ void Graphics::drawAnimations(RenderWindow& window, float timeElapsed) {
                 event.setCurentY(yStart);
             }
         }
-        // Vérifie si plus de mouvements à dessiner, pour ainsi
-        // dessinner la nouvelle tuile et mettre à jour le score.
-        if (tile.getEvents().size() != 0) {
+        if (tile.hasAnimation()) {
             checkAnimation(window, tile, timeElapsed);
-            if (!isCasesInAnimation() && isValidMovement) {
-                model.setRandomElements(1);
-                model.updateScore();
-                isValidMovement = false;          
-            }
         }
+    }
+    // Vérifie si plus de mouvements à dessiner, pour ainsi
+    // dessinner la nouvelle tuile et mettre à jour le score.
+    if (!isCasesInAnimation() && isValidMovement) {
+        model.setRandomElements(1);
+        model.updateScore();
+        isValidMovement = false;          
     }
 }
 
@@ -397,7 +398,7 @@ void Graphics::updateGame(RenderWindow& window) {
     displayBackground(window);
     displayInfo(window);
     displayTable(window);
-    drawAnimations(window, elapsedTimeSec);
+    if (isCasesInAnimation()) drawAnimations(window, elapsedTimeSec);
 }
 
 /** 

@@ -413,8 +413,8 @@ void Model::setRandomElements(int amount) {
         vector<tuple<int, int>> emptySlots = getEmptySlots();
         int k = rand() % emptySlots.size();
         tuple<int, int> values = emptySlots[k];
-        int r = rand() % 10;
         Tile newTile(get<0>(values), get<1>(values));
+        int r = rand() % 10;
         newTile.setValue(r < 9 ? 2 : 4);
         tiles.push_back(newTile);
     }

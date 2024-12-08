@@ -59,11 +59,12 @@ int Console::findNumberColor(int value) {
 
 /** Affiche le plateau de jeu en utilisant ncurses. */
 void Console::drawBoard(WINDOW* win, int cellHeight, int cellWidth, int startY, int startX) {
+    box(win, 0, 0);
     for (int i = 0; i < model.getLines(); i++) {
         for (int j = 0; j < model.getColumns(); j++) {
             if (!model.validTile(i, j)) continue;
             int value = model.getTile(i, j).getValue();
-            int colorPair = 9 + findNumberColor(value); // Couleur selon la valeu
+            int colorPair = 9 + findNumberColor(value); // Couleur selon la valeur
             colorPair = 0 <= colorPair and colorPair <= 20 ? colorPair : 21;
 
             // Déterminer les coordonnées pour la case
@@ -77,9 +78,7 @@ void Console::drawBoard(WINDOW* win, int cellHeight, int cellWidth, int startY, 
             }
 
             // Dessiner la valeur centrée dans la case
-            if (value > 0) {
-                mvwprintw(win, cellStartY + cellHeight / 2, cellStartX + (cellWidth - getMaxTextLenght()) / 2, "%d", value);
-            }
+            mvwprintw(win, cellStartY + cellHeight / 2, cellStartX + (cellWidth - getMaxTextLenght()) / 2, "%d", value);
 
             wattroff(win, COLOR_PAIR(colorPair));
         }
@@ -147,7 +146,6 @@ void Console::displayGame() {
 
     while (true) {
         werase(gameWin);
-        box(gameWin, 0, 0);
 
         // Dessiner le titre du jeu
         attron(COLOR_PAIR(1));

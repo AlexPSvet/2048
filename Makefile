@@ -1,5 +1,5 @@
 TARGET_EXEC := 2048
-PATH_ROOT := /home/alex/Documents/Projet-2048/2048
+PATH_ROOT := /home/andresfsanchez0310/Documents/2048
 SRC_DIR := $(PATH_ROOT)/src
 BUILD_DIR := $(PATH_ROOT)/target
 INCLUDE := $(PATH_ROOT)/include

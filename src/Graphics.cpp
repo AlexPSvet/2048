@@ -403,6 +403,8 @@ void Graphics::updateGame(RenderWindow& window) {
 
 /** 
  * Fonction pour vérifier si des bouton sont appuyées.
+ * On vérifie lorsque l'utilisateur fait un click dans
+ * la fentre si sa positiion correspond à un button.
  * 
  * @param window la fenetre dans laquelle vérifier.
  **/
@@ -424,6 +426,13 @@ void Graphics::checkButtons(RenderWindow& window) {
     }
 }
 
+/** 
+ * Fonction pour dessiner le button de fin de jeu pour
+ * recommencer et aussi le fond semi-transparent 
+ * du plateau avec les tuiles.
+ * 
+ * @param window la fenetre dans laquelle dessiner.
+ **/
 void Graphics::drawRestartMenu(RenderWindow& window) {
     bool win = model.didPlayerWin();
     Vector2u size = window.getSize();
@@ -435,14 +444,20 @@ void Graphics::drawRestartMenu(RenderWindow& window) {
     float textHeight = rectangleLenght * 0.3;
     float xrText = xRectangle + (rectangleLenght - textWidth) / 2;
     float yrText = (rectangleLenght - textHeight) / 4;
-    Color fillColor = win ? Color( 47, 142, 11, 255 ) : Color( 231, 83, 24, 255 );
-    Color outlineColor = Color( 255, 255, 255, 255 );
-    Color textColor = win ? Color( 31, 218, 229, 255) : Color( 225, 25, 104, 255 );
+    Color fillColor = win ? Color( 147, 49, 123 ) : Color( 187, 19, 147 );
+    Color outlineColor = Color( 127, 25, 210 );
+    Color textColor = win ? Color( 227, 108, 193, 255 ) : Color( 21, 143, 227 );
     string text = win ? "T'as gagné!" : "T'as perdu...";
     drawText(window, text, textWidth, textHeight, xrText, yRectangle + yrText, 5 * unit, 7 * unit, 10 * unit, fillColor, outlineColor, textColor);
     drawText(window, "RECOMMENCER", textWidth, textHeight, xrText, yRectangle + 2.5 * yrText, 5 * unit, 7 * unit, 10 * unit, fillColor, outlineColor, textColor);
 }
 
+/** 
+ * Fonction pour définir les unités lors de dessiner
+ * dans la fenetre.
+ * 
+ * @param window la fenetre dans laquelle dessiner.
+ **/
 void Graphics::updateUnits(RenderWindow& window) {
     Vector2u windowSize = window.getSize();
     unit = windowSize.x / 400.0;
@@ -453,7 +468,14 @@ void Graphics::updateUnits(RenderWindow& window) {
     yRectangle = 177.5 * unit;
 }
 
+/** 
+ * Fonction pour initialiser la fenetre et dessiner
+ * le jeu.
+ * 
+ * @param window la fenetre dans laquelle dessiner.
+ **/
 void Graphics::displayGame() {
+    // Initialisation de la fenetre.
     RenderWindow window(VideoMode(600, 600), "2048");
     window.setFramerateLimit(60);
     window.setVerticalSyncEnabled(true);
@@ -463,6 +485,7 @@ void Graphics::displayGame() {
     
     updateUnits(window);
 
+    // Variables du jeu.
     isValidMovement = false;
     model.setGameState(GameState::Running);
 
@@ -474,6 +497,7 @@ void Graphics::displayGame() {
                     window.close();
                     break;
                 case Event::KeyPressed:
+                    // Cas pour faire un mouvement.
                     if (!isCasesInAnimation()) {
                         if (model.canMove()) {
                             if (checkMovement(event)) {
@@ -483,13 +507,20 @@ void Graphics::displayGame() {
                             model.setGameState(GameState::End);
                         }
                     }
+                    // Sortir de la fenetre si la touche Q pressee.
+                    if (event.key.code == Keyboard::Q) {
+                        window.close();
+                        return;
+                    }
                     break;
                 case Event::MouseButtonPressed:
+                    // Verifier si un button est pressee.
                     checkButtons(window);
                     break;
             }
         }
         window.clear();
+        // Dessiner le jeu selon le cas
         switch (model.getGameState()) {
             case GameState::Running:
                 updateGame(window);
@@ -503,6 +534,11 @@ void Graphics::displayGame() {
     }
 }
 
+/** 
+ * Vérifie si au moins une tuile est en animation
+ * 
+ * @return true si au moins une tuile en animation, false sinon.
+ **/
 bool Graphics::isCasesInAnimation() {
     for (Tile& tile : model.getTiles()) {
         if (tile.getEvents().size() != 0) {

@@ -1,16 +1,14 @@
 TARGET_EXEC := 2048
 PATH_ROOT := /home/alex/Documents/Projet-2048/2048
-SRC_DIR := $(PATH_ROOT)/src
-BUILD_DIR := $(PATH_ROOT)/target
-INCLUDE := $(PATH_ROOT)/include
-LIB := $(PATH_ROOT)/lib
+SRC_DIR := src
+BUILD_DIR := target
 
 CXX := g++
 CXXFLAGS := -I$(SRC_DIR)/HeaderFiles -fsanitize=address
 NCURSES_FLAG := -lncurses
 SFML_FLAG := -lsfml-graphics -lsfml-window -lsfml-system
 
-SRCS := $(shell find $(SRC_DIR) -type f -name "*.cpp")
+SRCS := $(shell find $(SRC_DIR)/ -type f -name "*.cpp")
 OBJS := $(SRCS:$(SRC_DIR)/%.cpp=$(BUILD_DIR)/%.o)
 
 all: $(BUILD_DIR)/$(TARGET_EXEC)
@@ -24,6 +22,4 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@ $(NCURSES_FLAG)
 
 clean:
-	rm -rf $(BUILD_DIR) $(TARGET_EXEC)
-
-.PHONY: all clean
+	rm -rf $(BUILD_DIR)

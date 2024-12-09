@@ -50,7 +50,7 @@ void Console::setupColors() {
 
 int Console::findNumberColor(int value) {
     int exposant = 0;
-    while (value % 2 == 0) {
+    while (value != 1) {
         value /= 2;
         exposant += 1;
     }
@@ -73,18 +73,24 @@ void Console::drawBoard(WINDOW* win, int cellHeight, int cellWidth, int startY, 
 
             // Dessiner la case
             wattron(win, COLOR_PAIR(colorPair));
-            for (int y = 0; y < cellHeight; ++y) {
-                mvwprintw(win, cellStartY + y, cellStartX, "%*s", cellWidth, "");
-            }
+            for (int y = 0; y < cellHeight; y++) {
+                for (int x = 0; x < cellWidth; x++){
+                    mvwaddch(win, cellStartY + y, cellStartX + x, ' ');
+                }
+            }    
+            
+            int centerY = cellStartY + cellHeight/2;
+            int centerX = cellStartX + (cellWidth - getMaxTextLenght()) / 2;
+
 
             // Dessiner la valeur centrée dans la case
-            mvwprintw(win, cellStartY + cellHeight / 2, cellStartX + (cellWidth - getMaxTextLenght()) / 2, "%d", value);
+            mvwprintw(win, centerY, centerX, "%d", value); //"%d" est un format spécifiant que value est un entier
 
             wattroff(win, COLOR_PAIR(colorPair));
         }
     }
 
-    wrefresh(win); // Rafraîchir l'affichage
+    wrefresh(win); // Rafraîchit l'affichage de la window win
 }
 
 bool Console::isValidMove(int key) {

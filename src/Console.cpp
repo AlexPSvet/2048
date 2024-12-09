@@ -59,11 +59,12 @@ int Console::findNumberColor(int value) {
 
 /** Affiche le plateau de jeu en utilisant ncurses. */
 void Console::drawBoard(WINDOW* win, int cellHeight, int cellWidth, int startY, int startX) {
+    box(win, 0, 0);
     for (int i = 0; i < model.getLines(); i++) {
         for (int j = 0; j < model.getColumns(); j++) {
             if (!model.validTile(i, j)) continue;
             int value = model.getTile(i, j).getValue();
-            int colorPair = 9 + findNumberColor(value); // Couleur selon la valeu
+            int colorPair = 9 + findNumberColor(value); // Couleur selon la valeur
             colorPair = 0 <= colorPair and colorPair <= 20 ? colorPair : 21;
 
             // Déterminer les coordonnées pour la case
@@ -77,9 +78,7 @@ void Console::drawBoard(WINDOW* win, int cellHeight, int cellWidth, int startY, 
             }
 
             // Dessiner la valeur centrée dans la case
-            if (value > 0) {
-                mvwprintw(win, cellStartY + cellHeight / 2, cellStartX + (cellWidth - getMaxTextLenght()) / 2, "%d", value);
-            }
+            mvwprintw(win, cellStartY + cellHeight / 2, cellStartX + (cellWidth - getMaxTextLenght()) / 2, "%d", value);
 
             wattroff(win, COLOR_PAIR(colorPair));
         }
@@ -147,7 +146,6 @@ void Console::displayGame() {
 
     while (true) {
         werase(gameWin);
-        box(gameWin, 0, 0);
 
         // Dessiner le titre du jeu
         attron(COLOR_PAIR(1));
@@ -156,17 +154,17 @@ void Console::displayGame() {
 
         // Dessiner le plateau
         drawBoard(gameWin, cellHeight, cellWidth, 0, 0);
-
+        
         // Dessiner le score
         attron(COLOR_PAIR(2));
-        string score = "Score: " + to_string(model.getScore());  // Use to_string to convert int to string
-        mvprintw(startY + boardHeight + 1, (width - score.size()) / 2, "%s", score.c_str()); // Use %s for strings
+        string score = "Score: " + to_string(model.getScore());
+        mvprintw(startY + boardHeight + 1, (width - score.size()) / 2, "%s", score.c_str());
         attroff(COLOR_PAIR(2));
 
         // Dessiner le meilleur score
         attron(COLOR_PAIR(3));
-        string bestScore = "Meilleur score: " + to_string(model.getBestScore());  // Use to_string for bestScore
-        mvprintw(startY + boardHeight + 2, (width - bestScore.size()) / 2, "%s", bestScore.c_str()); // Use %s for strings
+        string bestScore = "Meilleur score: " + to_string(model.getBestScore());
+        mvprintw(startY + boardHeight + 2, (width - bestScore.size()) / 2, "%s", bestScore.c_str());
         attroff(COLOR_PAIR(3));
 
         refresh();

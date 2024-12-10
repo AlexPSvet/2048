@@ -30,8 +30,8 @@ class Game {
         
         // Related score
         string pathFile;
-        int getBestScoreFile();
-        void setBestScoreFile(int bestScore);
+        int getBestScoreFile(string pathFile);
+        void setBestScoreFile(int bestScore, string pathFile);
 
         // General variables
         vector<Tile> cases;

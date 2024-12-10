@@ -2,6 +2,20 @@
 
 MoveEvent::MoveEvent() {}
 
+/**
+ * Constructeur de la classe MoveEvent.
+ * Cette classe permet de pouvoir registrer un mouvement
+ * réalisée dans le plateau pour ainsi pouvoir après le dessiner
+ * dans l'interface graphique pour les animations.
+ * 
+ * @param value : la valeur de la tuile au moment du mouvement.
+ * @param isAddAnim : booléen pour dire si le mouvement est pour
+ * faire l'addition de deux cases.
+ * @param iStart : ligne de départ du mouvement.
+ * @param jStart : colonne de départ du mouvement.
+ * @param iEnd : ligne de fin du mouvement.
+ * @param jEnd : colonne de fin du mouvement.
+ */
 MoveEvent::MoveEvent(
     int value, 
     bool isAddAnim, 
@@ -21,6 +35,8 @@ MoveEvent::MoveEvent(
     currentX = -1;
     currentY = -1;
 }
+
+// FONCTIONS GET/SET
 
 int MoveEvent::getValue() {
     return value;

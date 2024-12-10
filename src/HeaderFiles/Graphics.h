@@ -11,6 +11,10 @@ class Graphics {
     public:
         Graphics(Model& game);
 
+        void displayGame();
+    private:
+        Model& model;
+
         void drawText(
             RenderWindow& window, 
             std::string text, 
@@ -20,7 +24,6 @@ class Graphics {
             float outline,
             Color fillColor, Color outlineColor, Color textColor);
 
-        void displayGame();
         void updateUnits(RenderWindow& window);
 
         void drawRestartMenu(RenderWindow& window);
@@ -41,9 +44,7 @@ class Graphics {
         bool checkMovement(Event event);
 
         bool isCasesInAnimation();
-    private:
-        Model& model;
-        // Graphics variables
+
         Font gameFont;
         Texture backgroundText;
         float unit;
@@ -52,9 +53,9 @@ class Graphics {
         float rectangleLenght;
         float caseLenght;
         float caseMargin;
-        // Animation
+
         Clock clock;
-        // Valid movement
+
         bool isValidMovement;
 };
 

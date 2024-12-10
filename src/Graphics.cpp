@@ -8,7 +8,7 @@ Graphics::Graphics(Model& model) : model(model) {}
  * Elle crée un sprite pour lui appliquer la texture étant
  * l'image de fond du jeu.
  * 
- * @param window la fenetre dans laquelle dessiner.
+ * @param window la fenêtre dans laquelle dessiner.
  **/
 void Graphics::displayBackground(RenderWindow& window) {
     Sprite sprite;
@@ -53,11 +53,11 @@ Color Graphics::getColor(int tileNumber) {
 }
 
 /** 
- * Fonction pour dessiner dans une fentre un rectangle
+ * Fonction pour dessiner dans une fenêtre un rectangle
  * de taille fixe et a l'intérieur du text d'une taille
  * qui dépend de la taille du rectangle.
  * 
- * @param window la fentre dans laquelle dessiner la figure.
+ * @param window la fenêtre dans laquelle dessiner la figure.
  * @param text le texte à afficher dans le rectangle.
  * @param width la largeur du rectangle.
  * @param height la longueur du rectangle.
@@ -141,7 +141,7 @@ bool Graphics::endAnimation(Tile& tile, int i, float xEnd, float yEnd) {
  * On considère que deux tuiles rajoutées représentent en soi la meme 
  * tuile avec leurs animations rajoutées.
  * 
- * @param window la fenetre dans laquelle dessiner l'animation.
+ * @param window la fenêtre dans laquelle dessiner l'animation.
  * @param tile la tuile laquelle il faut dessiner en premier.
  * @param xMove la composante en x à rajouter dans la position de la tuile (inclus valeurs négatifs).
  * @param yMove la composante en y à rajouter dans la position de la tuile (inclus valeurs négatifs).
@@ -195,7 +195,7 @@ void Graphics::drawAnimation(RenderWindow& window, Tile& tile, float xMove, floa
  * Fonction qui vérifie selon le mouvement à effectuer quel composante en x,y
  * ajouter ou diminuer pour faire l'animation.
  * 
- * @param window la fenetre dans laquelle dessiner l'animation.
+ * @param window la fenêtre dans laquelle dessiner l'animation.
  * @param tile la tuile laquelle il faut dessiner en premier.
  * @param timeElapsed le temps passé pour dessiner l'image précédente du jeu.
  **/
@@ -229,7 +229,7 @@ void Graphics::checkAnimation(RenderWindow& window, Tile& tile, float timeElapse
 /** 
  * Fonction pour dessiner toutes les animations des cases.
  * 
- * @param window la fenetre dans laquelle dessiner l'animation.
+ * @param window la fenêtre dans laquelle dessiner l'animation.
  * @param timeElapsed le temps passé pour dessiner l'image précédente du jeu.
  **/
 void Graphics::drawAnimations(RenderWindow& window, float timeElapsed) {
@@ -270,7 +270,7 @@ void Graphics::drawAnimations(RenderWindow& window, float timeElapsed) {
  * Fonction pour dessiner le plateau avec toutes les cases qui ne sont
  * pas en animation.
  * 
- * @param window la fenetre dans laquelle dessiner.
+ * @param window la fenêtre dans laquelle dessiner.
  **/
 void Graphics::displayTable(RenderWindow& window) {
     Vector2 size = window.getSize();
@@ -304,10 +304,10 @@ void Graphics::displayTable(RenderWindow& window) {
 
 /** 
  * Fonction pour dessiner toutes les informations du jeu
- * dans la fenetre : le titre du jeu, le meilleur score
+ * dans la fenêtre : le titre du jeu, le meilleur score
  * et le score actuel du jeu.
  * 
- * @param window la fenetre dans laquelle dessiner.
+ * @param window la fenêtre dans laquelle dessiner.
  **/
 void Graphics::displayInfo(RenderWindow& window) {
     // Afficher le titre du jeu.
@@ -346,7 +346,7 @@ void Graphics::displayInfo(RenderWindow& window) {
  * Vérifier si le mouvement en question est valide, 
  * c'est-à-dire si un mouvement est réalisée.
  * 
- * @param window la fenetre dans laquelle dessiner.
+ * @param window la fenêtre dans laquelle dessiner.
  * @return true si un mouvement se réalise, false sinon.
  **/
 bool Graphics::checkMovement(Event event) {
@@ -390,7 +390,7 @@ bool Graphics::checkMovement(Event event) {
  * Fonction pour dessiner tout le jeu, et vérifie
  * le temps mis par l'ordinateur pour afficher l'image.
  * 
- * @param window la fenetre dans laquelle dessiner.
+ * @param window la fenêtre dans laquelle dessiner.
  **/
 void Graphics::updateGame(RenderWindow& window) {
     float elapsedTimeSec = clock.getElapsedTime().asSeconds();
@@ -406,7 +406,7 @@ void Graphics::updateGame(RenderWindow& window) {
  * On vérifie lorsque l'utilisateur fait un click dans
  * la fentre si sa positiion correspond à un button.
  * 
- * @param window la fenetre dans laquelle vérifier.
+ * @param window la fenêtre dans laquelle vérifier.
  **/
 void Graphics::checkButtons(RenderWindow& window) {
     sf::Vector2i mousePosition = sf::Mouse::getPosition(window);
@@ -431,7 +431,7 @@ void Graphics::checkButtons(RenderWindow& window) {
  * recommencer et aussi le fond semi-transparent 
  * du plateau avec les tuiles.
  * 
- * @param window la fenetre dans laquelle dessiner.
+ * @param window la fenêtre dans laquelle dessiner.
  **/
 void Graphics::drawRestartMenu(RenderWindow& window) {
     bool win = model.didPlayerWin();
@@ -454,9 +454,9 @@ void Graphics::drawRestartMenu(RenderWindow& window) {
 
 /** 
  * Fonction pour définir les unités lors de dessiner
- * dans la fenetre.
+ * dans la fenêtre.
  * 
- * @param window la fenetre dans laquelle dessiner.
+ * @param window la fenêtre dans laquelle dessiner.
  **/
 void Graphics::updateUnits(RenderWindow& window) {
     Vector2u windowSize = window.getSize();
@@ -469,13 +469,13 @@ void Graphics::updateUnits(RenderWindow& window) {
 }
 
 /** 
- * Fonction pour initialiser la fenetre et dessiner
+ * Fonction pour initialiser la fenêtre et dessiner
  * le jeu.
  * 
- * @param window la fenetre dans laquelle dessiner.
+ * @param window la fenêtre dans laquelle dessiner.
  **/
 void Graphics::displayGame() {
-    // Initialisation de la fenetre.
+    // Initialisation de la fenêtre.
     RenderWindow window(VideoMode(600, 600), "2048");
     window.setFramerateLimit(60);
     window.setVerticalSyncEnabled(true);
@@ -507,20 +507,20 @@ void Graphics::displayGame() {
                             model.setGameState(GameState::End);
                         }
                     }
-                    // Sortir de la fenetre si la touche Q pressee.
+                    // Sortir de la fenêtre si la touche Q est pressée.
                     if (event.key.code == Keyboard::Q) {
                         window.close();
                         return;
                     }
                     break;
                 case Event::MouseButtonPressed:
-                    // Verifier si un button est pressee.
+                    // Vérifier si un button est pressée.
                     checkButtons(window);
                     break;
             }
         }
         window.clear();
-        // Dessiner le jeu selon le cas
+        // Dessiner le jeu selon le cas.
         switch (model.getGameState()) {
             case GameState::Running:
                 updateGame(window);
@@ -535,7 +535,7 @@ void Graphics::displayGame() {
 }
 
 /** 
- * Vérifie si au moins une tuile est en animation
+ * Vérifie si au moins une tuile est en animation.
  * 
  * @return true si au moins une tuile en animation, false sinon.
  **/

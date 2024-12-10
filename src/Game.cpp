@@ -1,10 +1,22 @@
 #include "Game.h"
 using namespace std;
 
-// Class constructor
+/**
+ * Constructeur de la classe Game.
+ * Cette classe permet de stocker les classes pour le fonctionnement du jeu, tels
+ * que l'interface graphique ou le mode console du terminal, ainsi que pour obtenir
+ * le meilleur score du jeu.
+ * 
+ * @param pathFile : la direction du fichier ou se trouve stockée le meilleur score.
+ */
 Game::Game(string pathFile) : pathFile(pathFile), model(Model(4, 4)), graphics(Graphics(model)), console(Console(model)) {}
 
-int Game::getBestScoreFile() {
+/**
+ * Fonction pour chercher dans un fichier le meilleur score.
+ * @param pathFile : la direction du fichier ou se trouve le meilleur score.
+ * @return bestScore : le meilleur score du joueur.
+ */
+int Game::getBestScoreFile(string pathFile) {
     ifstream scoreFile;
     scoreFile.open(pathFile);
     if ( scoreFile ) {
@@ -12,16 +24,21 @@ int Game::getBestScoreFile() {
         scoreFile >> text;
         scoreFile.close();
         istringstream entier( text );
-        int value;
-        entier >> value;
-        return value;
+        int bestScore;
+        entier >> bestScore;
+        return bestScore;
     } else {
         cerr << "Erreur : fichier non valide ou indisponibe au programme." << endl;
         return 0;
     }
 }
 
-void Game::setBestScoreFile(int bestScore) {
+/**
+ * Fonction pour chercher dans un fichier le meilleur score.
+ * @param bestScore : le meilleur score du joueur.
+ * @param pathFile : la direction du fichier ou se trouve le meilleur score.
+ */
+void Game::setBestScoreFile(int bestScore, string pathFile) {
     ofstream scoreFile;
     scoreFile.open(pathFile);
     if ( scoreFile ) {
@@ -32,25 +49,30 @@ void Game::setBestScoreFile(int bestScore) {
     }
 }
 
-/** Commence le jeu en initialisant le tableau, rajoute deux valeurs 
- * aléatoires et demande à l'utilisateur les mouvements. 
+/** 
+ * Fonction pour commencer le jeu. Demande à l'utilisateur
+ * quel mode de jeu utiliser avant de l'initialiser. (Terminale ou console).
  **/
 void Game::start() {
     model.restart();
     while (true) {
-        cout << "Game type (screen, console): ";
-        model.setBestScore(getBestScoreFile());
+        cout << "Saisir le mode d'interface du jeu (interface, terminale): ";
+        model.setBestScore(getBestScoreFile(pathFile));
         string ans;
         cin >> ans;
-        if (ans == "screen") {
+        if (ans == "interface") {
+            // Initialise la bibliothèque SFML ainsi que l'interface graphique.
             graphics.displayGame();
-        } else if (ans == "console") {
+        } else if (ans == "terminale") {
+            // Initialise la bibliothèque ncurses ainsi que la terminale du jeu.
             console.displayGame();
         }
-        setBestScoreFile(model.getBestScore());
+        setBestScoreFile(model.getBestScore(), pathFile);
         model.restart();
     }
 }
+
+// FONCTIONS GET
 
 Model& Game::getModel() {
     return model;

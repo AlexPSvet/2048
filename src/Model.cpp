@@ -5,6 +5,10 @@ using namespace std;
  * Constructeur de la classe Model pour toutes les fonctions
  * de logique et de mouvement du jeu.
  * 
+ * On retrouvera ici toutes les fonctions de
+ * mouvement, de vérification de mouvement et aussi
+ * les fonctions pour le score et état du jeu.
+ * 
  * @param lines les lignes du plateau du jeu.
  * @param columns le nombre de colonnes du jeu.
  */
@@ -135,12 +139,12 @@ bool Model::canMove() {
 // FONCTIONS DE MOUVEMENT
 
 /**
- * Déplace un case vers une case vide dans le plateau.
+ * Déplace un tuile vers une position vide dans le plateau.
  * 
- * @param i1 l'indice i du premier élément
- * @param j1 l'indice j du premier élément
- * @param i2 l'indice i de la case vide
- * @param j2 l'indice j de la case vide
+ * @param i1 : l'indice i du premier élément.
+ * @param j1 : l'indice j du premier élément.
+ * @param i2 : l'indice i de la position vide.
+ * @param j2 : l'indice j de la position vide.
  **/
 void Model::moveCase(int i1, int j1, int i2, int j2) {
     Tile& tile = getTile(i1, j1);
@@ -152,13 +156,14 @@ void Model::moveCase(int i1, int j1, int i2, int j2) {
 }
 
 /** 
- * Décale depuis l'indice startIndex jusqu'à l'indice endIndex exclu les valeurs d'un tableau
- * vers la gauche. Garde le dernier indice d'une cas vide, et déplace les valeurs différents de 0
- * sur ses indices.
+ * Décale depuis l'indice startIndex jusqu'à l'indice endIndex exclu les 
+ * tuiles de la ligne i vers la gauche. Garde le premier indice d'une 
+ * position vide par rapport à la direction du mouvement, et déplace 
+ * les tuiles vers les positions vides.
  * 
- * @param i l'indice de la ligne dans le plateau.
- * @param startIndex l'indice de début inclu.
- * @param endIndex l'indice de fin exclu.
+ * @param i : l'indice de la ligne dans le plateau.
+ * @param startIndex : l'indice de début inclu.
+ * @param endIndex : l'indice de fin exclu.
  **/
 void Model::moveLeftRange(int i, int startIndex, int endIndex) {
     int first0Index = -1;
@@ -175,13 +180,14 @@ void Model::moveLeftRange(int i, int startIndex, int endIndex) {
 }
 
 /** 
- * Décale depuis l'indice startIndex jusqu'à l'indice endIndex exclu les valeurs d'un tableau
- * vers la droite. Garde le dernier indice d'une cas vide, et déplace les valeurs différents de 0
- * sur ses indices.
+ * Décale depuis l'indice startIndex jusqu'à l'indice endIndex exclu les 
+ * tuiles de la ligne i vers la droite. Garde le premier indice d'une 
+ * position vide par rapport à la direction du mouvement, et déplace 
+ * les tuiles vers les positions vides.
  * 
- * @param i l'indice de la ligne dans le plateau.
- * @param startIndex l'indice de début inclu.
- * @param endIndex l'indice de fin exclu.
+ * @param i : l'indice de la ligne dans le plateau.
+ * @param startIndex : l'indice de début inclu.
+ * @param endIndex : l'indice de fin exclu.
  **/
 void Model::moveRightRange(int i, int startIndex, int endIndex) {
     int first0Index = -1;
@@ -198,13 +204,14 @@ void Model::moveRightRange(int i, int startIndex, int endIndex) {
 }
 
 /** 
- * Décale depuis l'indice startIndex jusqu'à l'indice endIndex exclu les valeurs d'un tableau
- * vers le haut. Garde le dernier indice d'une cas vide, et déplace les valeurs différents de 0
- * sur ses indices.
+ * Décale depuis l'indice startIndex jusqu'à l'indice endIndex exclu les 
+ * tuiles de la colonne j vers le haut. Garde le premier indice d'une 
+ * position vide par rapport à la direction du mouvement, et déplace 
+ * les tuiles vers les positions vides.
  * 
- * @param j l'indice de la colonne dans le plateau.
- * @param startIndex l'indice de début inclu.
- * @param endIndex l'indice de fin exclu.
+ * @param j : l'indice de la colonne dans le plateau.
+ * @param startIndex : l'indice de début inclu.
+ * @param endIndex : l'indice de fin exclu.
  **/
 void Model::moveUpRange(int j, int startIndex, int endIndex) {
     int first0Index = -1;
@@ -221,13 +228,14 @@ void Model::moveUpRange(int j, int startIndex, int endIndex) {
 }
 
 /** 
- * Décale depuis l'indice startIndex jusqu'à l'indice endIndex exclu les valeurs d'un tableau
- * vers le bas. Garde le dernier indice d'une cas vide, et déplace les valeurs différents de 0
- * sur ses indices.
+ * Décale depuis l'indice startIndex jusqu'à l'indice endIndex exclu les 
+ * tuiles de la colonne j vers le bas. Garde le premier indice d'une 
+ * position vide par rapport à la direction du mouvement, et déplace 
+ * les tuiles vers les positions vides.
  * 
- * @param j l'indice de la colonne dans le plateau.
- * @param startIndex l'indice de début inclu.
- * @param endIndex l'indice de fin exclu.
+ * @param j : l'indice de la colonne dans le plateau.
+ * @param startIndex : l'indice de début inclu.
+ * @param endIndex : l'indice de fin exclu.
  **/
 void Model::moveDownRange(int j, int startIndex, int endIndex) {
     int first0Index = -1;
@@ -243,18 +251,18 @@ void Model::moveDownRange(int j, int startIndex, int endIndex) {
     }
 }
 
-// FONCTIONS MOUVEMENT SOMME DES CASES
+// FONCTIONS MOUVEMENT SOMME DES TUILES
 
 /**
- * Vérifie si deux cases peuvent s'ajouter, et dans le cas que oui,
- * l'addition de la case de départ ( première case ) vers la case
+ * Vérifie si deux tuiles peuvent s'ajouter, et dans le cas que oui,
+ * l'addition de la tuile de départ ( première case ) vers la tuile
  * d'arrivée ( deuxième case ) se réalise.
  * 
- * @param i1 l'indice i de la case de départ.
- * @param j1 l'indice j de la case de départ.
- * @param i2 l'indice i de la case d'arrivé.
- * @param j2 l'indice j de la case d'arrivé.
- * @return true si l'addition des cases se réalise, false sinon.
+ * @param i1 l'indice i de la tuile de départ.
+ * @param j1 l'indice j de la tuile de départ.
+ * @param i2 l'indice i de la tuile d'arrivé.
+ * @param j2 l'indice j de la tuile d'arrivé.
+ * @return true si l'addition des tuiles se réalise, false sinon.
  **/
 bool Model::addCases(int i1, int j1, int i2, int j2) {
     if (validTile(i1, j1) && validTile(i2, j2)) {
@@ -277,10 +285,10 @@ bool Model::addCases(int i1, int j1, int i2, int j2) {
 }
 
 /** 
- * Rajoute les éléments l'un près de l'autres égaux de gauche vers la 
- * droite et décale les éléments pour enlever les espaces.
+ * Rajoute les tuiles l'un près de l'autres égaux de gauche vers la 
+ * droite et décale les tuiles pour enlever les espaces.
  * 
- * @param i l'indice de la ligne dans le plateau.
+ * @param i : l'indice de la ligne dans le plateau.
  **/
 void Model::addLeftValues(int i) {
     int j = 0;
@@ -293,10 +301,10 @@ void Model::addLeftValues(int i) {
 }
 
 /** 
- * Rajoute les éléments l'un près de l'autres égaux de droite vers la gauche
- * et décale les éléments pour enlever les espaces.
+ * Rajoute les tuiles l'un près de l'autres égaux de droite vers la gauche
+ * et décale les tuiles pour enlever les espaces.
  * 
- * @param i l'indice de la ligne dans le plateau.
+ * @param i : l'indice de la ligne dans le plateau.
  **/
 void Model::addRightValues(int i) {
     int j = columns - 1;
@@ -309,10 +317,10 @@ void Model::addRightValues(int i) {
 }
 
 /** 
- * Rajoute les éléments l'un près de l'autres égaux du haut vers le bas
- * et décale les éléments pour enlever les espaces.
+ * Rajoute les tuiles l'un près de l'autres égaux du haut vers le bas
+ * et décale les tuiles pour enlever les espaces.
  * 
- * @param j l'indice de la colonne dans le plateau.
+ * @param j : l'indice de la colonne dans le plateau.
  **/
 void Model::addUpValues(int j) {
     int i = 0;
@@ -324,9 +332,11 @@ void Model::addUpValues(int j) {
     } 
 }
 
-/** Rajoute vers la droite les cases avec les memes valeurs.
- * @param i l'indice de la ligne dans le tableau
- * @param t le tableau.
+/** 
+ * Rajoute les tuiles l'un près de l'autres égaux du bas vers le haut
+ * et décale les tuiles pour enlever les espaces.
+ * 
+ * @param j : l'indice de la colonne dans le plateau.
  **/
 void Model::addDownValues(int j) {
     int i = lines - 1;
@@ -386,7 +396,7 @@ void Model::moveDown() {
  * Fonction qui cherche dans le plateau les cases sans 
  * valeurs ( vides ) et en renvoie une liste des indices.
  * 
- * @return tableau des uplets : premier valeur l'indice du tableau et 
+ * @return tableau d'uplets : premier valeur l'indice du tableau et 
  * deuxième valeur l'indice dans le tableau de la case vide.
  **/
 vector<tuple<int, int>> Model::getEmptySlots() {
@@ -406,7 +416,7 @@ vector<tuple<int, int>> Model::getEmptySlots() {
  * cases vides de la table. Probabilité des cases : 9/10 pour une 
  * valeur égale à 2 et 1/10 pour une valeur égale à 4.
  * 
- * @param amount le nombre de cases vides à mettre aléatoirement dans le plateau.
+ * @param amount : le nombre de cases vides à mettre aléatoirement dans le plateau.
  **/
 void Model::setRandomElements(int amount) {
     for (int i = 0; i < amount; i++) {
@@ -423,9 +433,10 @@ void Model::setRandomElements(int amount) {
 // FONCTIONS POUR FAIRE DÉBOGAGE
 
 /** 
- * Fonction pour afficher une ligne du plateau sous forme de tableau.
+ * Fonction pour afficher une ligne du 
+ * plateau sous forme de tableau.
  * 
- * @param i indice de la ligne dans le plateau.
+ * @param i : indice de la ligne dans le plateau.
  **/
 void Model::printLine(int i) {
     cout << "[";
@@ -443,7 +454,8 @@ void Model::printLine(int i) {
 }
 
 /** 
- * Fonction pour afficher le plateau sous forme de tableau.
+ * Fonction pour afficher le plateau sous
+ * forme de tableau dans la terminale.
  **/
 void Model::printPlateau() {
     cout << "[";
@@ -459,12 +471,12 @@ void Model::printPlateau() {
 // AUTRES MÉTHODES UTILES
 
 /** 
- * Fonction qui vérifie si une case du plateau
+ * Fonction qui vérifie si une tuile du plateau
  * est non-vide, donc qu'elle existe.
  * 
- * @param i l'indice i de la case à vérifier.
- * @param j l'indice j de la case à vérifier.
- * @return true si la case existe, false sinon.
+ * @param i : l'indice i de la tuile à vérifier.
+ * @param j : l'indice j de la tuile à vérifier.
+ * @return true si la tuile existe, false sinon.
  **/
 bool Model::validTile(int i, int j) {
     for (int k = 0; k < tiles.size(); k++) {
@@ -478,11 +490,11 @@ bool Model::validTile(int i, int j) {
 
 /**
  * Fonction qui renvoie une tuile du plateau.
- * Renvoie une erreur si la case est invalide.
+ * Renvoie une erreur si la tuile est invalide.
  * 
- * @param i l'indice i de la case.
- * @param j l'indice j de la case.
- * @return la case d'indices i,j.
+ * @param i : l'indice i de la tuile.
+ * @param j : l'indice j de la tuile.
+ * @return tile : la tuile d'indices i,j.
  **/
 Tile& Model::getTile(int i, int j) {
     for (int k = 0; k < tiles.size(); k++) {
@@ -510,9 +522,9 @@ void Model::updateScore() {
 }
 
 /**
- * Fonction pour enlever une case du plateau.
+ * Fonction pour enlever une tuile du plateau.
  * 
- * @param caseObjet la case du plateau.
+ * @param tile : la tuile du plateau.
  **/
 void Model::removeTile(Tile& tile) {
     int i = tile.getIndexI();

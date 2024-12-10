@@ -8,13 +8,18 @@ using namespace std;
  * en termes des fonctions de mouvement et vérification de mouvement.
  * 
  * @param Model la classe model.
+ * 
+ * Auteur : Andres Felipe Sanchez Salcedo
  */
 Console::Console(Model& model) : model(model) {}
 
 /** 
  * Retrouve le nombre le plus grand en caractères. 
+ * 
  * @return entier représentant le nombre de caractères
  * du plus grand nombre dans le plateau.
+ * 
+ * Auteur : Andres Felipe Sanchez Salcedo
  **/
 int Console::getMaxTextLenght() {
     int maxValue = 1;
@@ -31,6 +36,8 @@ int Console::getMaxTextLenght() {
  * Fonction pour initialiser toutes les couleurs pour
  * le text ainsi que les couleurs des tuiles pour la console
  * dans la bibliothéque ncurses.
+ * 
+ * Auteur : Andres Felipe Sanchez Salcedo
  **/
 void Console::setupColors() {
     if (has_colors() && can_change_color()) {
@@ -68,6 +75,8 @@ void Console::setupColors() {
  * Fonction pour retrouver l'exposant d'un nombre 2^k.
  * @param value un entier tel que value = 2^k
  * @return l'exposant k.
+ * 
+ * Auteur : Andres Felipe Sanchez Salcedo
  */
 int Console::findNumberColor(int value) {
     int exposant = 0;
@@ -85,6 +94,8 @@ int Console::findNumberColor(int value) {
  * @param cellWidth la largueur de chaque tuile dans le terminale.
  * @param startY coordonnée y (ligne) de début du plateau.
  * @param coordonnée x (colonne) de début du plateau.
+ * 
+ * Auteur : Andres Felipe Sanchez Salcedo
  * */
 void Console::drawBoard(WINDOW* win, int cellHeight, int cellWidth, int startY, int startX) {
     box(win, 0, 0);
@@ -118,7 +129,10 @@ void Console::drawBoard(WINDOW* win, int cellHeight, int cellWidth, int startY, 
 /**
  * Fonction pour vérifier si le mouvement saisit est valide, et
  * si c'est le cas, réalise le mouvmenet dans le plateau.
+ * 
  * @param key : le code numérique de la touche pressée.
+ * 
+ * Auteur : Andres Felipe Sanchez Salcedo
  */
 bool Console::isValidMove(int key) {
     switch (key) {
@@ -159,6 +173,8 @@ bool Console::isValidMove(int key) {
  * Initialise toutes les variables, et montre le jeu
  * dans le terminale avec le score et le meilleur score.
  * Vérifie à chaque tour de boucle les mouvmenets réalisées. 
+ * 
+ * Auteur : Andres Felipe Sanchez Salcedo
  **/
 void Console::displayGame() {
     initscr(); // Initialiser la bibliothèque ncurses

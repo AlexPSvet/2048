@@ -11,6 +11,8 @@ using namespace std;
  * 
  * @param lines les lignes du plateau du jeu.
  * @param columns le nombre de colonnes du jeu.
+ * 
+ * Auteur : Alejandro Perez Svetlitsky
  */
 Model::Model(int lines, int columns) {
     this->lines = lines;
@@ -30,6 +32,8 @@ Model::Model(int lines, int columns) {
  * @param j1 l'indice j du premier élément
  * @param i2 l'indice i du deuxième élément
  * @param j2 l'indice j du deuxième élément
+ * 
+ * Auteur : Alejandro Perez Svetlitsky
  **/
 bool Model::compareValues(int i1, int j1, int i2, int j2) {
     if (validTile(i2, j2)) {
@@ -54,6 +58,8 @@ bool Model::compareValues(int i1, int j1, int i2, int j2) {
  * ou deux éléments égaux près l'un de l'autre ( entre 0 et columns - 1 inclus )
  * 
  * @return true si un mouvement à gauche est possible, false sinon.
+ * 
+ * Auteur : Alejandro Perez Svetlitsky
  **/
 bool Model::canMoveLeft() {
     for (int i = 0; i < lines; i++) {
@@ -74,6 +80,8 @@ bool Model::canMoveLeft() {
  * ou deux éléments égaux près l'un de l'autre ( entre 0 et columns - 1 inclus )
  * 
  * @return true si un mouvement à gauche est possible, false sinon.
+ * 
+ * Auteur : Alejandro Perez Svetlitsky
  **/
 bool Model::canMoveRight() {
     for (int i = 0; i < lines; i++) {
@@ -94,6 +102,8 @@ bool Model::canMoveRight() {
  * ou deux éléments égaux près l'un de l'autre ( entre 0 et lines - 1 inclus )
  * 
  * @return true si un mouvement à gauche est possible, false sinon.
+ * 
+ * Auteur : Alejandro Perez Svetlitsky
  **/
 bool Model::canMoveUp() {
     for (int j = 0; j < columns; j++) {
@@ -114,6 +124,8 @@ bool Model::canMoveUp() {
  * ou deux éléments égaux près l'un de l'autre ( entre 0 et lines - 1 inclus )
  * 
  * @return true si un mouvement à gauche est possible, false sinon.
+ * 
+ * Auteur : Alejandro Perez Svetlitsky
  **/
 bool Model::canMoveDown() {
     for (int j = 0; j < columns; j++) {
@@ -131,6 +143,8 @@ bool Model::canMoveDown() {
  * les 4 fonctions de mouvement.
  * 
  * @return true si au moins un mouvement est possible, false sinon.
+ * 
+ * Auteur : Alejandro Perez Svetlitsky
  **/
 bool Model::canMove() {
     return canMoveLeft() || canMoveRight() || canMoveUp() || canMoveDown();
@@ -145,6 +159,8 @@ bool Model::canMove() {
  * @param j1 : l'indice j du premier élément.
  * @param i2 : l'indice i de la position vide.
  * @param j2 : l'indice j de la position vide.
+ * 
+ * Auteur : Andres Felipe Sanchez Salcedo
  **/
 void Model::moveCase(int i1, int j1, int i2, int j2) {
     Tile& tile = getTile(i1, j1);
@@ -164,6 +180,8 @@ void Model::moveCase(int i1, int j1, int i2, int j2) {
  * @param i : l'indice de la ligne dans le plateau.
  * @param startIndex : l'indice de début inclu.
  * @param endIndex : l'indice de fin exclu.
+ * 
+ * Auteur : Andres Felipe Sanchez Salcedo
  **/
 void Model::moveLeftRange(int i, int startIndex, int endIndex) {
     int first0Index = -1;
@@ -188,6 +206,8 @@ void Model::moveLeftRange(int i, int startIndex, int endIndex) {
  * @param i : l'indice de la ligne dans le plateau.
  * @param startIndex : l'indice de début inclu.
  * @param endIndex : l'indice de fin exclu.
+ * 
+ * Auteur : Andres Felipe Sanchez Salcedo
  **/
 void Model::moveRightRange(int i, int startIndex, int endIndex) {
     int first0Index = -1;
@@ -212,6 +232,8 @@ void Model::moveRightRange(int i, int startIndex, int endIndex) {
  * @param j : l'indice de la colonne dans le plateau.
  * @param startIndex : l'indice de début inclu.
  * @param endIndex : l'indice de fin exclu.
+ * 
+ * Auteur : Andres Felipe Sanchez Salcedo
  **/
 void Model::moveUpRange(int j, int startIndex, int endIndex) {
     int first0Index = -1;
@@ -236,6 +258,8 @@ void Model::moveUpRange(int j, int startIndex, int endIndex) {
  * @param j : l'indice de la colonne dans le plateau.
  * @param startIndex : l'indice de début inclu.
  * @param endIndex : l'indice de fin exclu.
+ * 
+ * Auteur : Andres Felipe Sanchez Salcedo
  **/
 void Model::moveDownRange(int j, int startIndex, int endIndex) {
     int first0Index = -1;
@@ -263,6 +287,8 @@ void Model::moveDownRange(int j, int startIndex, int endIndex) {
  * @param i2 l'indice i de la tuile d'arrivé.
  * @param j2 l'indice j de la tuile d'arrivé.
  * @return true si l'addition des tuiles se réalise, false sinon.
+ * 
+ * Auteur : Alejandro Perez Svetlitsky
  **/
 bool Model::addCases(int i1, int j1, int i2, int j2) {
     if (validTile(i1, j1) && validTile(i2, j2)) {
@@ -289,6 +315,8 @@ bool Model::addCases(int i1, int j1, int i2, int j2) {
  * droite et décale les tuiles pour enlever les espaces.
  * 
  * @param i : l'indice de la ligne dans le plateau.
+ * 
+ * Auteur : Alejandro Perez Svetlitsky
  **/
 void Model::addLeftValues(int i) {
     int j = 0;
@@ -305,6 +333,8 @@ void Model::addLeftValues(int i) {
  * et décale les tuiles pour enlever les espaces.
  * 
  * @param i : l'indice de la ligne dans le plateau.
+ * 
+ * Auteur : Alejandro Perez Svetlitsky
  **/
 void Model::addRightValues(int i) {
     int j = columns - 1;
@@ -321,6 +351,8 @@ void Model::addRightValues(int i) {
  * et décale les tuiles pour enlever les espaces.
  * 
  * @param j : l'indice de la colonne dans le plateau.
+ * 
+ * Auteur : Alejandro Perez Svetlitsky
  **/
 void Model::addUpValues(int j) {
     int i = 0;
@@ -337,6 +369,8 @@ void Model::addUpValues(int j) {
  * et décale les tuiles pour enlever les espaces.
  * 
  * @param j : l'indice de la colonne dans le plateau.
+ * 
+ * Auteur : Alejandro Perez Svetlitsky
  **/
 void Model::addDownValues(int j) {
     int i = lines - 1;
@@ -398,6 +432,8 @@ void Model::moveDown() {
  * 
  * @return tableau d'uplets : premier valeur l'indice du tableau et 
  * deuxième valeur l'indice dans le tableau de la case vide.
+ * 
+ * Auteur : Alejandro Perez Svetlitsky
  **/
 vector<tuple<int, int>> Model::getEmptySlots() {
     vector<tuple<int, int>> emptySlots;
@@ -417,6 +453,8 @@ vector<tuple<int, int>> Model::getEmptySlots() {
  * valeur égale à 2 et 1/10 pour une valeur égale à 4.
  * 
  * @param amount : le nombre de cases vides à mettre aléatoirement dans le plateau.
+ * 
+ * Auteur : Alejandro Perez Svetlitsky
  **/
 void Model::setRandomElements(int amount) {
     for (int i = 0; i < amount; i++) {

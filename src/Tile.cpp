@@ -16,6 +16,8 @@ Tile::Tile() {
  * 
  * @param i : l'indice de la ligne de la tuile.
  * @param j : l'indice de la colonne de la tuile.
+ * 
+ * Auteur : Alejandro Perez Svetlitsky
  **/
 Tile::Tile(int i, int j) {
     this->i = i;
@@ -27,6 +29,7 @@ Tile::Tile(int i, int j) {
  * Fonction pour rajouter un mouvement d'une tuile.
  * Ceci permet de stocker toutes les mouvements précédents
  * jusqu'à arriver au point final dans un tableau.
+ * 
  * @param event : la classe du mouvement.
  **/
 void Tile::addAnimation(MoveEvent event) {

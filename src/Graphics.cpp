@@ -9,6 +9,8 @@ Graphics::Graphics(Model& model) : model(model) {}
  * l'image de fond du jeu.
  * 
  * @param window la fenêtre dans laquelle dessiner.
+ * 
+ * Auteur : Alejandro Perez Svetlitsky
  **/
 void Graphics::displayBackground(RenderWindow& window) {
     Sprite sprite;
@@ -23,6 +25,8 @@ void Graphics::displayBackground(RenderWindow& window) {
  * 
  * @param tileNumber le numéro de la tuile.
  * @return la couleur de la tuile sur le plateau.
+ * 
+ * Auteur : Alejandro Perez Svetlitsky
  **/
 Color Graphics::getColor(int tileNumber) {
     if (tileNumber == 2) {
@@ -69,6 +73,8 @@ Color Graphics::getColor(int tileNumber) {
  * @param fillColor la couleur à l'intérieur du rectangle.
  * @param outlineColor la couleur de la bordure du rectangle.
  * @param textColor la couleur du texte à l'intérieur du rectangle.
+ * 
+ * Auteur : Alejandro Perez Svetlitsky
  **/
 void Graphics::drawText (
     RenderWindow& window, 
@@ -112,6 +118,8 @@ void Graphics::drawText (
  * @param xEnd la coordonnée de fin de mouvement pour x.
  * @param yEnd la coordonnées de fin de mouvement pour y.
  * @return true si le mouvement est fini, false sinon.
+ * 
+ * Auteur : Alejandro Perez Svetlitsky
  **/
 bool Graphics::endAnimation(Tile& tile, int i, float xEnd, float yEnd) {
     MoveEvent& event = tile.getEvents()[0];
@@ -145,6 +153,8 @@ bool Graphics::endAnimation(Tile& tile, int i, float xEnd, float yEnd) {
  * @param tile la tuile laquelle il faut dessiner en premier.
  * @param xMove la composante en x à rajouter dans la position de la tuile (inclus valeurs négatifs).
  * @param yMove la composante en y à rajouter dans la position de la tuile (inclus valeurs négatifs).
+ * 
+ * Auteur : Alejandro Perez Svetlitsky
  **/
 void Graphics::drawAnimation(RenderWindow& window, Tile& tile, float xMove, float yMove) {
     vector<MoveEvent>& events = tile.getEvents();
@@ -198,6 +208,8 @@ void Graphics::drawAnimation(RenderWindow& window, Tile& tile, float xMove, floa
  * @param window la fenêtre dans laquelle dessiner l'animation.
  * @param tile la tuile laquelle il faut dessiner en premier.
  * @param timeElapsed le temps passé pour dessiner l'image précédente du jeu.
+ * 
+ * Auteur : Alejandro Perez Svetlitsky
  **/
 void Graphics::checkAnimation(RenderWindow& window, Tile& tile, float timeElapsed) {
     // On obtient le premier mouvement pour savoir dans quel direction
@@ -231,6 +243,8 @@ void Graphics::checkAnimation(RenderWindow& window, Tile& tile, float timeElapse
  * 
  * @param window la fenêtre dans laquelle dessiner l'animation.
  * @param timeElapsed le temps passé pour dessiner l'image précédente du jeu.
+ * 
+ * Auteur : Alejandro Perez Svetlitsky
  **/
 void Graphics::drawAnimations(RenderWindow& window, float timeElapsed) {
     int x = xRectangle + caseMargin;
@@ -271,6 +285,8 @@ void Graphics::drawAnimations(RenderWindow& window, float timeElapsed) {
  * pas en animation.
  * 
  * @param window la fenêtre dans laquelle dessiner.
+ * 
+ * Auteur : Alejandro Perez Svetlitsky
  **/
 void Graphics::displayTable(RenderWindow& window) {
     Vector2 size = window.getSize();
@@ -308,6 +324,8 @@ void Graphics::displayTable(RenderWindow& window) {
  * et le score actuel du jeu.
  * 
  * @param window la fenêtre dans laquelle dessiner.
+ * 
+ * Auteur : Alejandro Perez Svetlitsky
  **/
 void Graphics::displayInfo(RenderWindow& window) {
     // Afficher le titre du jeu.
@@ -348,6 +366,8 @@ void Graphics::displayInfo(RenderWindow& window) {
  * 
  * @param window la fenêtre dans laquelle dessiner.
  * @return true si un mouvement se réalise, false sinon.
+ * 
+ * Auteur : Alejandro Perez Svetlitsky
  **/
 bool Graphics::checkMovement(Event event) {
     switch (event.key.code) {
@@ -391,6 +411,8 @@ bool Graphics::checkMovement(Event event) {
  * le temps mis par l'ordinateur pour afficher l'image.
  * 
  * @param window la fenêtre dans laquelle dessiner.
+ * 
+ * Auteur : Alejandro Perez Svetlitsky
  **/
 void Graphics::updateGame(RenderWindow& window) {
     float elapsedTimeSec = clock.getElapsedTime().asSeconds();
@@ -407,6 +429,8 @@ void Graphics::updateGame(RenderWindow& window) {
  * la fentre si sa positiion correspond à un button.
  * 
  * @param window la fenêtre dans laquelle vérifier.
+ * 
+ * Auteur : Alejandro Perez Svetlitsky
  **/
 void Graphics::checkButtons(RenderWindow& window) {
     sf::Vector2i mousePosition = sf::Mouse::getPosition(window);
@@ -432,6 +456,8 @@ void Graphics::checkButtons(RenderWindow& window) {
  * du plateau avec les tuiles.
  * 
  * @param window la fenêtre dans laquelle dessiner.
+ * 
+ * Auteur : Alejandro Perez Svetlitsky
  **/
 void Graphics::drawRestartMenu(RenderWindow& window) {
     bool win = model.didPlayerWin();
@@ -457,6 +483,8 @@ void Graphics::drawRestartMenu(RenderWindow& window) {
  * dans la fenêtre.
  * 
  * @param window la fenêtre dans laquelle dessiner.
+ * 
+ * Auteur : Alejandro Perez Svetlitsky
  **/
 void Graphics::updateUnits(RenderWindow& window) {
     Vector2u windowSize = window.getSize();
@@ -473,6 +501,8 @@ void Graphics::updateUnits(RenderWindow& window) {
  * le jeu.
  * 
  * @param window la fenêtre dans laquelle dessiner.
+ * 
+ * Auteur : Alejandro Perez Svetlitsky
  **/
 void Graphics::displayGame() {
     // Initialisation de la fenêtre.
@@ -538,6 +568,8 @@ void Graphics::displayGame() {
  * Vérifie si au moins une tuile est en animation.
  * 
  * @return true si au moins une tuile en animation, false sinon.
+ * 
+ * Auteur : Alejandro Perez Svetlitsky
  **/
 bool Graphics::isCasesInAnimation() {
     for (Tile& tile : model.getTiles()) {

@@ -15,6 +15,8 @@ MoveEvent::MoveEvent() {}
  * @param jStart : colonne de départ du mouvement.
  * @param iEnd : ligne de fin du mouvement.
  * @param jEnd : colonne de fin du mouvement.
+ * 
+ * Auteur : Alejandro Perez Svetlitsky
  */
 MoveEvent::MoveEvent(
     int value, 

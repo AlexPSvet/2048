@@ -8,13 +8,18 @@ using namespace std;
  * le meilleur score du jeu.
  * 
  * @param pathFile : la direction du fichier ou se trouve stockée le meilleur score.
+ * 
+ * Auteur : Andres Felipe Sanchez Salcedo
  */
 Game::Game(string pathFile) : pathFile(pathFile), model(Model(4, 4)), graphics(Graphics(model)), console(Console(model)) {}
 
 /**
  * Fonction pour chercher dans un fichier le meilleur score.
+ * 
  * @param pathFile : la direction du fichier ou se trouve le meilleur score.
  * @return bestScore : le meilleur score du joueur.
+ * 
+ * Auteur : Andres Felipe Sanchez Salcedo
  */
 int Game::getBestScoreFile(string pathFile) {
     ifstream scoreFile;
@@ -35,8 +40,11 @@ int Game::getBestScoreFile(string pathFile) {
 
 /**
  * Fonction pour chercher dans un fichier le meilleur score.
+ * 
  * @param bestScore : le meilleur score du joueur.
  * @param pathFile : la direction du fichier ou se trouve le meilleur score.
+ * 
+ * Auteur : Andres Felipe Sanchez Salcedo
  */
 void Game::setBestScoreFile(int bestScore, string pathFile) {
     ofstream scoreFile;
@@ -52,6 +60,8 @@ void Game::setBestScoreFile(int bestScore, string pathFile) {
 /** 
  * Fonction pour commencer le jeu. Demande à l'utilisateur
  * quel mode de jeu utiliser avant de l'initialiser. (Terminale ou console).
+ * 
+ * Auteur : Andres Felipe Sanchez Salcedo
  **/
 void Game::start() {
     model.restart();

@@ -506,7 +506,7 @@ void Graphics::updateUnits(RenderWindow& window) {
  **/
 void Graphics::displayGame() {
     // Initialisation de la fenêtre.
-    RenderWindow window(VideoMode(600, 600), "2048");
+    RenderWindow window(VideoMode(800, 800), "2048");
     window.setFramerateLimit(60);
     window.setVerticalSyncEnabled(true);
     backgroundText.loadFromFile("textures/background.png");
